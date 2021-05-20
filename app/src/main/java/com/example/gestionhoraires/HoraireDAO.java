@@ -437,6 +437,48 @@ public class HoraireDAO {
      * @param identifiant l'identifiant de la plage horaire à modifier
      */
     public void updatePlageHoraire(PlageHoraire plageHoraire, String identifiant) {
+        ContentValues nouvellePlageHoraire = new ContentValues();
+        nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE, plageHoraire.getHoraireOuverture());
+        nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE, plageHoraire.getHoraireFermeture());
+        nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE, plageHoraire.getEtatOuverture());
+        nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE, plageHoraire.getEtatFermeture());
+        baseHoraire.update(HelperBDHoraire.NOM_TABLE_PLAGE_HORAIRE,
+                nouvellePlageHoraire,
+                HelperBDHoraire.PLAGE_HORAIRE_CLE + " = ?",
+                new String[] {identifiant});
+    }
+
+    /**
+     * Modifie une horaire ponctuelle
+     * @param horairePonctuelle l'horaire ponctuelle modifiée
+     * @param identifiant l'identifiant de l'horaire ponctuelle à modifier
+     */
+    public void updateHorairePonctuelle(HorairePonctuelle horairePonctuelle, String identifiant) {
+        ContentValues nouvellleHorairePonctuelle = new ContentValues();
+        nouvellleHorairePonctuelle.put(HelperBDHoraire.HORAIRE_PONCTUELLE_OUVERTURE, horairePonctuelle.getHoraireDebut());
+        nouvellleHorairePonctuelle.put(HelperBDHoraire.HORAIRE_PONCTUELLE_FERMETURE, horairePonctuelle.getHoraireFin());
+        nouvellleHorairePonctuelle.put(HelperBDHoraire.HORAIRE_PONCTUELLE_CLE_JOUR, horairePonctuelle.getIdJour());
+        nouvellleHorairePonctuelle.put(HelperBDHoraire.HORAIRE_PONCTUELLE_CLE_FICHE, horairePonctuelle.getIdFicheHorairePonctuelle());
+        baseHoraire.update(HelperBDHoraire.NOM_TABLE_HORAIRE_PONCTUELLE,
+                nouvellleHorairePonctuelle,
+                HelperBDHoraire.HORAIRE_PONCTUELLE_CLE + " = ?",
+                new String[] {identifiant});
+    }
+
+    /**
+     * Modifie une fiche horaire ponctuelle
+     * @param ficheHorairePonctuelle la fiche horaire ponctuelle modifiée
+     * @param identifiant l'identifiant de la fiche horaire à modifier
+     */
+    public void updateFicheHorairePonctuelle(FicheHorairePonctuelle ficheHorairePonctuelle, String identifiant) {
+        ContentValues nouvelleFicheHorairePonctuelle = new ContentValues();
+        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM, ficheHorairePonctuelle.getNom());
+        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_INFORMATION, ficheHorairePonctuelle.getInformation());
+        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_IMAGE, ficheHorairePonctuelle.getCheminPhoto());
+        baseHoraire.update(HelperBDHoraire.NOM_TABLE_FICHE_HORAIRE_PONCTUELLE,
+                nouvelleFicheHorairePonctuelle,
+                HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE + " = ?",
+                new String[] {identifiant});
 
     }
 }
