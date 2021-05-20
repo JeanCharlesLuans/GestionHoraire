@@ -11,6 +11,7 @@ import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
 import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 import com.example.gestionhoraires.beans.HorairePonctuelle;
+import com.example.gestionhoraires.beans.Jour;
 import com.example.gestionhoraires.beans.Localisation;
 import com.example.gestionhoraires.beans.PlageHoraire;
 
@@ -282,6 +283,82 @@ public class HoraireDAO {
         categorie.setNom(cursor.getString(2));
         return categorie;
     }
+
+    /**
+     * Récupère le jour en fonction de l'identifiant
+     * (utilisé uniquement pour la partie export)
+     * @param idJour identifiant du jour
+     * @return le jour
+     */
+    public Jour getJourById(String idJour) {
+        Jour jour = new Jour();
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_JOUR + " WHERE "
+                        + HelperBDHoraire.JOUR_CLE + " = " + idJour;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        jour.setId(cursor.getString(0));
+        jour.setJour(cursor.getString(1));
+        return jour;
+    }
+
+    /**
+     * Récupère une fiche horaire ponctuelle en fonction d'un identifiant
+     * @param idHorairePonctuelle l'identifiant de l'horaire ponctuelle
+     * @return l'horaire ponctuelle
+     */
+    public HorairePonctuelle getHorairePonctuelleById(String idHorairePonctuelle) {
+        HorairePonctuelle horairePonctuelle = new HorairePonctuelle();
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_HORAIRE_PONCTUELLE + " WHERE "
+                        + HelperBDHoraire.HORAIRE_PONCTUELLE_CLE + " = " + idHorairePonctuelle;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        horairePonctuelle.setId(cursor.getString(0));
+        horairePonctuelle.setHoraireDebut(cursor.getString(1));
+        horairePonctuelle.setHoraireFin(cursor.getString(2));
+        horairePonctuelle.setIdJour(cursor.getString(3));
+        horairePonctuelle.setIdFicheHorairePonctuelle(cursor.getString(4));
+        return horairePonctuelle;
+    }
+
+    /**
+     * Récupère un ensemble de plage horaire en fonction d'un id
+     * @param idEnsemblePlageHoraire identifiant de l'ensemble que l'on souhaite récupérer
+     * @return l'ensemble de plage horaire
+     */
+    public EnsemblePlageHoraire getEnsemblePlageHoraire(String idEnsemblePlageHoraire) {
+        EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire();
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE + " WHERE "
+                        + HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE + " = " + idEnsemblePlageHoraire;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        ensemblePlageHoraire.setId(cursor.getString(0));
+        ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(1));
+        ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(2));
+        ensemblePlageHoraire.setIdJour(cursor.getString(3));
+        ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(4));
+        return ensemblePlageHoraire;
+    }
+
+    /**
+     * Récupère une plage horaire en fonction d'un id
+     * @param idPlageHoraire identifiant de la plage horaire
+     * @return la plage horaire
+     */
+    public PlageHoraire getPlageHoraireById(String idPlageHoraire) {
+        PlageHoraire plageHoraire = new PlageHoraire();
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_PLAGE_HORAIRE + " WHERE "
+                        + HelperBDHoraire.PLAGE_HORAIRE_CLE + " = " + idPlageHoraire;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        plageHoraire.setId(cursor.getString(0));
+        plageHoraire.setHoraireOuverture(cursor.getString(1));
+        plageHoraire.setHoraireFermeture(cursor.getString(2));
+        plageHoraire.setEtatOuverture(Integer.parseInt(cursor.getString(3)));
+        plageHoraire.setEtatFermeture(Integer.parseInt(cursor.getString(4)));
+        return plageHoraire;
+    }
+
+
 
     /**
      * Permet d'ajouter une localisation
