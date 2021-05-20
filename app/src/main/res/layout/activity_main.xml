@@ -46,6 +46,33 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
+                    <!--  pour afficher les intitulés des colonnes -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/marge_normale"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:text="@string/colonne_nom"
+                            android:layout_width="0dp"
+                            android:layout_marginLeft="@dimen/marge_normale"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="40" />
+
+                        <TextView
+                            android:text="@string/colonne_information"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="70" />
+
+                    </LinearLayout>
+
+                    <!--  on affiche une ligne horizontale de séparation -->
+                    <View
+                        android:layout_width="match_parent"
+                        style="@style/ligneView" />
+
                     <!--  liste dans laquelle les informations seront affichées -->
                     <ListView
                         android:id="@+id/liste_plage_horaire"
@@ -53,6 +80,7 @@
                         android:layout_height="match_parent" />
 
                 </LinearLayout>
+
                 <!-- Contenu de l'onglet numéro 2 : Horaires Ponctuelles-->
                 <LinearLayout
                     android:id="@+id/onglet_horaires_ponctuelles"
@@ -60,6 +88,39 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="vertical">
+
+                    <!--  pour afficher les intitulés des colonnes -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/marge_normale"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:text="@string/colonne_nom"
+                            android:layout_width="0dp"
+                            android:layout_marginLeft="@dimen/marge_normale"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="30" />
+
+                        <TextView
+                            android:text="@string/colonne_jour"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="30" />
+
+                        <TextView
+                            android:text="@string/colonne_horaire"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="40" />
+
+                    </LinearLayout>
+
+                    <!--  on affiche une ligne horizontale de séparation -->
+                    <View
+                        android:layout_width="match_parent"
+                        style="@style/ligneView" />
 
                     <!--  liste dans laquelle les informations seront affichées -->
                     <ListView

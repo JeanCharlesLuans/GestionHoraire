@@ -3,39 +3,45 @@ package com.example.gestionhoraires;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.viewpager.widget.ViewPager;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
 import static android.graphics.Color.rgb;
 
 public class MainActivity extends AppCompatActivity {
+
+    /** Identifiant de l'intention pour la gestion des catégories */
+    private final int CODE_GESTION_CATEGORIE = 10;
+
+    /** Identifiant de l'intention pour la gestion des localisations */
+    private final int CODE_GESTION_LOCALISATION = 20;
 
     /** barre d'outils de l'applications */
     private Toolbar maBarreOutil;
@@ -45,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private TabHost lesOnglets;
 
-    /** Objet destiné à faciliter l'accès à la table des plages horaires */
-    //private HoraireDAO accesHoraires; // TODO CHANGER TYPE
+    /** Objet destiné à faciliter l'accès à la table des horaires */
+    private HoraireDAO accesHoraires;
 
     // ONGLET 1
 
@@ -82,10 +88,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // accès au DAO
-        //accesHoraires = new HoraireDAO(this); //TODO Changer type
-        //accesHoraires.open();
-        //curseurPlageHoraire = accesHoraires.getCursorPlageHoraire();
-        //curseurHorairesPonctuelles = accesHoraires.getCursorHPonctuelles();
+        accesHoraires = new HoraireDAO(this);
+        accesHoraires.open();
+//        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+//        curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
 
         // Liste de l'onglet 1 : Plages Horaires
         listePlageHoraire = new ArrayList<String>();
@@ -115,8 +121,9 @@ public class MainActivity extends AppCompatActivity {
 
         registerForContextMenu(ListViewPlageHoraire);
         registerForContextMenu(ListViewHPonctuelles);
+        // TODO Menu Contextuel des listes
 
-        // On ajoute ka ToolBar
+        // On ajoute la ToolBar
         maBarreOutil = findViewById(R.id.main_tool_bar);
         setSupportActionBar(maBarreOutil);
 
@@ -130,14 +137,14 @@ public class MainActivity extends AppCompatActivity {
         lesOnglets.addTab(lesOnglets.newTabSpec("onglet_horaires_ponctuelles")
                 .setIndicator(getResources().getString(R.string.onglet_horaires_ponctuelles) )
                 .setContent(R.id.onglet_horaires_ponctuelles));
-        changeColorOnglet();
+        changeStyleOnglet();
         lesOnglets.setOnTabChangedListener(
                 new TabHost.OnTabChangeListener() {
                     @Override
                     public void onTabChanged(String tabId) {
 
                         // on met la bonne couleurs pour les onglets
-                        changeColorOnglet();
+                        changeStyleOnglet();
 
                         /* on enleve la possibiliter de filtrer la liste quand
                          * l'utilisateur est sur le deuxieme onglet
@@ -170,13 +177,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void changeColorOnglet() {
-        for (int i = 0; i < lesOnglets.getTabWidget().getChildCount(); i++) {
-            TextView tv = (TextView) lesOnglets.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
-            tv.setTextColor(getResources().getColor(R.color.gris));
+    /**
+     * Méthode invoquée automatiquement lorsque l'utiisateur active un menu contextuel
+     */
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+// TODO Menu Contextuel des listes
+        new MenuInflater(this).inflate(R.menu.menu_contextuel_settings, menu);
+    }
+
+    /**
+     * Méthode invoquée automatiquement lorsque l'utilisateur choisira une option
+     * dans le menu contextuel associé à la liste
+     */
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+// TODO Menu Contextuel des listes
+        /*
+         *  on accéde à des informations supplémentaires sur l'élémemt cliqué dans la liste
+         */
+        AdapterView.AdapterContextMenuInfo information =
+                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
+        switch(item.getItemId()) {
+            case R.id.supprimer :   // supprimer un élément
+                // supprimer element()  // TODO action supprimer
+                break;
+            case R.id.modifier :
+                //modifierElement(information.id); // TODO action modifier
+                break;
+            case R.id.annuler :		 // retour à la liste principale
+                break;
+
         }
-        TextView tv = (TextView) lesOnglets.getCurrentTabView().findViewById(android.R.id.title);
-        tv.setTextColor(getResources().getColor(R.color.secondary));
+        return (super.onContextItemSelected(item));
     }
 
     /**
@@ -228,12 +264,14 @@ public class MainActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.filtre:
+                afficherFiltre();
                 break;
             case R.id.import_option :
                 break;
             case R.id.export_option :
                 break;
             case R.id.settings_option :
+                GestionParametre();
                 break;
             case R.id.annuler_option :
                 break;
@@ -244,11 +282,221 @@ public class MainActivity extends AppCompatActivity {
         return (super.onOptionsItemSelected(item));
     }
 
+    /**
+     * Change le style des onglets
+     */
+    private void changeStyleOnglet() {
+        for (int i = 0; i < lesOnglets.getTabWidget().getChildCount(); i++) {
+            TextView tv = (TextView) lesOnglets.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
+            tv.setTextColor(getResources().getColor(R.color.gris));
+        }
+        TextView tv = (TextView) lesOnglets.getCurrentTabView().findViewById(android.R.id.title);
+        tv.setTextColor(getResources().getColor(R.color.secondary));
+    }
+
+    /**
+     * affiche une boite de dialogue a l'utilisateur pour choisir entre
+     * la gestion des Catégorie ou des Localisation
+     * Envoie une intention a l'activité correspondante au choix de l'utilisateur
+     */
+    private void GestionParametre() {
+        // on désérialise le layout qui est associé à la boîte de saisie
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_gestion, null);
+
+        /*
+         * Création d'une boîte de dialogue
+         */
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.titre_boite_parametre))
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_positif),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                RadioGroup boutonMode =
+                                        boiteSaisie.findViewById(R.id.groupe_gestion);
+
+                                switch (boutonMode.getCheckedRadioButtonId()) {
+                                    case R.id.option_gestion_categorie:
+                                        Intent catego = new Intent(MainActivity.this,
+                                                                    CategorieActivity.class);
+                                        startActivityForResult(catego, CODE_GESTION_CATEGORIE);
+                                        break;
+                                    case R.id.option_gestion_localisation:
+                                        Intent locali = new Intent(MainActivity.this,
+                                                LocalisationActivity.class);
+                                        startActivityForResult(locali, CODE_GESTION_LOCALISATION);
+                                        break;
+                                }
+                            }
+                        })
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .show();
+    }
+
+    /**
+     * Affiche une boite de dialogue pour la selection des filtre a appliquer sur la liste
+     * l'utilisateur pourra ensuite appliquer les filtre a la liste
+     */
+    private void afficherFiltre() {
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.selection_filtre, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.titre_boite_filtre))
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_appliquer), null)
+                .setNeutralButton(getResources().getString(R.string.bouton_effacer),null)
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .create();
+
+        // ajout des listener au la boite de dialogue
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button boutonEffacer = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                Button boutonAppliquer = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                CheckBox check_localisation = dialog.findViewById(R.id.filtre_localisation);
+                CheckBox check_categorie = dialog.findViewById(R.id.filtre_categorie);
+                CheckBox check_ouvert = dialog.findViewById(R.id.filtre_open);
+                Spinner spin_localisation = dialog.findViewById(R.id.localisation_spinner);
+                Spinner spin_categorie = dialog.findViewById(R.id.categorie_spinner);
+
+                // Remplissage des spinners
+                SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
+                SimpleCursorAdapter adapterCategorie = getAdapterCategorie();
+                adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                adapterCategorie.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spin_localisation.setAdapter(adapterLocalisation);
+                spin_categorie.setAdapter(adapterCategorie);
+
+                /* Délaration d'un Constraint Layout qui servira a la mosification de ce
+                 dernier lorsque on voula faire apparaitre les liste déroulate*/
+                ConstraintLayout constraintLayout =  dialog.findViewById(R.id.parent_layout);
+                ConstraintSet constraintSet = new ConstraintSet();
+
+                // Evènements sur les checkbox
+                check_localisation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // affiche la liste et deplace les élément en dessous si la checkBox est selectionner
+                        toggleSpinnerLocalisation(constraintLayout, constraintSet,
+                                                  check_localisation.isChecked(), spin_localisation);
+                    }
+                });
+                check_categorie.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // affiche la liste et deplace les élément en dessous si la checkBox est selectionner
+                        toggleSpinnerCategorie(constraintLayout, constraintSet,
+                                               check_categorie.isChecked(), spin_categorie);
+                    }
+                });
+
+                // Evènements sur les boutons
+                boutonEffacer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        check_localisation.setChecked(false);
+                        toggleSpinnerLocalisation(constraintLayout, constraintSet,
+                                check_localisation.isChecked(), spin_localisation);
+                        check_categorie.setChecked(false);
+                        check_ouvert.setChecked(false);
+                    }
+                });
+                boutonAppliquer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // TODO Do something
+
+                        //ferme la dialog quand tout est bon
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
+
+    private void toggleSpinnerLocalisation(
+            ConstraintLayout constraintLayout,
+            ConstraintSet constraintSet,
+            boolean isChecked,
+            Spinner spin_localisation) {
+        constraintSet.clone(constraintLayout);
+        if (isChecked) {
+            constraintSet.connect(R.id.filtre_categorie,ConstraintSet.TOP,R.id.localisation_spinner,ConstraintSet.BOTTOM,0);
+            constraintSet.applyTo(constraintLayout);
+            spin_localisation.setVisibility(View.VISIBLE);
+        } else {
+            constraintSet.connect(R.id.filtre_categorie,ConstraintSet.TOP,R.id.filtre_localisation,ConstraintSet.BOTTOM,0);
+            constraintSet.applyTo(constraintLayout);
+            spin_localisation.setVisibility(View.INVISIBLE);
+        }
+    }
+    private void toggleSpinnerCategorie(
+            ConstraintLayout constraintLayout,
+            ConstraintSet constraintSet,
+            boolean isChecked,
+            Spinner spin_localisation) {
+        constraintSet.clone(constraintLayout);
+        if (isChecked) {
+            constraintSet.connect(R.id.filtre_open,ConstraintSet.TOP,R.id.categorie_spinner,ConstraintSet.BOTTOM,0);
+            constraintSet.applyTo(constraintLayout);
+            spin_localisation.setVisibility(View.VISIBLE);
+        } else {
+            constraintSet.connect(R.id.filtre_open,ConstraintSet.TOP,R.id.filtre_categorie,ConstraintSet.BOTTOM,0);
+            constraintSet.applyTo(constraintLayout);
+            spin_localisation.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * @return un Adapter contenant l'ensemble des localisation
+     */
+    private SimpleCursorAdapter getAdapterLocalisation() {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorAllLocalisation(),
+                new String[] {"nom"}, // TODO nom Colonne
+                new int[] {android.R.id.text1,}, 0);
+    }
+
+    /**
+     * @return un Adapter contenant l'ensemble des Catégorie
+     */
+    private SimpleCursorAdapter getAdapterCategorie() {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorAllCategorie(),
+                new String[] {"nom"}, // TODO nom Colonne
+                new int[] {android.R.id.text1,}, 0);
+    }
+
+    /**
+     * Affiche une boite de dialogue d'aide a l'utilisateur
+     */
     private void afficheAide() {
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.titre_aide))
                 .setMessage(getResources().getString(R.string.message_aide))
                 .setPositiveButton(R.string.bouton_positif, null)
                 .show();
+    }
+
+    /**
+     * Méthode appelé lors du retour d'une activité fille
+     * @param requestCode
+     * @param resultCode
+     * @param returnedIntent
+     */
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        super.onActivityResult(requestCode, resultCode, returnedIntent);
+        switch(requestCode) {
+            case CODE_GESTION_CATEGORIE:
+                // TODO Avons nous besoin de faire qq chose au retour ?
+                break;
+            case CODE_GESTION_LOCALISATION:
+                break;
+        }
     }
 }
