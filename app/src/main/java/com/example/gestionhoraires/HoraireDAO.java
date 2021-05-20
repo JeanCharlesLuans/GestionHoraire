@@ -211,6 +211,11 @@ public class HoraireDAO {
         return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_FICHE_HORAIRE_PONCTUELLE, null);
     }
 
+    /**
+     * TODO COMMENT
+     * @param id
+     * @return
+     */
     public FichePlageHoraire getFichePlageHoraireById(String id) {
         FichePlageHoraire fichePlageHoraire = new FichePlageHoraire();
         String requete =
@@ -226,6 +231,11 @@ public class HoraireDAO {
         return fichePlageHoraire;
     }
 
+    /**
+     * TODO COMMENT
+     * @param id
+     * @return
+     */
     public FicheHorairePonctuelle getFicheHorairePonctuelleById(String id) {
         FicheHorairePonctuelle ficheHorairePonctuelle = new FicheHorairePonctuelle();
         String requete =
@@ -238,6 +248,22 @@ public class HoraireDAO {
         ficheHorairePonctuelle.setInformation(cursor.getString(2));
         ficheHorairePonctuelle.setCheminPhoto(cursor.getString(3));
         return ficheHorairePonctuelle;
+    }
+
+    /**
+     * TODO COMMENT
+     * @param idLocalisation
+     * @return
+     */
+    public Localisation getLocalisationById(String idLocalisation) {
+        Localisation localisation = new Localisation();
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_LOCALISATION + " WHERE "
+                        + HelperBDHoraire.LOCALISATION_CLE + " = " + idLocalisation;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        localisation.setId(cursor.getString(0));
+        localisation.setNom(cursor.getString(1));
+        return localisation;
     }
 
     /**
@@ -394,7 +420,7 @@ public class HoraireDAO {
     public void updateCategorie(Categorie categorie, String identifiant) {
         ContentValues nouvelleCategorie = new ContentValues();
         nouvelleCategorie.put(HelperBDHoraire.CATEGORIE_NOM, categorie.getNom());
-        nouvelleCategorie.put(HelperBDHoraire.CATEGORIE_CLE_LOCALISATION, categorie.getId());
+        nouvelleCategorie.put(HelperBDHoraire.CATEGORIE_CLE_LOCALISATION, categorie.getIdLocalisation());
         baseHoraire.update(HelperBDHoraire.NOM_TABLE_CATEGORIE,
                 nouvelleCategorie,
                 HelperBDHoraire.CATEGORIE_CLE + " = ?",
