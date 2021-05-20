@@ -180,7 +180,6 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + FICHE_PLAGE_HORAIRE_CHEMIN_IMAGE + " TEXT,"
                     + FICHE_PLAGE_HORAIRE_CLE_CATEGORIE + " INTEGER,"
                     + "FOREIGN KEY(" + FICHE_PLAGE_HORAIRE_CLE_CATEGORIE + ") REFERENCES "+ NOM_TABLE_CATEGORIE +"(" + CATEGORIE_CLE + ")"
-                    + " ON DELETE CASCADE"
                     +");";
 
     /** Requête pour la création de la table PLAGE_HORAIRE*/
