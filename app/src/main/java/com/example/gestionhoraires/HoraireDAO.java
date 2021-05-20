@@ -212,9 +212,9 @@ public class HoraireDAO {
     }
 
     /**
-     * TODO COMMENT
-     * @param id
-     * @return
+     * Récupère une fiche plage horaire
+     * @param id l'identifiant de la fiche plage horaire
+     * @return la fiche plage horaire
      */
     public FichePlageHoraire getFichePlageHoraireById(String id) {
         FichePlageHoraire fichePlageHoraire = new FichePlageHoraire();
@@ -232,9 +232,9 @@ public class HoraireDAO {
     }
 
     /**
-     * TODO COMMENT
-     * @param id
-     * @return
+     * Récupère une fiche horaire ponctuelle en fonction d'un identifiant
+     * @param id l'identifiant de la fiche
+     * @return la fiche horaire ponctuelle
      */
     public FicheHorairePonctuelle getFicheHorairePonctuelleById(String id) {
         FicheHorairePonctuelle ficheHorairePonctuelle = new FicheHorairePonctuelle();
@@ -251,9 +251,9 @@ public class HoraireDAO {
     }
 
     /**
-     * TODO COMMENT
-     * @param idLocalisation
-     * @return
+     * Récupère une localisation en fonction d'un identifiant
+     * @param idLocalisation l'identifiant de la localisation
+     * @return la localisation
      */
     public Localisation getLocalisationById(String idLocalisation) {
         Localisation localisation = new Localisation();
@@ -264,6 +264,23 @@ public class HoraireDAO {
         localisation.setId(cursor.getString(0));
         localisation.setNom(cursor.getString(1));
         return localisation;
+    }
+
+    /**
+     * Rétourne une catégorie en fonction d'un identifiant
+     * @param idCategorie l'id de la catégorie
+     * @return la catégorie
+     */
+    public Categorie getCategorieById(String idCategorie) {
+        Categorie categorie = new Categorie();
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE + " WHERE "
+                        + HelperBDHoraire.CATEGORIE_CLE + " = " + idCategorie;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        categorie.setId(cursor.getString(0));
+        categorie.setIdLocalisation(cursor.getString(1));
+        categorie.setNom(cursor.getString(2));
+        return categorie;
     }
 
     /**
