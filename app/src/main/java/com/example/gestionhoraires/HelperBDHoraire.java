@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class HelperBDHoraire extends SQLiteOpenHelper {
 
+    /** Activation des clés étrangères */
+    private static final String ACTIVATION_CLES_ETRANGERES = "PRAGMA foreign_keys = ON;";
+
     //// Localisation ////
     /** Nom de la table de localisation */
     public static final String NOM_TABLE_LOCALISATION = "Localisation";
@@ -163,7 +166,8 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + CATEGORIE_NOM + " TEXT, "
                     + CATEGORIE_IS_DEFAULT + " INTEGER CHECK (" + CATEGORIE_IS_DEFAULT + "= 0 OR " + CATEGORIE_IS_DEFAULT + "= 1),"
                     + "FOREIGN KEY(" + CATEGORIE_CLE_LOCALISATION + ") REFERENCES "+ NOM_TABLE_LOCALISATION +"(" + LOCALISATION_CLE + ")"
-                    +");" ;
+                    + " ON DELETE CASCADE"
+                    +");";
 
 
     /* Création des tables des plages horaires */
@@ -176,6 +180,7 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + FICHE_PLAGE_HORAIRE_CHEMIN_IMAGE + " TEXT,"
                     + FICHE_PLAGE_HORAIRE_CLE_CATEGORIE + " INTEGER,"
                     + "FOREIGN KEY(" + FICHE_PLAGE_HORAIRE_CLE_CATEGORIE + ") REFERENCES "+ NOM_TABLE_CATEGORIE +"(" + CATEGORIE_CLE + ")"
+                    + " ON DELETE CASCADE"
                     +");";
 
     /** Requête pour la création de la table PLAGE_HORAIRE*/
@@ -196,10 +201,10 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR + " INTEGER, "
                     + ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR + " INTGER,"
                     + ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE + " INTEGER,"
-                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN + ") REFERENCES "+ NOM_TABLE_PLAGE_HORAIRE +"(" + PLAGE_HORAIRE_CLE + "),"
-                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR + ") REFERENCES "+ NOM_TABLE_PLAGE_HORAIRE +"(" + PLAGE_HORAIRE_CLE + "),"
-                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR + ") REFERENCES "+ NOM_TABLE_JOUR +"(" + JOUR_CLE + "),"
-                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE + ") REFERENCES "+ NOM_TABLE_FICHE_PLAGE_HORAIRE +"(" + FICHE_PLAGE_HORAIRE_CLE + ")"
+                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN + ") REFERENCES "+ NOM_TABLE_PLAGE_HORAIRE +"(" + PLAGE_HORAIRE_CLE + ") ON DELETE CASCADE,"
+                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR + ") REFERENCES "+ NOM_TABLE_PLAGE_HORAIRE +"(" + PLAGE_HORAIRE_CLE + ") ON DELETE CASCADE,"
+                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR + ") REFERENCES "+ NOM_TABLE_JOUR +"(" + JOUR_CLE + ") ON DELETE CASCADE,"
+                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE + ") REFERENCES "+ NOM_TABLE_FICHE_PLAGE_HORAIRE +"(" + FICHE_PLAGE_HORAIRE_CLE + ") ON DELETE CASCADE"
                     +");";
 
 
@@ -221,8 +226,8 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + HORAIRE_PONCTUELLE_FERMETURE + " TEXT,"
                     + HORAIRE_PONCTUELLE_CLE_JOUR  + " INTEGER,"
                     + HORAIRE_PONCTUELLE_CLE_FICHE + " INTEGER,"
-                    + "FOREIGN KEY(" + HORAIRE_PONCTUELLE_CLE_JOUR + ") REFERENCES "+ NOM_TABLE_JOUR +"(" + JOUR_CLE + "),"
-                    + "FOREIGN KEY(" + HORAIRE_PONCTUELLE_CLE_FICHE + ") REFERENCES "+ NOM_TABLE_FICHE_HORAIRE_PONCTUELLE +"(" + FICHE_HORAIRE_PONCTUELLE_CLE + ")"
+                    + "FOREIGN KEY(" + HORAIRE_PONCTUELLE_CLE_JOUR + ") REFERENCES "+ NOM_TABLE_JOUR +"(" + JOUR_CLE + ") ON DELETE CASCADE,"
+                    + "FOREIGN KEY(" + HORAIRE_PONCTUELLE_CLE_FICHE + ") REFERENCES "+ NOM_TABLE_FICHE_HORAIRE_PONCTUELLE +"(" + FICHE_HORAIRE_PONCTUELLE_CLE + ") ON DELETE CASCADE"
                     +");";
 
 
@@ -271,12 +276,20 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         initTableBD(db);
         initJourSemaine(db);
         initLocalisation(db);
         initCategorie(db);
 
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            // Enable foreign key constraints
+            db.execSQL(ACTIVATION_CLES_ETRANGERES);
+        }
     }
 
     @Override
