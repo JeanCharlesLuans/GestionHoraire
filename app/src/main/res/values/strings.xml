@@ -5,6 +5,10 @@
 
     <!-- boutons -->
     <string name="bouton_positif">OK</string>
+    <string name="bouton_ajouter">Ajouter</string>
+    <string name="bouton_retour">Retour</string>
+    <string name="bouton_appliquer">Appliquer</string>
+    <string name="bouton_effacer">Effacer</string>
     <string name="bouton_negatif">Annuler</string>
 
     <!-- menu_main_tool_bar.xml -->
@@ -15,15 +19,40 @@
     <string name="annuler">Annuler</string>
     <string name="recherche">Recherche par mot</string>
 
+    <!-- Menu Contextuel -->
+    <string name="option_supprimer">Supprimer</string>
+    <string name="option_modifier">Modifier</string>
+    <string name="option_annuler">Annuler</string>
+
     <!-- Texte Aide --> <!-- TODO changer le texte d'aide -->
     <string name="aide_recherche">Recherche</string>
     <string name="aide">Aide au fonctionnement de l\'application</string>
     <string name="titre_aide">Aide au fonctionnement de l\'application</string>
     <string name="message_aide">Aide au fonctionnement de l\'application</string>
 
-
     <!-- Onglets -->
     <string name="onglet_plage_horaire">Plages Horaires</string>
-    <string name="onglet_horaires_ponctuelles">Horaires Ponctuelles</string>
+    <string name="onglet_horaires_ponctuelles">Horaires Ponctuels</string>
+
+    <!-- Intuitulé Colonne -->
+    <string name="colonne_nom">Nom</string>
+    <string name="colonne_information">Information</string>
+    <string name="colonne_jour">Jour</string>
+    <string name="colonne_horaire">Horaire</string>
+
+    <!-- Paramètre -->
+    <string name="titre_boite_parametre">Paramètre</string>
+    <string name="label_gestion_categorie">Gestion Catégorie</string>
+    <string name="label_gestion_localisation">Gestion Localisation</string>
+    <string name="ajout_categorie">Ajouter Catégorie</string>
+    <string name="ajout_localisation">Ajouter Localisation</string>
+
+    <!-- Filtre -->
+    <string name="titre_boite_filtre">Selectionnez les filtres</string>
+    <string name="filtre_localisation">Lieu géographique</string>
+    <string name="filtre_categorie">Catégorie</string>
+    <string name="filtre_open">Uniquement ouvert</string>
+
+
 
 </resources>

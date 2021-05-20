@@ -4,4 +4,11 @@
     <dimen name="toolbar_elevation">5dp</dimen>
     <dimen name="toolbar_heigth">50dp</dimen>
     <dimen name="marge_normale">10dp</dimen>
+    <dimen name="marge_grande">15dp</dimen>
+    <dimen name="marge_dropdown">30dp</dimen>
+    <dimen name="grande_hauteur">50dp</dimen>
+
+    <!-- taille des caractères -->
+    <dimen name="taille_radio_bouton">12sp</dimen>
+    <dimen name="taille_titre">18sp</dimen>
 </resources>

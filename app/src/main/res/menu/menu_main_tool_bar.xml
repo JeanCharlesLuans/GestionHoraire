@@ -22,7 +22,7 @@
 		android:id="@+id/aide"
 		android:title="@string/aide"
 		android:icon="@drawable/ic_baseline_help_outline_24"
-		android:orderInCategory="2"
+		android:orderInCategory="3"
 		app:showAsAction="always" />
 	<item
 		android:id="@+id/import_option"
