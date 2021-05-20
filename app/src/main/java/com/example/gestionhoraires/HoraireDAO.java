@@ -629,6 +629,22 @@ public class HoraireDAO {
                 nouvelleFicheHorairePonctuelle,
                 HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE + " = ?",
                 new String[] {identifiant});
+	}
+
+    /**
+     * Modifie une fiche horaire ponctuelle
+     * @param ficheHorairePonctuelle la fiche horaire ponctuelle modifiée
+     * @param identifiant l'identifiant de la fiche horaire à modifier
+     */
+    public void updateFicheHorairePonctuelle(FicheHorairePonctuelle ficheHorairePonctuelle, String identifiant) {
+        ContentValues nouvelleFicheHorairePonctuelle = new ContentValues();
+        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM, ficheHorairePonctuelle.getNom());
+        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_INFORMATION, ficheHorairePonctuelle.getInformation());
+        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_IMAGE, ficheHorairePonctuelle.getCheminPhoto());
+        baseHoraire.update(HelperBDHoraire.NOM_TABLE_FICHE_HORAIRE_PONCTUELLE,
+                nouvelleFicheHorairePonctuelle,
+                HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE + " = ?",
+                new String[] {identifiant});
 
     }
 
