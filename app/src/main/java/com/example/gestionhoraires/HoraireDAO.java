@@ -421,5 +421,22 @@ public class HoraireDAO {
      */
     public void updateEnsemblePlageHoraire(EnsemblePlageHoraire ensemblePlageHoraire, String identifiant) {
         ContentValues nouvelEnsemblePlageHoraire = new ContentValues();
+        nouvelEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN, ensemblePlageHoraire.getIdPlageHoraireMatin());
+        nouvelEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR, ensemblePlageHoraire.getIdPlageHoraireSoir());
+        nouvelEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR, ensemblePlageHoraire.getIdJour());
+        nouvelEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE, ensemblePlageHoraire.getIdFichePlageHoraire());
+        baseHoraire.update(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE,
+                nouvelEnsemblePlageHoraire,
+                HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE + " = ?",
+                new String[] {identifiant});
+    }
+
+    /**
+     * Modifie une plage horaire
+     * @param plageHoraire la plage horaire modifiée
+     * @param identifiant l'identifiant de la plage horaire à modifier
+     */
+    public void updatePlageHoraire(PlageHoraire plageHoraire, String identifiant) {
+
     }
 }
