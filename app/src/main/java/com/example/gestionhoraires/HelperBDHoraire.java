@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteTransactionListener;
 
 public class HelperBDHoraire extends SQLiteOpenHelper {
 
@@ -160,8 +159,8 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
     private static final  String CREATION_TABLE_CATEGORIE =
             "CREATE TABLE " + NOM_TABLE_CATEGORIE + " ( "
                     + CATEGORIE_CLE + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + CATEGORIE_NOM + " TEXT, "
                     + CATEGORIE_CLE_LOCALISATION + " INTEGER,"
+                    + CATEGORIE_NOM + " TEXT, "
                     + CATEGORIE_IS_DEFAULT + " INTEGER CHECK (" + CATEGORIE_IS_DEFAULT + "= 0 OR " + CATEGORIE_IS_DEFAULT + "= 1),"
                     + "FOREIGN KEY(" + CATEGORIE_CLE_LOCALISATION + ") REFERENCES "+ NOM_TABLE_LOCALISATION +"(" + LOCALISATION_CLE + ")"
                     +");" ;
@@ -206,7 +205,7 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
 
     /* Création des tables des horaires ponctuelles */
     /** Requête pour la création de la table FICHE_HORAIRE_PONCTUELLE*/
-    private static final  String CREATION_TABLE_FICHE_HORRAIRE_PONCTUELLE =
+    private static final  String CREATION_TABLE_FICHE_HORAIRE_PONCTUELLE =
             "CREATE TABLE " + NOM_TABLE_FICHE_HORAIRE_PONCTUELLE + " ( "
                     + FICHE_HORAIRE_PONCTUELLE_CLE + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + FICHE_HORAIRE_PONCTUELLE_NOM + " TEXT, "
@@ -215,7 +214,7 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     +");";
 
     /** Requête pour la création de la table FICHE_HORAIRE_PONCTUELLE*/
-    private static final  String CREATION_TABLE_HORRAIRE_PONCTUELLE =
+    private static final  String CREATION_TABLE_HORAIRE_PONCTUELLE =
             "CREATE TABLE " + NOM_TABLE_HORAIRE_PONCTUELLE + " ( "
                     + HORAIRE_PONCTUELLE_CLE + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + HORAIRE_PONCTUELLE_OUVERTURE + " TEXT, "
@@ -306,9 +305,9 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
         db.execSQL(CREATION_TABLE_CATEGORIE);
 
         db.execSQL(CREATION_TABLE_FICHE_PLAGE_HORAIRE);
-        db.execSQL(CREATION_TABLE_FICHE_HORRAIRE_PONCTUELLE);
+        db.execSQL(CREATION_TABLE_FICHE_HORAIRE_PONCTUELLE);
 
-        db.execSQL(CREATION_TABLE_HORRAIRE_PONCTUELLE);
+        db.execSQL(CREATION_TABLE_HORAIRE_PONCTUELLE);
         db.execSQL(CREATION_TABLE_PLAGE_HORAIRE);
         db.execSQL(CREATION_TABLE_ENSEMBLE_PLAGE_HORAIRE);
     }
