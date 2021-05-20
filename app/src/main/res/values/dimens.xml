@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fab_margin">25dp</dimen>
+    <dimen name="toolbar_elevation">5dp</dimen>
+    <dimen name="toolbar_heigth">50dp</dimen>
+    <dimen name="marge_normale">10dp</dimen>
+</resources>

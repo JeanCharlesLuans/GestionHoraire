@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Gestion Horaires</string>
+
+    <string name="fab_description">Ajouter Horaire ou plage horaire</string>
+
+    <!-- boutons -->
+    <string name="bouton_positif">OK</string>
+    <string name="bouton_negatif">Annuler</string>
+
+    <!-- menu_main_tool_bar.xml -->
+    <string name="filte_liste">Filtrer la liste</string>
+    <string name="option_import">Importer</string>
+    <string name="option_export">Exporter</string>
+    <string name="option_settings">Paramètres</string>
+    <string name="annuler">Annuler</string>
+    <string name="recherche">Recherche par mot</string>
+
+    <!-- Texte Aide --> <!-- TODO changer le texte d'aide -->
+    <string name="aide_recherche">Recherche</string>
+    <string name="aide">Aide au fonctionnement de l\'application</string>
+    <string name="titre_aide">Aide au fonctionnement de l\'application</string>
+    <string name="message_aide">Aide au fonctionnement de l\'application</string>
+
+
+    <!-- Onglets -->
+    <string name="onglet_plage_horaire">Plages Horaires</string>
+    <string name="onglet_horaires_ponctuelles">Horaires Ponctuelles</string>
+
+</resources>

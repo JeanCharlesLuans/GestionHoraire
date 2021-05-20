@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  menu contextuel de l'application TempsCuisson (permet de supprimer une cuisson -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".MainActivity"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<item
+		android:id="@+id/recherche"
+		android:title="@string/recherche"
+		android:icon="@drawable/ic_baseline_search_24"
+		android:orderInCategory="1"
+		app:showAsAction="always|collapseActionView"
+		app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+	<item
+		android:id="@+id/filtre"
+		android:title="@string/filte_liste"
+		android:icon="@drawable/ic_baseline_filter_alt_24"
+		android:orderInCategory="2"
+		app:showAsAction="always" />
+	<item
+		android:id="@+id/aide"
+		android:title="@string/aide"
+		android:icon="@drawable/ic_baseline_help_outline_24"
+		android:orderInCategory="2"
+		app:showAsAction="always" />
+	<item
+		android:id="@+id/import_option"
+		android:title="@string/option_import"
+		app:showAsAction="never" />
+	<item
+		android:id="@+id/export_option"
+		android:title="@string/option_export"
+		app:showAsAction="never" />
+	<item
+		android:id="@+id/settings_option"
+		android:title="@string/option_settings"
+		app:showAsAction="never" />
+	<item
+		android:id="@+id/annuler_option"
+		android:title="@string/annuler"
+		app:showAsAction="never" />
+</menu>
