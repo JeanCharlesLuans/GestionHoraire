@@ -19,17 +19,18 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.gestionhoraires.beans.Categorie;
+import com.example.gestionhoraires.beans.Localisation;
+
 import java.util.ArrayList;
 
 public class CategorieActivity extends AppCompatActivity {
-
-    /** Objet destiné à faciliter l'accès à la table des horaires */
-    private HoraireDAO accesHoraires;
 
     /** barre d'outils de l'applications */
     private Toolbar maBarreOutil;
@@ -38,7 +39,7 @@ public class CategorieActivity extends AppCompatActivity {
     private Cursor curseurSurBase;
 
     /** Objet destiné à faciliter l'accès à la table */
-    //private HoraireDAO accesHoraire; // TODO CHANGER TYPE
+    private HoraireDAO accesHoraire;
 
     /** Liste contenant les catégorie à afficher */
     private ArrayList<String> listeCategorie;
@@ -47,7 +48,7 @@ public class CategorieActivity extends AppCompatActivity {
     private SimpleCursorAdapter adaptateur;
 
     /** Liste présenter dans l'application */
-    private ListView ListeVueCategorie;
+    private ListView listeVueCategorie;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,22 +63,25 @@ public class CategorieActivity extends AppCompatActivity {
         mTitle.setText(getString(R.string.label_gestion_categorie));
 
         listeCategorie = new ArrayList<String>();
-        ListeVueCategorie = findViewById(R.id.liste_gestion);
+        listeVueCategorie = findViewById(R.id.liste_gestion);
 
-        accesHoraires = new HoraireDAO(this);
-        accesHoraires.open();
-        //curseurSurBase = accesFrais.getCursorFrais();
+        accesHoraire = new HoraireDAO(this);
+        accesHoraire.open();
+        curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+        curseurSurBase.moveToFirst();
 
         // On crée un adpateur pour rassembler les données à afficher
         adaptateur = new SimpleCursorAdapter(this,
-                android.R.layout.simple_list_item_1,
+                android.R.layout.simple_list_item_2,
                 curseurSurBase,
-                new String[] {"nom"}, // TODO nom Colonne
-                new int[] {android.R.id.text1,}, 0);
-        ListeVueCategorie.setAdapter(adaptateur);
+                new String[] {HelperBDHoraire.CATEGORIE_NOM,
+                "nom:1"},
+                new int[] {android.R.id.text1,
+                android.R.id.text2}, 0);
+        listeVueCategorie.setAdapter(adaptateur);
 
         // on précise qu'un menu est associé à la liste qui correspond à l'activité
-        registerForContextMenu(ListeVueCategorie);
+        registerForContextMenu(listeVueCategorie);
     }
 
     /**
@@ -147,10 +151,21 @@ public class CategorieActivity extends AppCompatActivity {
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
-                // supprimer element()  // TODO action supprimer
+                if (curseurSurBase.getString(3).equals("0")) {
+                    accesHoraire.deleteCategorie(curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
+                } else {
+                    Toast.makeText(this, R.string.toast_categorie_defaut_supprimer, Toast.LENGTH_LONG).show();
+                }
+                curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+                adaptateur.swapCursor(curseurSurBase);
+                onContentChanged();
                 break;
             case R.id.modifier :
-                //modifierElement(information.id); // TODO action modifier
+                if (curseurSurBase.getString(3).equals("0")) {
+                    modifierCategorie();
+                } else {
+                    Toast.makeText(this, R.string.toast_categorie_defaut_modifier, Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.annuler :		 // retour à la liste principale
                 break;
@@ -165,6 +180,12 @@ public class CategorieActivity extends AppCompatActivity {
     private void ajouterCategorie() {
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_categorie, null);
 
+        /** Création de l'alerte si les données sont invalides */
+        AlertDialog.Builder alerte = new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.alerte_titre))
+                .setMessage(getResources().getString(R.string.alerte_nom))
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null);
+
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.ajout_categorie))
                 .setView(boiteSaisie)
@@ -176,14 +197,14 @@ public class CategorieActivity extends AppCompatActivity {
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 // on remplit le spinner
-                Spinner spin_localisation = dialog.findViewById(R.id.localisation_spinner);
+                Spinner spinLocalisation = dialog.findViewById(R.id.localisation_spinner);
                 SimpleCursorAdapter adapterLocalisation = new SimpleCursorAdapter(dialog.getContext(),
                         android.R.layout.simple_spinner_item,
-                        accesHoraires.getCursorAllCategorie(),
-                        new String[] {"nom"}, // TODO nom Colonne
+                        accesHoraire.getCursorAllLocalisation(),
+                        new String[] {HelperBDHoraire.CATEGORIE_NOM},
                         new int[] {android.R.id.text1,}, 0);;
                 adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spin_localisation.setAdapter(adapterLocalisation);
+                spinLocalisation.setAdapter(adapterLocalisation);
 
                 Button positiveButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
                 positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +212,79 @@ public class CategorieActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         EditText edt_nom = dialog.findViewById(R.id.edt_nom);
                         String name = edt_nom.getText().toString();
-                        // TODO add
+                        if (!name.equals("")) {
+                            accesHoraire.addCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + ""));
+                        } else {
+                            alerte.show();
+                        }
+                        curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+                        adaptateur.swapCursor(curseurSurBase);
+                        onContentChanged();
+                        //close when everythings is OK
+                        dialog.dismiss();
+                    }
+                });
+
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * Modifie la catégorie sélectionnée
+     */
+    public void modifierCategorie() {
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_categorie, null);
+
+        String identifiant = curseurSurBase.getString(0);
+        String identifiantLocalisation = curseurSurBase.getString(2);
+        String name = curseurSurBase.getString(1);
+
+
+        /** Création de l'alerte si les données sont invalides */
+        AlertDialog.Builder alerte = new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.alerte_titre))
+                .setMessage(getResources().getString(R.string.alerte_nom))
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.ajout_categorie))
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null)
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                // on remplit le spinner
+                Spinner spinLocalisation = dialog.findViewById(R.id.localisation_spinner);
+                SimpleCursorAdapter adapterLocalisation = new SimpleCursorAdapter(dialog.getContext(),
+                        android.R.layout.simple_spinner_item,
+                        accesHoraire.getCursorAllLocalisation(),
+                        new String[] {HelperBDHoraire.CATEGORIE_NOM},
+                        new int[] {android.R.id.text1,}, 0);;
+                adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinLocalisation.setAdapter(adapterLocalisation);
+                spinLocalisation.setSelection(accesHoraire.getPositionByIdLocalisation(identifiantLocalisation));
+                Log.i("Position", accesHoraire.getPositionByIdLocalisation(identifiantLocalisation) + "");
+                EditText edtNom = dialog.findViewById(R.id.edt_nom);
+                edtNom.setText(name);
+
+                Button positiveButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        String name = edtNom.getText().toString();
+                        if (!name.equals("")) {
+                            accesHoraire.updateCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + ""), identifiant);
+                        } else {
+                            alerte.show();
+                        }
+                        curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+                        adaptateur.swapCursor(curseurSurBase);
+                        onContentChanged();
                         //close when everythings is OK
                         dialog.dismiss();
                     }
