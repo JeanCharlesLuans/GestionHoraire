@@ -18,10 +18,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.example.gestionhoraires.beans.Localisation;
 
 import java.util.ArrayList;
 
@@ -34,7 +37,7 @@ public class LocalisationActivity extends AppCompatActivity {
     private Cursor curseurSurBase;
 
     /** Objet destiné à faciliter l'accès à la table */
-    //private HoraireDAO accesHoraire; // TODO CHANGER TYPE
+    private HoraireDAO accesHoraire;
 
     /** Liste contenant les catégorie à afficher */
     private ArrayList<String> listeLocalisation;
@@ -43,7 +46,7 @@ public class LocalisationActivity extends AppCompatActivity {
     private SimpleCursorAdapter adaptateur;
 
     /** Liste présenter dans l'application */
-    private ListView ListeVueLocalisation;
+    private ListView listeVueLocalisation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,22 +61,22 @@ public class LocalisationActivity extends AppCompatActivity {
         mTitle.setText(getString(R.string.label_gestion_localisation));
 
         listeLocalisation = new ArrayList<String>();
-        ListeVueLocalisation = findViewById(R.id.liste_gestion);
+        listeVueLocalisation = findViewById(R.id.liste_gestion);
 
-        //accesFrais = new FraisDAO(this); //TODO Changer type
-        //accesFrais.open();
-        //curseurSurBase = accesFrais.getCursorFrais();
+        accesHoraire = new HoraireDAO(this);
+        accesHoraire.open();
+        curseurSurBase = accesHoraire.getCursorAllLocalisation();
 
         // On crée un adpateur pour rassembler les données à afficher
         adaptateur = new SimpleCursorAdapter(this,
                 android.R.layout.simple_list_item_1,
                 curseurSurBase,
-                new String[] {"nom"}, // TODO nom Colonne
-                new int[] {android.R.id.text1,}, 0);
-        ListeVueLocalisation.setAdapter(adaptateur);
+                new String[] {HelperBDHoraire.LOCALISATION_NOM},
+                new int[] {android.R.id.text1}, 0);
+        listeVueLocalisation.setAdapter(adaptateur);
 
         // on précise qu'un menu est associé à la liste qui correspond à l'activité
-        registerForContextMenu(ListeVueLocalisation);
+        registerForContextMenu(listeVueLocalisation);
     }
 
     /**
@@ -143,10 +146,19 @@ public class LocalisationActivity extends AppCompatActivity {
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
-                // supprimer element()  // TODO action supprimer
+                // TODO rajouter gestion des conflits de suppression
+                /* Si la localisation n'est pas celle par défaut */
+                if (curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_DEFAUT).equals("0")) {
+                    accesHoraire.deleteLocalisation(curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
+                } else {
+                    Toast.makeText(this, R.string.toast_localisation_defaut, Toast.LENGTH_LONG).show();
+                }
+                curseurSurBase = accesHoraire.getCursorAllLocalisation();
+                adaptateur.swapCursor(curseurSurBase);
+                onContentChanged();
                 break;
             case R.id.modifier :
-                //modifierElement(information.id); // TODO action modifier
+                modifierLocalisation();
                 break;
             case R.id.annuler :		 // retour à la liste principale
                 break;
@@ -160,6 +172,12 @@ public class LocalisationActivity extends AppCompatActivity {
      */
     private void ajouterLocalisation() {
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_localisation, null);
+
+        /** Création de l'alerte si les données sont invalides */
+        AlertDialog.Builder alerte = new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.alerte_titre))
+                .setMessage(getResources().getString(R.string.alerte_nom))
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.ajout_localisation))
@@ -176,8 +194,72 @@ public class LocalisationActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         EditText edt_nom = dialog.findViewById(R.id.edt_nom);
                         String name = edt_nom.getText().toString();
-                        //TODO add
-                        //close when everythings is OK
+                        if (!name.equals("")) {
+                            Localisation localisation = new Localisation(name);
+                            accesHoraire.addLocalisation(localisation);
+                        } else {
+                            alerte.show();
+                        }
+
+                        curseurSurBase = accesHoraire.getCursorAllLocalisation();
+                        adaptateur.swapCursor(curseurSurBase);
+                        onContentChanged();
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * Permet de modifier une localisation
+     */
+    public void modifierLocalisation() {
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_localisation, null);
+
+        String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
+
+        /** Création de l'alerte si les données sont invalides */
+        AlertDialog.Builder alerte = new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.alerte_titre))
+                .setMessage(getResources().getString(R.string.alerte_nom))
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null);
+
+        EditText edtNom = boiteSaisie.findViewById(R.id.edt_nom);
+
+        String titreBoite = getResources().getString(R.string.modifier_localisation);
+        if (curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_DEFAUT).equals("1")) {
+            titreBoite += " (localisation par défaut)";
+        }
+        String nom = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_NOM);
+        edtNom.setText(nom);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(titreBoite)
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null)
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button positiveButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText edt_nom = dialog.findViewById(R.id.edt_nom);
+                        String name = edt_nom.getText().toString();
+                        if (!name.equals("")) {
+                            Localisation localisation = new Localisation(name);
+                            accesHoraire.updateLocalisation(localisation, identifiant);
+                        } else {
+                            alerte.show();
+                        }
+
+                        curseurSurBase = accesHoraire.getCursorAllLocalisation();
+                        adaptateur.swapCursor(curseurSurBase);
+                        onContentChanged();
                         dialog.dismiss();
                     }
                 });
