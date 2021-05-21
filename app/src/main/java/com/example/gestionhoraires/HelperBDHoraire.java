@@ -141,6 +141,9 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
     /** Nom du champs correspondant au libelle dans la table */
     public static final String JOUR_LIBELLE = "libelle";
 
+    /** Vue des catégories avec leur localisation */
+    public  static final String VUE_CATEGORIE_LOCALISATION = "V_Categorie";
+
     //// Création des tables ////
     /** Requête pour la création de la table JOUR */
     private static final  String CREATION_TABLE_JOUR =
@@ -202,7 +205,7 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE + " INTEGER,"
                     + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN + ") REFERENCES "+ NOM_TABLE_PLAGE_HORAIRE +"(" + PLAGE_HORAIRE_CLE + ") ON DELETE CASCADE,"
                     + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR + ") REFERENCES "+ NOM_TABLE_PLAGE_HORAIRE +"(" + PLAGE_HORAIRE_CLE + ") ON DELETE CASCADE,"
-                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR + ") REFERENCES "+ NOM_TABLE_JOUR +"(" + JOUR_CLE + ") ON DELETE CASCADE,"
+                    + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR + ") REFERENCES "+ NOM_TABLE_JOUR +"(" + JOUR_CLE + "),"
                     + "FOREIGN KEY(" + ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE + ") REFERENCES "+ NOM_TABLE_FICHE_PLAGE_HORAIRE +"(" + FICHE_PLAGE_HORAIRE_CLE + ") ON DELETE CASCADE"
                     +");";
 
@@ -225,10 +228,21 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + HORAIRE_PONCTUELLE_FERMETURE + " TEXT,"
                     + HORAIRE_PONCTUELLE_CLE_JOUR  + " INTEGER,"
                     + HORAIRE_PONCTUELLE_CLE_FICHE + " INTEGER,"
-                    + "FOREIGN KEY(" + HORAIRE_PONCTUELLE_CLE_JOUR + ") REFERENCES "+ NOM_TABLE_JOUR +"(" + JOUR_CLE + ") ON DELETE CASCADE,"
+                    + "FOREIGN KEY(" + HORAIRE_PONCTUELLE_CLE_JOUR + ") REFERENCES "+ NOM_TABLE_JOUR +"(" + JOUR_CLE + "),"
                     + "FOREIGN KEY(" + HORAIRE_PONCTUELLE_CLE_FICHE + ") REFERENCES "+ NOM_TABLE_FICHE_HORAIRE_PONCTUELLE +"(" + FICHE_HORAIRE_PONCTUELLE_CLE + ") ON DELETE CASCADE"
                     +");";
 
+    /** Requête de création d'une vue pour les catégories */
+    private static final String CREATION_VUE_CATEGORIE_LOCALISATION =
+            "CREATE VIEW " + VUE_CATEGORIE_LOCALISATION + " AS "
+            + "SELECT " + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE + ", "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_NOM + ", "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE_LOCALISATION + ", "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_IS_DEFAULT + ", "
+            + NOM_TABLE_LOCALISATION + "." + LOCALISATION_NOM
+            + " FROM " + NOM_TABLE_CATEGORIE + " INNER JOIN " + NOM_TABLE_LOCALISATION + " ON "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE_LOCALISATION + " = "
+            + NOM_TABLE_LOCALISATION + "." + LOCALISATION_CLE;
 
     /** Requête pour supprimer la table JOUR */
     public static final String SUPPRIMER_TABLE_JOUR =
@@ -322,6 +336,8 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
         db.execSQL(CREATION_TABLE_HORAIRE_PONCTUELLE);
         db.execSQL(CREATION_TABLE_PLAGE_HORAIRE);
         db.execSQL(CREATION_TABLE_ENSEMBLE_PLAGE_HORAIRE);
+
+        db.execSQL(CREATION_VUE_CATEGORIE_LOCALISATION);
     }
 
     private void initJourSemaine(SQLiteDatabase db) {
