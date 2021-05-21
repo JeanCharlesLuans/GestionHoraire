@@ -42,10 +42,14 @@
 
     <!-- Paramètre -->
     <string name="titre_boite_parametre">Paramètre</string>
-    <string name="label_gestion_categorie">Gestion Catégorie</string>
-    <string name="label_gestion_localisation">Gestion Localisation</string>
-    <string name="ajout_categorie">Ajouter Catégorie</string>
-    <string name="ajout_localisation">Ajouter Localisation</string>
+    <string name="label_gestion_categorie">Gestion catégorie</string>
+    <string name="label_gestion_localisation">Gestion localisation</string>
+    <string name="ajout_categorie">Ajouter une catégorie</string>
+    <string name="ajout_localisation">Ajouter une localisation</string>
+    <string name="modifier_localisation">Modifier la localisation</string>
+    <string name="modifier_categorie">Modifier la catégorie</string>
+    <string name="alerte_titre">Saisie invalide</string>
+    <string name="alerte_nom">Vous devez renseigner le nom.</string>
 
     <!-- Filtre -->
     <string name="titre_boite_filtre">Selectionnez les filtres</string>
@@ -53,6 +57,9 @@
     <string name="filtre_categorie">Catégorie</string>
     <string name="filtre_open">Uniquement ouvert</string>
 
-
+    <!-- Toast -->
+    <string name="toast_localisation_defaut">Vous ne pouvez pas supprimer la localisation par défaut.</string>
+    <string name="toast_categorie_defaut_modifier">Vous ne pouvez pas modifer la catégorie par défaut.</string>
+    <string name="toast_categorie_defaut_supprimer">Vous ne pouvez pas supprimer la catégorie par défaut.</string>
 
 </resources>
