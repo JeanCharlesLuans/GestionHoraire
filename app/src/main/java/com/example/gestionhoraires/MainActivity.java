@@ -10,16 +10,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -63,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> listePlageHoraire;
 
     /** Liste présenter dans le premiere onglet de l'application */
-    private ListView ListViewPlageHoraire;
+    private ListView listViewPlageHoraire;
 
     /** Adaptateur permettant de gérer la liste des plage horaire */
     private SimpleCursorAdapter plageHoraireAdaptateur;
@@ -77,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> listeHPonctuelles;
 
     /** Liste présenter dans le deuxieme onglet de l'application */
-    private ListView ListViewHPonctuelles;
+    private ListView listViewHPonctuelles;
 
     /** Adaptateur permettant de gérer la liste des horaire ponctuelle */
     private SimpleCursorAdapter horairesPonctuellesAdapteur;
@@ -95,19 +92,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Liste de l'onglet 1 : Plages Horaires
         listePlageHoraire = new ArrayList<String>();
-        ListViewPlageHoraire = findViewById(R.id.liste_plage_horaire);
+        listViewPlageHoraire = findViewById(R.id.liste_plage_horaire);
         plageHoraireAdaptateur = new SimpleCursorAdapter(this,
                 R.layout.ligne_liste_plage_horaire,
                 curseurPlageHoraire,
-                new String[] {"nom",  //TODO ici regarder les colonne dans ligne_liste.xml
-                        "information"},      //TODO a adapter comme GestionBDCuisson.CUISSON_ALIMENT,
+                new String[] {HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM,
+                        HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION},
                 new int[] {R.id.name,
                         R.id.information}, 0);
-        ListViewPlageHoraire.setAdapter(plageHoraireAdaptateur);
+        listViewPlageHoraire.setAdapter(plageHoraireAdaptateur);
 
         // Liste de l'onglet 2 : Horaires Ponctuelles
         listeHPonctuelles = new ArrayList<String>();
-        ListViewHPonctuelles = findViewById(R.id.liste_horaires_ponctuelles);
+        listViewHPonctuelles = findViewById(R.id.liste_horaires_ponctuelles);
         horairesPonctuellesAdapteur = new SimpleCursorAdapter(this,
                 R.layout.ligne_liste_horaires_ponctuelles,
                 curseurHorairesPonctuelles,
@@ -117,10 +114,10 @@ public class MainActivity extends AppCompatActivity {
                 new int[] {R.id.name,
                         R.id.jour_semaine,
                         R.id.horaire}, 0);
-        ListViewHPonctuelles.setAdapter(horairesPonctuellesAdapteur);
+        listViewHPonctuelles.setAdapter(horairesPonctuellesAdapteur);
 
-        registerForContextMenu(ListViewPlageHoraire);
-        registerForContextMenu(ListViewHPonctuelles);
+        registerForContextMenu(listViewPlageHoraire);
+        registerForContextMenu(listViewHPonctuelles);
         // TODO Menu Contextuel des listes
 
         // On ajoute la ToolBar
