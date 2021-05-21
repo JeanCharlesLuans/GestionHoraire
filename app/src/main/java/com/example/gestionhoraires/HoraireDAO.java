@@ -1,5 +1,6 @@
 package com.example.gestionhoraires;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -157,6 +158,10 @@ public class HoraireDAO {
     public static final String REQUETE_TOUT_SELECTIONNER_FICHE_HORAIRE_PONCTUELLE =
             "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_FICHE_HORAIRE_PONCTUELLE + " ORDER BY " + HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM;
 
+    /** Requête pour sélectionner toutes les catégories avec leurs localisations associées */
+    public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION =
+            "SELECT * FROM " + HelperBDHoraire.VUE_CATEGORIE_LOCALISATION + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
+
     /**
      * Constructeur avec argument
      * @param context le contexte de l'application
@@ -178,6 +183,14 @@ public class HoraireDAO {
     public void close() {
         gestionnaireBase.close();
         baseHoraire.close();
+    }
+
+    /**
+     * Retourne un curseur sur la vue
+     * @return le curseur
+     */
+    public Cursor getCursorAllCategorieLocalisation() {
+        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION, null);
     }
 
     /**
@@ -710,5 +723,24 @@ public class HoraireDAO {
         for (FichePlageHoraire fichePlageHoraire : fichesPlageHoraire) {
             updateFichePlageHoraire(fichePlageHoraire, idCategorie);
         }
+    }
+
+    /**
+     * Récupère la position de la localisation dans la liste
+     * @param idLocalisation l'identifiant de la localistion
+     * @return la position de la localisation
+     */
+    public int getPositionByIdLocalisation(String idLocalisation) {
+        int position = 0;
+        Cursor cursor = baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_LOCALISATION, null);
+
+        while (cursor.moveToNext()) {
+            String tmp = cursor.getString(0);
+            if (tmp.equals(idLocalisation)) {
+                return position;
+            }
+            position++;
+        }
+        return -1;
     }
 }
