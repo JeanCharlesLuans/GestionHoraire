@@ -7,6 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -21,12 +22,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TabHost;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.Jour;
@@ -51,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
      * Table d'onglets gérée par l'activité
      */
     private TabHost lesOnglets;
+
+    /** numéro de l'onglet des plages horaires */
+    private final int TAB_PLAGE_HORAIRE = 0;
+
+    /** numéro de l'onglet des horaires ponctuels */
+    private final int TAB_H_PONCTUEL = 1;
 
     /** Objet destiné à faciliter l'accès à la table des horaires */
     private HoraireDAO accesHoraires;
@@ -148,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                         // on met la bonne couleurs pour les onglets
                         changeStyleOnglet();
 
+
                         /* on enleve la possibiliter de filtrer la liste quand
                          * l'utilisateur est sur le deuxieme onglet
                          */
@@ -170,13 +181,20 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-        lesOnglets.setCurrentTab(0);
+        lesOnglets.setCurrentTab(TAB_PLAGE_HORAIRE);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO action ajouter suivant onglet (+ faire methode pour connaitre onglet select)
+                switch (lesOnglets.getCurrentTab()){
+                    case TAB_PLAGE_HORAIRE:
+                        ajouterPlageHoraire();
+                        break;
+                    case TAB_H_PONCTUEL:
+                        ajouterHorairePonctuel();
+                        break;
+                }
             }
         });
     }
@@ -339,6 +357,98 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * permet l'ajout d'un plage horaire en appelant une nouvelle activité
+     */
+    private void ajouterPlageHoraire() {
+
+    }
+
+    /**
+     * permet l'ajout d'une horaire ponctuel grace a une boite de dialogue
+     */
+    private void ajouterHorairePonctuel() {
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.ajout_h_ponctuel, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.ajout_horaires_ponctuelles)
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_ajouter), null)
+                .setNeutralButton(getResources().getString(R.string.bouton_negatif),null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button boutonAjout = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                EditText editTextHeure = ((AlertDialog) dialog).findViewById(R.id.heure_editText);
+                EditText editTextHeureFin = ((AlertDialog) dialog).findViewById(R.id.heure_fin_editText);
+                Button bouton_heure = ((AlertDialog) dialog).findViewById(R.id.btn_heure);
+                Button bouton_heure_fin = ((AlertDialog) dialog).findViewById(R.id.btn_heure_fin);
+                CheckBox checkBoxAjoutFin = ((AlertDialog) dialog).findViewById(R.id.checkbox_ajout_fin);
+                TableRow rowHeureFin = ((AlertDialog) dialog).findViewById(R.id.table_row_heure_fin);
+                Spinner spinnerJour = ((AlertDialog) dialog).findViewById(R.id.jour_spinner);
+
+                //remplissage du Spinner
+                SimpleCursorAdapter adapterJour = getAdapterJour();
+                adapterJour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerJour.setAdapter(adapterJour);
+
+                // listener pour l'affichage de l'ajout de l'heure de fin
+                checkBoxAjoutFin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (checkBoxAjoutFin.isChecked()) {
+                            rowHeureFin.setVisibility(View.VISIBLE);
+                        } else {
+                            rowHeureFin.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+                // listener pour ajouter l'heure a l'editText
+                bouton_heure.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                editTextHeure.setText(hourOfDay + ":" + minute );
+                            }
+                        };
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(((AlertDialog) dialog).getContext(),
+                                R.style.timePickerDialog, timeSetListener, 12, 30, true);
+                        timePickerDialog.show();
+                    }
+                });
+                // listener pour ajouter l'heure a l'editText
+                bouton_heure_fin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                editTextHeureFin.setText(hourOfDay + ":" + minute );
+                            }
+                        };
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(((AlertDialog) dialog).getContext(),
+                                R.style.timePickerDialog, timeSetListener, 12, 30, true);
+                        timePickerDialog.show();
+                    }
+                });
+                // listener pour ajouter l'horaire ponctuelle
+                boutonAjout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        // TODO action ajout horaire ponctuelle
+                    }
+                });
+            }
+        });
+
+        dialog.show();
+    }
+
+    /**
      * Affiche une boite de dialogue pour la selection des filtre a appliquer sur la liste
      * l'utilisateur pourra ensuite appliquer les filtre a la liste
      */
@@ -376,14 +486,13 @@ public class MainActivity extends AppCompatActivity {
                 /* Délaration d'un Constraint Layout qui servira a la mosification de ce
                  dernier lorsque on voula faire apparaitre les liste déroulate*/
                 ConstraintLayout constraintLayout =  dialog.findViewById(R.id.parent_layout);
-                ConstraintSet constraintSet = new ConstraintSet();
 
                 // Evènements sur les checkbox
                 check_localisation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // affiche la liste et deplace les élément en dessous si la checkBox est selectionner
-                        toggleSpinnerLocalisation(constraintLayout, constraintSet,
+                        toggleSpinnerLocalisation(constraintLayout,
                                                   check_localisation.isChecked(), spin_localisation);
 
                         SimpleCursorAdapter adapter;
@@ -414,7 +523,7 @@ public class MainActivity extends AppCompatActivity {
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spin_categorie.setAdapter(adapter);
                         // affiche la liste et deplace les élément en dessous si la checkBox est selectionner
-                        toggleSpinnerCategorie(constraintLayout, constraintSet,
+                        toggleSpinnerCategorie(constraintLayout,
                                                check_categorie.isChecked(), spin_categorie);
                     }
                 });
@@ -466,13 +575,19 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * permet de rendre visible ou de cacher le spinner localisation
+     * @param constraintLayout layout parent de la boite de dialogue du spinner
+     * @param isVisible vrai si le spinner doit devenir visible
+     * @param spin_localisation spinner a afficher
+     */
     private void toggleSpinnerLocalisation(
             ConstraintLayout constraintLayout,
-            ConstraintSet constraintSet,
-            boolean isChecked,
+            boolean isVisible,
             Spinner spin_localisation) {
+        ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
-        if (isChecked) {
+        if (isVisible) {
             constraintSet.connect(R.id.filtre_categorie,ConstraintSet.TOP,R.id.localisation_spinner,ConstraintSet.BOTTOM,0);
             constraintSet.applyTo(constraintLayout);
             spin_localisation.setVisibility(View.VISIBLE);
@@ -482,13 +597,20 @@ public class MainActivity extends AppCompatActivity {
             spin_localisation.setVisibility(View.INVISIBLE);
         }
     }
+
+    /**
+     * permet de rendre visible ou de cacher le spinner categorie
+     * @param constraintLayout layout parent de la boite de dialogue du spinner
+     * @param isVisible vrai si le spinner doit devenir visible
+     * @param spin_localisation spinner a afficher
+     */
     private void toggleSpinnerCategorie(
             ConstraintLayout constraintLayout,
-            ConstraintSet constraintSet,
-            boolean isChecked,
+            boolean isVisible,
             Spinner spin_localisation) {
+        ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
-        if (isChecked) {
+        if (isVisible) {
             constraintSet.connect(R.id.filtre_open,ConstraintSet.TOP,R.id.categorie_spinner,ConstraintSet.BOTTOM,0);
             constraintSet.applyTo(constraintLayout);
             spin_localisation.setVisibility(View.VISIBLE);
@@ -507,6 +629,17 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item,
                 accesHoraires.getCursorAllLocalisation(),
                 new String[] {HelperBDHoraire.LOCALISATION_NOM},
+                new int[] {android.R.id.text1,}, 0);
+    }
+
+    /**
+     * @return un Adapter contenant l'ensemble des jour d'une semaine
+     */
+    private SimpleCursorAdapter getAdapterJour() {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorAllJour(), // TODO CURSOR JOUR
+                new String[] {"nom"}, // TODO nom Colonne
                 new int[] {android.R.id.text1,}, 0);
     }
 

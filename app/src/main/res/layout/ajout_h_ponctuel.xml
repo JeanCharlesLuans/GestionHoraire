@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:stretchColumns="1,2">
+
+    <TableRow>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/grande_hauteur"
+            android:gravity="center_vertical"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:text="@string/colonne_nom" />
+
+        <EditText
+            android:id="@+id/edt_nom"
+            android:layout_width="331dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:layout_marginEnd="@dimen/marge_normale"
+            android:maxLines="1"
+            android:layout_span="2" />
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="@dimen/grande_hauteur"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:text="@string/colonne_jour" />
+
+        <Spinner
+            android:id="@+id/jour_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_span="2"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:layout_marginEnd="@dimen/marge_normale"/>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="@dimen/grande_hauteur"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:text="@string/colonne_heure" />
+
+        <EditText
+            android:id="@+id/heure_editText"
+            android:layout_width="@dimen/grande_hauteur"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:editable="false"
+            android:enabled="false"
+            android:inputType="time"
+            android:timePickerMode="clock" />
+        <Button
+            android:id="@+id/btn_heure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:text="@string/colonne_horaire"
+            android:layout_marginEnd="@dimen/marge_normale"/>
+    </TableRow>
+
+    <TableRow>
+        <CheckBox
+            android:id="@+id/checkbox_ajout_fin"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="@dimen/grande_hauteur"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:layout_marginEnd="@dimen/marge_normale"
+            android:layout_span="3"
+            android:text="@string/ajout_heure_fin"/>
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/table_row_heure_fin"
+        android:visibility="invisible">
+        <TextView
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="@dimen/grande_hauteur"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:text="@string/colonne_heure" />
+
+        <EditText
+            android:id="@+id/heure_fin_editText"
+            android:layout_width="@dimen/grande_hauteur"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:ems="10"
+            android:inputType="time"
+            android:editable="false"
+            android:enabled="false"
+            android:timePickerMode="clock" />
+        <Button
+            android:id="@+id/btn_heure_fin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/marge_normale"
+            android:text="@string/colonne_horaire"
+            android:layout_marginEnd="@dimen/marge_normale" />
+    </TableRow>
+
+</TableLayout>

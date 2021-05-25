@@ -17,6 +17,7 @@
         <Spinner
             android:id="@+id/spinner_localisation"
             android:layout_width="match_parent"
+            android:maxLines="1"
             android:layout_marginStart="@dimen/marge_normale"
             android:layout_height="match_parent" />
 

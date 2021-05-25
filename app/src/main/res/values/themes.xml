@@ -32,8 +32,9 @@
         <item name="android:layout_marginBottom">@dimen/marge_grande</item>
     </style>
 
-    <!-- <style name="tabHost" parent="Theme.AppCompat">                                -->
-    <!--     <item name="android:textColorPrimary">@color/secondary</item>              -->
-    <!--     <item name="android:textColorSecondary">@color/secondary_variant</item>    -->
-    <!-- </style>                                                                       -->
+     <style name="timePickerDialog" parent="Widget.MaterialComponents.TimePicker">
+         <item name="android:colorPrimary">@color/primary</item>
+         <item name="android:color">@color/secondary</item>
+         <item name="android:colorAccent">@color/secondary_variant</item>
+     </style>
 </resources>
