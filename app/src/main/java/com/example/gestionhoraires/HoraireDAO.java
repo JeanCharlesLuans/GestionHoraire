@@ -802,11 +802,11 @@ public class HoraireDAO {
 
         EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire();
 
-        ensemblePlageHoraire.setId(cursor.getString(0));
-        ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(1));
-        ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(2));
-        ensemblePlageHoraire.setIdJour(cursor.getString(3));
-        ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(4));
+        ensemblePlageHoraire.setId(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+        ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_MATIN));
+        ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_SOIR));
+        ensemblePlageHoraire.setIdJour(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_JOUR));
+        ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_FICHE_PLAGE_HORAIRE));
 
         listeEnsemble.add(ensemblePlageHoraire);
 
