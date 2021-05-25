@@ -827,37 +827,6 @@ public class HoraireDAO {
     }
 
     /**
-     * Récupère la position de la localisation dans la liste
-     * @param idLocalisation l'identifiant de la localistion
-     * @return la position de la localisation
-     */
-    public int getPositionByIdLocalisation(String idLocalisation) {
-        int position = 0;
-        Cursor cursor = baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_LOCALISATION, null);
-
-        while (cursor.moveToNext()) {
-            String tmp = cursor.getString(0);
-            if (tmp.equals(idLocalisation)) {
-                return position;
-            }
-            position++;
-        }
-        return -1;
-    }
-
-    /**
-     * Retourne un curseur sur les catégories de la localisation
-     * @param idLocalisation l'identifiant
-     * @return le curseur
-     */
-    public Cursor getCursorCategorieByLocalisation(String idLocalisation) {
-        String requete =
-                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
-                + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation;
-        return baseHoraire.rawQuery(requete, null);
-    }
-
-    /**
      * Récupère un curseur sur une liste de localisation sans celle spécifiée
      * @param idLocalisation l'identifiant de la localisation que l'on souhaite exclure
      * @return le curseur
@@ -878,5 +847,4 @@ public class HoraireDAO {
         ArrayList<Categorie> categories = getCategoriesByLocalisation(idLocalisation);
         return getCategoriesByLocalisation(idLocalisation).size() != 0;
     }
-}
 }
