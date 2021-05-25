@@ -163,6 +163,10 @@ public class HoraireDAO {
     public static final String REQUETE_TOUT_SELECTIONNER_FICHE_HORAIRE_PONCTUELLE =
             "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_FICHE_HORAIRE_PONCTUELLE + " ORDER BY " + HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM;
 
+    /** Requête pour sélectionner tous les jours */
+    public static final String REQUETE_TOUT_SELECTIONNER_JOUR =
+            "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_JOUR + " ORDER BY " + HelperBDHoraire.JOUR_CLE;
+
     /** Requête pour sélectionner toutes les catégories avec leurs localisations associées */
     public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION =
             "SELECT * FROM " + HelperBDHoraire.VUE_CATEGORIE_LOCALISATION + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
@@ -228,6 +232,14 @@ public class HoraireDAO {
      */
     public Cursor getCursorAllFicheHorairePonctuelle() {
         return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_FICHE_HORAIRE_PONCTUELLE, null);
+    }
+
+    /**
+     * Retourne un curseur sur tous les jours
+     * @return le curseur
+     */
+    public Cursor getCursorAllJour() {
+        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_JOUR, null);
     }
 
     /**
