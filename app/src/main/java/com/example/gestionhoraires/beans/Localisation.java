@@ -70,7 +70,7 @@ public class Localisation {
     public JSONObject getJson() throws JSONException {
         JSONObject jsonLocalisation = new JSONObject();
         jsonLocalisation.put(HelperBDHoraire.LOCALISATION_NOM, this.nom);
-        //jsonLocalisation.put(HelperBDHoraire.LOCALISATION_IS_DEFAULT, this.);
+        jsonLocalisation.put(HelperBDHoraire.LOCALISATION_IS_DEFAULT, this.isDefault);
         return jsonLocalisation;
     }
 }

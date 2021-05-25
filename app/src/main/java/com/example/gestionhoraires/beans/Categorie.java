@@ -75,6 +75,7 @@ public class Categorie {
         JSONObject jsonCategorie = new JSONObject();
         jsonCategorie.put(HelperBDHoraire.CATEGORIE_CLE_LOCALISATION, this.idLocalisation);
         jsonCategorie.put(HelperBDHoraire.CATEGORIE_NOM, this.nom);
+        jsonCategorie.put(HelperBDHoraire.CATEGORIE_IS_DEFAULT, this.isDefault);
 
 
         return jsonCategorie;
