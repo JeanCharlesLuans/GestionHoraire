@@ -33,8 +33,12 @@
 		android:title="@string/option_export"
 		app:showAsAction="never" />
 	<item
-		android:id="@+id/settings_option"
-		android:title="@string/option_settings"
+		android:id="@+id/settings_gestion_categorie"
+		android:title="@string/label_gestion_categorie"
+		app:showAsAction="never" />
+	<item
+		android:id="@+id/settings_gestion_localisation"
+		android:title="@string/label_gestion_localisation"
 		app:showAsAction="never" />
 	<item
 		android:id="@+id/annuler_option"

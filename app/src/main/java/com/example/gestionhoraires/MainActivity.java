@@ -152,13 +152,15 @@ public class MainActivity extends AppCompatActivity {
                         MenuItem filtre = menu.findItem(R.id.filtre);
                         MenuItem import_option = menu.findItem(R.id.import_option);
                         MenuItem export_option = menu.findItem(R.id.export_option);
-                        MenuItem settings_option = menu.findItem(R.id.settings_option);
+                        MenuItem settings_gestion_categorie = menu.findItem(R.id.settings_gestion_categorie);
+                        MenuItem settings_gestion_localisation = menu.findItem(R.id.settings_gestion_localisation);
                         MenuItem annuler_option = menu.findItem(R.id.annuler_option);
                         recherche.setVisible(visibility);
                         filtre.setVisible(visibility);
                         import_option.setVisible(visibility);
                         export_option.setVisible(visibility);
-                        settings_option.setVisible(visibility);
+                        settings_gestion_categorie.setVisible(visibility);
+                        settings_gestion_localisation.setVisible(visibility);
                         annuler_option.setVisible(visibility);
                     }
                 }
@@ -268,8 +270,15 @@ public class MainActivity extends AppCompatActivity {
             case R.id.export_option :
                 showDialogExport();
                 break;
-            case R.id.settings_option :
-                GestionParametre();
+            case R.id.settings_gestion_categorie :
+                Intent catego = new Intent(MainActivity.this,
+                        CategorieActivity.class);
+                startActivityForResult(catego, CODE_GESTION_CATEGORIE);
+                break;
+            case R.id.settings_gestion_localisation :
+                Intent locali = new Intent(MainActivity.this,
+                        LocalisationActivity.class);
+                startActivityForResult(locali, CODE_GESTION_LOCALISATION);
                 break;
             case R.id.annuler_option :
                 break;
@@ -322,46 +331,6 @@ public class MainActivity extends AppCompatActivity {
         }
         TextView tv = (TextView) lesOnglets.getCurrentTabView().findViewById(android.R.id.title);
         tv.setTextColor(getResources().getColor(R.color.secondary));
-    }
-
-    /**
-     * affiche une boite de dialogue a l'utilisateur pour choisir entre
-     * la gestion des Catégorie ou des Localisation
-     * Envoie une intention a l'activité correspondante au choix de l'utilisateur
-     */
-    private void GestionParametre() {
-        // on désérialise le layout qui est associé à la boîte de saisie
-        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_gestion, null);
-
-        /*
-         * Création d'une boîte de dialogue
-         */
-        new AlertDialog.Builder(this)
-                .setTitle(getResources().getString(R.string.titre_boite_parametre))
-                .setView(boiteSaisie)
-                .setPositiveButton(getResources().getString(R.string.bouton_positif),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                RadioGroup boutonMode =
-                                        boiteSaisie.findViewById(R.id.groupe_gestion);
-
-                                switch (boutonMode.getCheckedRadioButtonId()) {
-                                    case R.id.option_gestion_categorie:
-                                        Intent catego = new Intent(MainActivity.this,
-                                                                    CategorieActivity.class);
-                                        startActivityForResult(catego, CODE_GESTION_CATEGORIE);
-                                        break;
-                                    case R.id.option_gestion_localisation:
-                                        Intent locali = new Intent(MainActivity.this,
-                                                LocalisationActivity.class);
-                                        startActivityForResult(locali, CODE_GESTION_LOCALISATION);
-                                        break;
-                                }
-                            }
-                        })
-                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
-                .show();
     }
 
     /**
