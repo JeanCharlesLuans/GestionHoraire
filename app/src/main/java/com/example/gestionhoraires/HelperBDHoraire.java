@@ -96,6 +96,9 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
     /** Nom du champs correspondant à l'état de l'horaire de fermeture */
     public static final String PLAGE_HORAIRE_ETAT_FERMETURE = "etatFermeture";
 
+    /** Nom du champs correspondant à l'indicateur de fermeture */
+    public static final String PLAGE_HORAIRE_EST_FERME = "estFerme";
+
     //// FicheHorairePonctuelle ////
     /** Nom de la Table FicheHorairePonctuelle */
     public static final String NOM_TABLE_FICHE_HORAIRE_PONCTUELLE = "FicheHorairePonctuelle";
@@ -192,7 +195,8 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + PLAGE_HORAIRE_OUVERTURE + " TEXT, "
                     + PLAGE_HORAIRE_FERMETURE + " TEXT, "
                     + PLAGE_HORAIRE_ETAT_OUVERTURE + " INTEGER,"
-                    + PLAGE_HORAIRE_ETAT_FERMETURE + " INTEGER"
+                    + PLAGE_HORAIRE_ETAT_FERMETURE + " INTEGER,"
+                    + PLAGE_HORAIRE_EST_FERME + " INTEGER"
                     +");";
 
     /** Requête pour la création de la table ENSEMBLE_PLAGE_HORAIRE*/

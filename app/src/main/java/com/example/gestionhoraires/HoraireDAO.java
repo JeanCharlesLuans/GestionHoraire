@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.INotificationSideChannel;
 
 import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
@@ -98,7 +99,10 @@ public class HoraireDAO {
     public static final int PLAGE_HORAIRE_NUM_COLONNE_ETAT_OUVERTURE = 3;
 
     /** Numéro de la colonne de l'état de la fermeture */
-    public static final int PLAGE_HORAIRE_NUM_COLONNE_ETAT_FERMETURE = 3;
+    public static final int PLAGE_HORAIRE_NUM_COLONNE_ETAT_FERMETURE = 4;
+
+    /** Numéro de la colonne de l'indicateur de fermeture */
+    public static final int PLAGE_HORAIRE_NUM_COLONNE_EST_FERME = 5;
 
     //// Horaire Ponctuelle ////
     /** Numéro de la colonne de la clé */
@@ -376,6 +380,7 @@ public class HoraireDAO {
         plageHoraire.setHoraireFermeture(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_HORAIRE_FERMETURE));
         plageHoraire.setEtatOuverture(Integer.parseInt(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_ETAT_OUVERTURE)));
         plageHoraire.setEtatFermeture(Integer.parseInt(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_ETAT_FERMETURE)));
+        plageHoraire.setEstFerme(Integer.parseInt(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_EST_FERME)));
         return plageHoraire;
     }
 
