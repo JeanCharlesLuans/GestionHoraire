@@ -16,6 +16,7 @@ import com.example.gestionhoraires.beans.HorairePonctuelle;
 import com.example.gestionhoraires.beans.Jour;
 import com.example.gestionhoraires.beans.Localisation;
 import com.example.gestionhoraires.beans.PlageHoraire;
+import com.google.android.material.animation.ChildrenAlphaProperty;
 
 import java.util.ArrayList;
 
@@ -720,16 +721,18 @@ public class HoraireDAO {
                 + " = " + idLocalisation;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
         cursor.moveToFirst();
-        Categorie categorie = new Categorie(cursor.getString(2),
-                idLocalisation);
-        categorie.setId(cursor.getString(0));
-        listeCategories.add(categorie);
-
-        while (cursor.moveToNext()) {
-            categorie = new Categorie(cursor.getString(2),
+        if (cursor.getCount() != 0) {
+            Categorie categorie = new Categorie(cursor.getString(2),
                     idLocalisation);
             categorie.setId(cursor.getString(0));
             listeCategories.add(categorie);
+
+            while (cursor.moveToNext()) {
+                categorie = new Categorie(cursor.getString(2),
+                        idLocalisation);
+                categorie.setId(cursor.getString(0));
+                listeCategories.add(categorie);
+            }
         }
 
         return listeCategories;
@@ -810,4 +813,70 @@ public class HoraireDAO {
             updateFichePlageHoraire(fichePlageHoraire, idCategorie);
         }
     }
+
+    /**
+     * Change la localisation d'une liste de catégories
+     * @param categories les catégories à changer
+     * @param idLocalisation l'identifiant de la nouvelle localisation
+     */
+    public void changeCategorieLocalisation(ArrayList<Categorie> categories, String idLocalisation) {
+        for (Categorie categorie : categories) {
+            categorie.setIdLocalisation(idLocalisation);
+            updateCategorie(categorie, categorie.getId());
+        }
+    }
+
+    /**
+     * Récupère la position de la localisation dans la liste
+     * @param idLocalisation l'identifiant de la localistion
+     * @return la position de la localisation
+     */
+    public int getPositionByIdLocalisation(String idLocalisation) {
+        int position = 0;
+        Cursor cursor = baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_LOCALISATION, null);
+
+        while (cursor.moveToNext()) {
+            String tmp = cursor.getString(0);
+            if (tmp.equals(idLocalisation)) {
+                return position;
+            }
+            position++;
+        }
+        return -1;
+    }
+
+    /**
+     * Retourne un curseur sur les catégories de la localisation
+     * @param idLocalisation l'identifiant
+     * @return le curseur
+     */
+    public Cursor getCursorCategorieByLocalisation(String idLocalisation) {
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
+                + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation;
+        return baseHoraire.rawQuery(requete, null);
+    }
+
+    /**
+     * Récupère un curseur sur une liste de localisation sans celle spécifiée
+     * @param idLocalisation l'identifiant de la localisation que l'on souhaite exclure
+     * @return le curseur
+     */
+    public Cursor getCursorLocalisationWithoutOne(String idLocalisation) {
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_LOCALISATION
+                + " WHERE " + HelperBDHoraire.LOCALISATION_CLE + " != " + idLocalisation;
+        return baseHoraire.rawQuery(requete, null);
+    }
+
+    /**
+     * Détermine si des catégories existe avec une localisation
+     * @param idLocalisation l'identifiant de la localisation
+     * @return vrai si il existe des catégories pour cette localisation, false sinon
+     */
+    public boolean conflictWithCategorie(String idLocalisation) {
+        ArrayList<Categorie> categories = getCategoriesByLocalisation(idLocalisation);
+        return getCategoriesByLocalisation(idLocalisation).size() != 0;
+    }
+}
 }

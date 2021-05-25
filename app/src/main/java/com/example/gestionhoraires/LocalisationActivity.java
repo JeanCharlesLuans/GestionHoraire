@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.method.CharacterPickerDialog;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.Localisation;
 
 import java.util.ArrayList;
@@ -164,8 +166,7 @@ public class LocalisationActivity extends AppCompatActivity {
      * Permet la suppression d'un localisation avec la gestion des erreurs
      */
     private void supprimerLocalisation() {
-        boolean isConflit = true; //TODO conflits de suppression
-
+        String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
         /* Si la localisation n'est pas celle par défaut */
         if (!curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_DEFAUT).equals("0")) {
             Toast.makeText(this, R.string.toast_localisation_defaut, Toast.LENGTH_LONG).show();
@@ -178,6 +179,7 @@ public class LocalisationActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    boolean isConflit = accesHoraire.conflictWithCategorie(identifiant);
                                     gestionConflit(isConflit);
                                 }
                             })
@@ -190,6 +192,7 @@ public class LocalisationActivity extends AppCompatActivity {
     }
 
     private void gestionConflit(boolean isConflit){
+        String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
         if (isConflit) {
             // Si il y a un conflit, on laisse le choix a l'utilisateur de l'actiona effectuer
             AlertDialog dialogConflit = new AlertDialog.Builder(this)
@@ -208,10 +211,12 @@ public class LocalisationActivity extends AppCompatActivity {
                     boutonDeleteAll.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            // TODO DeleteALL
-
+                            accesHoraire.deleteLocalisation(identifiant);
                             // when everything is ok
                             dialogConflit.dismiss();
+                            curseurSurBase = accesHoraire.getCursorAllLocalisation();
+                            adaptateur.swapCursor(curseurSurBase);
+                            onContentChanged();
                         }
                     });
                     boutonMove.setOnClickListener(new View.OnClickListener() {
@@ -227,9 +232,12 @@ public class LocalisationActivity extends AppCompatActivity {
             dialogConflit.show();
         } else {
             // si il n'y a pas de conflit, on supprime
-            accesHoraire.deleteLocalisation(curseurSurBase.getString(
-                    accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
+            accesHoraire.deleteLocalisation(identifiant);
         }
+
+        curseurSurBase = accesHoraire.getCursorAllLocalisation();
+        adaptateur.swapCursor(curseurSurBase);
+        onContentChanged();
     }
 
     /**
@@ -237,6 +245,7 @@ public class LocalisationActivity extends AppCompatActivity {
      * liste qui recevras les localisation
      */
     private void moveLocalisationDialog() {
+        String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_spinner_localisation, null);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -250,7 +259,7 @@ public class LocalisationActivity extends AppCompatActivity {
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 Spinner localisationSpinner = ((AlertDialog) dialog).findViewById(R.id.spinner_localisation);
-                SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
+                SimpleCursorAdapter adapterLocalisation = getAdapterLocalisationWithoutOne(identifiant);
                 adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 localisationSpinner.setAdapter(adapterLocalisation);
 
@@ -259,10 +268,14 @@ public class LocalisationActivity extends AppCompatActivity {
                 boutonMove.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO déplacer loc
-
+                        ArrayList<Categorie> categories = accesHoraire.getCategoriesByLocalisation(identifiant);
+                        accesHoraire.changeCategorieLocalisation(categories, localisationSpinner.getSelectedItemId() + "");
+                        accesHoraire.deleteLocalisation(identifiant);
                         // when everything is ok
                         dialog.dismiss();
+                        curseurSurBase = accesHoraire.getCursorAllLocalisation();
+                        adaptateur.swapCursor(curseurSurBase);
+                        onContentChanged();
                     }
                 });
             }
@@ -272,13 +285,13 @@ public class LocalisationActivity extends AppCompatActivity {
     }
 
     /**
-     * @return un Adapter contenant l'ensemble des localisation
+     * @return un Adapter contenant l'ensemble des localisation sauf une
      */
-    private SimpleCursorAdapter getAdapterLocalisation() {
+    private SimpleCursorAdapter getAdapterLocalisationWithoutOne(String idLocalisation) {
         return new SimpleCursorAdapter(this,
                 android.R.layout.simple_spinner_item,
-                accesHoraire.getCursorAllLocalisation(),
-                new String[] {"nom"}, // TODO nom Colonne
+                accesHoraire.getCursorLocalisationWithoutOne(idLocalisation),
+                new String[] {HelperBDHoraire.LOCALISATION_NOM},
                 new int[] {android.R.id.text1,}, 0);
     }
 
