@@ -11,10 +11,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -26,6 +28,8 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.example.gestionhoraires.beans.Categorie;
+import com.example.gestionhoraires.beans.Jour;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         // accès au DAO
         accesHoraires = new HoraireDAO(this);
         accesHoraires.open();
+
 //        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
 //        curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
 
@@ -380,14 +385,57 @@ public class MainActivity extends AppCompatActivity {
                         // affiche la liste et deplace les élément en dessous si la checkBox est selectionner
                         toggleSpinnerLocalisation(constraintLayout, constraintSet,
                                                   check_localisation.isChecked(), spin_localisation);
+
+                        SimpleCursorAdapter adapter;
+                        if (!check_localisation.isChecked()) {
+                             adapter = getAdapterCategorie();
+                        } else {
+                            String idLocalisation = spin_localisation.getSelectedItemId() + "";
+                            adapter = getAdapterCategorieByLocalisation(idLocalisation);
+                        }
+
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spin_categorie.setAdapter(adapter);
+                        toggleSpinnerCategorie(constraintLayout, constraintSet,
+                                check_categorie.isChecked(), spin_categorie);
                     }
                 });
                 check_categorie.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        SimpleCursorAdapter adapter;
+
+                        if (!check_localisation.isChecked()) {
+                            adapter = getAdapterCategorie();
+                        } else {
+                            String idLocalisation = spin_localisation.getSelectedItemId() + "";
+                            adapter = getAdapterCategorieByLocalisation(idLocalisation);
+                        }
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spin_categorie.setAdapter(adapter);
                         // affiche la liste et deplace les élément en dessous si la checkBox est selectionner
                         toggleSpinnerCategorie(constraintLayout, constraintSet,
                                                check_categorie.isChecked(), spin_categorie);
+                    }
+                });
+
+                spin_localisation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (check_categorie.isChecked()) {
+                            String idLocalisation = spin_localisation.getSelectedItemId() + "";
+                            SimpleCursorAdapter adapter;
+                            adapter = getAdapterCategorieByLocalisation(idLocalisation);
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spin_categorie.setAdapter(adapter);
+                            toggleSpinnerCategorie(constraintLayout, constraintSet,
+                                    check_categorie.isChecked(), spin_categorie);
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
                     }
                 });
 
@@ -397,7 +445,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         check_localisation.setChecked(false);
                         toggleSpinnerLocalisation(constraintLayout, constraintSet,
-                                check_localisation.isChecked(), spin_localisation);
+                                false, spin_localisation);
+                        toggleSpinnerCategorie(constraintLayout, constraintSet,
+                                false, spin_categorie);
                         check_categorie.setChecked(false);
                         check_ouvert.setChecked(false);
                     }
@@ -456,7 +506,7 @@ public class MainActivity extends AppCompatActivity {
         return new SimpleCursorAdapter(this,
                 android.R.layout.simple_spinner_item,
                 accesHoraires.getCursorAllLocalisation(),
-                new String[] {"nom"}, // TODO nom Colonne
+                new String[] {HelperBDHoraire.LOCALISATION_NOM},
                 new int[] {android.R.id.text1,}, 0);
     }
 
@@ -467,7 +517,20 @@ public class MainActivity extends AppCompatActivity {
         return new SimpleCursorAdapter(this,
                 android.R.layout.simple_spinner_item,
                 accesHoraires.getCursorAllCategorie(),
-                new String[] {"nom"}, // TODO nom Colonne
+                new String[] {HelperBDHoraire.CATEGORIE_NOM},
+                new int[] {android.R.id.text1,}, 0);
+    }
+
+    /**
+     * Retourne un adapter sur une liste de catégorie en fonction d'une localisation
+     * @param idLocalisation
+     * @return
+     */
+    private SimpleCursorAdapter getAdapterCategorieByLocalisation(String idLocalisation) {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorCategorieByLocalisation(idLocalisation),
+                new String[] {HelperBDHoraire.CATEGORIE_NOM},
                 new int[] {android.R.id.text1,}, 0);
     }
 
