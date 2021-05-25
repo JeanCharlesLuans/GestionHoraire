@@ -2,6 +2,7 @@ package com.example.gestionhoraires;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -146,16 +147,7 @@ public class LocalisationActivity extends AppCompatActivity {
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
-                // TODO rajouter gestion des conflits de suppression
-                /* Si la localisation n'est pas celle par défaut */
-                if (curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_DEFAUT).equals("0")) {
-                    accesHoraire.deleteLocalisation(curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
-                } else {
-                    Toast.makeText(this, R.string.toast_localisation_defaut, Toast.LENGTH_LONG).show();
-                }
-                curseurSurBase = accesHoraire.getCursorAllLocalisation();
-                adaptateur.swapCursor(curseurSurBase);
-                onContentChanged();
+                supprimerLocalisation();
                 break;
             case R.id.modifier :
                 modifierLocalisation();
@@ -165,6 +157,79 @@ public class LocalisationActivity extends AppCompatActivity {
 
         }
         return (super.onContextItemSelected(item));
+    }
+
+    /**
+     * Permet la suppression d'un localisation avec la gestion des erreurs
+     */
+    private void supprimerLocalisation() {
+        boolean isConflit = true; //TODO conflits de suppression
+
+        /* Si la localisation n'est pas celle par défaut */
+        if (!curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_DEFAUT).equals("0")) {
+            Toast.makeText(this, R.string.toast_localisation_defaut, Toast.LENGTH_LONG).show();
+        }
+
+        // on affiche une boite de confirmation
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.alerte_suppression))
+                .setNegativeButton(getResources().getString(R.string.bouton_non), null)
+                .setPositiveButton(getResources().getString(R.string.bouton_oui),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                gestionConflit(isConflit);
+                            }
+                        })
+                .show();
+
+        curseurSurBase = accesHoraire.getCursorAllLocalisation();
+        adaptateur.swapCursor(curseurSurBase);
+        onContentChanged();
+    }
+
+    private void gestionConflit(boolean isConflit){
+        if (isConflit) {
+            // Si il y a un conflit, on laisse le choix a l'utilisateur de l'actiona effectuer
+            AlertDialog dialogConflit = new AlertDialog.Builder(this)
+                    .setTitle(getResources().getString(R.string.alerte_conflit))
+                    .setNeutralButton(getResources().getString(R.string.bouton_negatif), null)
+                    .setNegativeButton(getResources().getString(R.string.delete_all), null)
+                    .setPositiveButton(getResources().getString(R.string.move_all), null)
+                    .create();
+
+            dialogConflit.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Button boutonDeleteAll = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                    Button boutonMove = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                    boutonDeleteAll.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO DeleteALL
+
+                            // when everything is ok
+                            dialogConflit.dismiss();
+                        }
+                    });
+                    boutonMove.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO Move to other list
+
+                            // when everything is ok
+                            dialogConflit.dismiss();
+                        }
+                    });
+                }
+            });
+
+            dialogConflit.show();
+        } else {
+            // si il n'y a pas de conflit, on supprime
+            accesHoraire.deleteLocalisation(curseurSurBase.getString(
+                    accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
+        }
     }
 
     /**

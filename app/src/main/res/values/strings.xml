@@ -4,6 +4,8 @@
     <string name="fab_description">Ajouter Horaire ou plage horaire</string>
 
     <!-- boutons -->
+    <string name="bouton_oui">Oui</string>
+    <string name="bouton_non">Non</string>
     <string name="bouton_positif">OK</string>
     <string name="bouton_ajouter">Ajouter</string>
     <string name="bouton_retour">Retour</string>
@@ -50,6 +52,10 @@
     <string name="modifier_categorie">Modifier la catégorie</string>
     <string name="alerte_titre">Saisie invalide</string>
     <string name="alerte_nom">Vous devez renseigner le nom.</string>
+    <string name="alerte_suppression">Voulez-vous vraiment supprimer cette localisation ?</string>
+    <string name="alerte_conflit">Il semble il y avoir un conflit, que voulez-vous faire ?</string>
+    <string name="delete_all">Tout Supprimer</string>
+    <string name="move_all">Déplacer dans une autre liste</string>
 
     <!-- Filtre -->
     <string name="titre_boite_filtre">Selectionnez les filtres</string>

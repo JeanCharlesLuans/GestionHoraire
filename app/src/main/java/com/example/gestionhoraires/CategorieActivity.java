@@ -151,14 +151,7 @@ public class CategorieActivity extends AppCompatActivity {
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
-                if (curseurSurBase.getString(3).equals("0")) {
-                    accesHoraire.deleteCategorie(curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
-                } else {
-                    Toast.makeText(this, R.string.toast_categorie_defaut_supprimer, Toast.LENGTH_LONG).show();
-                }
-                curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
-                adaptateur.swapCursor(curseurSurBase);
-                onContentChanged();
+                supprimerCategorie();
                 break;
             case R.id.modifier :
                 if (curseurSurBase.getString(3).equals("0")) {
@@ -172,6 +165,32 @@ public class CategorieActivity extends AppCompatActivity {
 
         }
         return (super.onContextItemSelected(item));
+    }
+
+    /**
+     * permet la suppression d'une catégorie
+     */
+    private void supprimerCategorie() {
+        if (!curseurSurBase.getString(3).equals("0")) {
+            Toast.makeText(this, R.string.toast_categorie_defaut_supprimer, Toast.LENGTH_LONG).show();
+        }
+
+        // on affiche une boite de confirmation
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.alerte_suppression))
+                .setNegativeButton(getResources().getString(R.string.bouton_non), null)
+                .setPositiveButton(getResources().getString(R.string.bouton_oui),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                accesHoraire.deleteCategorie(curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
+                            }
+                        })
+                .show();
+
+        curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+        adaptateur.swapCursor(curseurSurBase);
+        onContentChanged();
     }
 
     /**
