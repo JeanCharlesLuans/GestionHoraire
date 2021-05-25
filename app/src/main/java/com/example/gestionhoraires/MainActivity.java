@@ -522,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
 
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spin_categorie.setAdapter(adapter);
-                        toggleSpinnerCategorie(constraintLayout, constraintSet,
+                        toggleSpinnerCategorie(constraintLayout,
                                 check_categorie.isChecked(), spin_categorie);
                     }
                 });
@@ -554,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
                             adapter = getAdapterCategorieByLocalisation(idLocalisation);
                             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spin_categorie.setAdapter(adapter);
-                            toggleSpinnerCategorie(constraintLayout, constraintSet,
+                            toggleSpinnerCategorie(constraintLayout,
                                     check_categorie.isChecked(), spin_categorie);
                         }
                     }
@@ -570,9 +570,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         check_localisation.setChecked(false);
-                        toggleSpinnerLocalisation(constraintLayout, constraintSet,
+                        toggleSpinnerLocalisation(constraintLayout,
                                 false, spin_localisation);
-                        toggleSpinnerCategorie(constraintLayout, constraintSet,
+                        toggleSpinnerCategorie(constraintLayout,
                                 false, spin_categorie);
                         check_categorie.setChecked(false);
                         check_ouvert.setChecked(false);
@@ -655,7 +655,7 @@ public class MainActivity extends AppCompatActivity {
     private SimpleCursorAdapter getAdapterJour() {
         return new SimpleCursorAdapter(this,
                 android.R.layout.simple_spinner_item,
-                accesHoraires.getCursorAllJour(), // TODO CURSOR JOUR
+                accesHoraires.getCursorAllCategorie(), // TODO CURSOR JOUR getCursorAllJour()
                 new String[] {"nom"}, // TODO nom Colonne
                 new int[] {android.R.id.text1,}, 0);
     }
@@ -711,7 +711,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-}
+
 
 	/**
      * Serialisation des objets pour l'exportation en JSON
@@ -758,26 +758,26 @@ public class MainActivity extends AppCompatActivity {
 
         PlageHoraire[] listePlage =
                 {
-                        new PlageHoraire("10:00", 1, "12:00", 1),
-                        new PlageHoraire("14:00", 1, "18:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
+                        new PlageHoraire("14:00", 1, "18:00", 1, 0),
 
-                        new PlageHoraire("08:00", 1, "14:00", 1),
-                        new PlageHoraire("16:00", 1, "20:00", 1),
+                        new PlageHoraire("08:00", 1, "14:00", 1, 0),
+                        new PlageHoraire("16:00", 1, "20:00", 1, 0),
 
-                        new PlageHoraire("08:00", 1, "", 0),
-                        new PlageHoraire("", 0, "20:00", 1),
+                        new PlageHoraire("08:00", 1, "", 0, 0),
+                        new PlageHoraire("", 0, "20:00", 1, 0),
 
-                        new PlageHoraire("10:00", 1, "12:00", 1),
-                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
 
-                        new PlageHoraire("10:00", 1, "12:00", 1),
-                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
 
-                        new PlageHoraire("10:00", 1, "12:00", 1),
-                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
 
-                        new PlageHoraire("10:00", 1, "12:00", 1),
-                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
+                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
                 };
 
         EnsemblePlageHoraire[] listeEnsemble =
@@ -814,5 +814,4 @@ public class MainActivity extends AppCompatActivity {
         Log.i("IMPORTATION", "Fin");
     }
 
-}
 }

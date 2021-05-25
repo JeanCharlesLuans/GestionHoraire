@@ -629,129 +629,7 @@ public class HoraireDAO {
                 nouvelleFicheHorairePonctuelle,
                 HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE + " = ?",
                 new String[] {identifiant});
-	}
 
-    /**
-     * Modifie une fiche horaire ponctuelle
-     * @param ficheHorairePonctuelle la fiche horaire ponctuelle modifiée
-     * @param identifiant l'identifiant de la fiche horaire à modifier
-     */
-    public void updateFicheHorairePonctuelle(FicheHorairePonctuelle ficheHorairePonctuelle, String identifiant) {
-        ContentValues nouvelleFicheHorairePonctuelle = new ContentValues();
-        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM, ficheHorairePonctuelle.getNom());
-        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_INFORMATION, ficheHorairePonctuelle.getInformation());
-        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_IMAGE, ficheHorairePonctuelle.getCheminPhoto());
-        baseHoraire.update(HelperBDHoraire.NOM_TABLE_FICHE_HORAIRE_PONCTUELLE,
-                nouvelleFicheHorairePonctuelle,
-                HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE + " = ?",
-                new String[] {identifiant});
-
-    }
-
-    /**
-     * Retourne une liste de catégories en fonction d'une localisation
-     * @param idLocalisation l'identifiant de la localisation
-     * @return la liste des catégories
-     */
-    public ArrayList<Categorie> getCategoriesByLocalisation(String idLocalisation) {
-        ArrayList<Categorie> listeCategories = new ArrayList<>();
-
-        String requete =
-                "SELECT * FROM "
-                + HelperBDHoraire.NOM_TABLE_CATEGORIE
-                + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION
-                + " = " + idLocalisation;
-        Cursor cursor = baseHoraire.rawQuery(requete, null);
-        cursor.moveToFirst();
-        Categorie categorie = new Categorie(cursor.getString(2),
-                idLocalisation);
-        categorie.setId(cursor.getString(0));
-        listeCategories.add(categorie);
-
-        while (cursor.moveToNext()) {
-            categorie = new Categorie(cursor.getString(2),
-                    idLocalisation);
-            categorie.setId(cursor.getString(0));
-            listeCategories.add(categorie);
-        }
-
-        return listeCategories;
-    }
-
-    /**
-     * Récupère la localisation par défaut
-     * @return la localisation
-     */
-    public Cursor getCursorDefaultLocalisation() {
-        String requete =
-                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_LOCALISATION
-                + " WHERE " + HelperBDHoraire.LOCALISATION_IS_DEFAULT + " = 1";
-        return baseHoraire.rawQuery(requete, null);
-    }
-
-    /**
-     * Change la localisation des catégories
-     * @param categories la listes des catégories dont on souhaite mettre la localisation par défaut
-     */
-    public void resetCategories(ArrayList<Categorie> categories, String idLocalisation) {
-        for (Categorie categorie : categories) {
-            updateCategorie(categorie, idLocalisation);
-        }
-    }
-
-    /**
-     * Récupère la liste des fiches plage horaire en fonction d'une catégorie
-     * @param idCategorie l'identifiant de la catégorie dont on souhaite récupérer les fiches
-     * @return la liste des fiches plage horaire
-     */
-    public ArrayList<FichePlageHoraire> getFichePlageHoraireByCategorie(String idCategorie) {
-        ArrayList<FichePlageHoraire> listeFichePlageHoraire = new ArrayList<>();
-
-        String requete =
-                "SELECT * FROM "
-                        + HelperBDHoraire.NOM_TABLE_FICHE_PLAGE_HORAIRE
-                        + " WHERE " + HelperBDHoraire.FICHE_PLAGE_HORAIRE_CLE_CATEGORIE
-                        + " = " + idCategorie;
-        Cursor cursor = baseHoraire.rawQuery(requete, null);
-        cursor.moveToFirst();
-        FichePlageHoraire fichePlageHoraire = new FichePlageHoraire(cursor.getString(1),
-                idCategorie,
-                cursor.getString(2),
-                cursor.getString(3));
-        fichePlageHoraire.setId(cursor.getString(0));
-        listeFichePlageHoraire.add(fichePlageHoraire);
-
-        while (cursor.moveToNext()) {
-            fichePlageHoraire = new FichePlageHoraire(cursor.getString(1),
-                    idCategorie,
-                    cursor.getString(2),
-                    cursor.getString(3));
-            fichePlageHoraire.setId(cursor.getString(0));
-            listeFichePlageHoraire.add(fichePlageHoraire);
-        }
-
-        return listeFichePlageHoraire;
-    }
-
-    /**
-     * Récupère la catégorie par défaut
-     * @return la catégorie
-     */
-    public Cursor getCursorDefaultCategorie() {
-        String requete =
-                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
-                        + " WHERE " + HelperBDHoraire.CATEGORIE_IS_DEFAULT + " = 1";
-        return baseHoraire.rawQuery(requete, null);
-    }
-
-    /**
-     * Change la localisation des fiches plage horaire
-     * @param fichesPlageHoraire la liste des fiches plage horaire dont on souhaite mettre la localisation par défaut
-     */
-    public void resetFichePlageHoraire(ArrayList<FichePlageHoraire> fichesPlageHoraire, String idCategorie) {
-        for (FichePlageHoraire fichePlageHoraire : fichesPlageHoraire) {
-            updateFichePlageHoraire(fichePlageHoraire, idCategorie);
-        }
     }
 
     /**
@@ -826,7 +704,6 @@ public class HoraireDAO {
         return listeEnsemble;
     }
 
-}
 
     /**
      * Retourne une liste de catégories en fonction d'une localisation
