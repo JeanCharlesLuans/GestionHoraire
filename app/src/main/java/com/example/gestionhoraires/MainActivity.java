@@ -220,8 +220,6 @@ public class MainActivity extends AppCompatActivity {
 
         FichePlageHoraire test = new FichePlageHoraire("Nom 0", "1", "Information 0", "c:/photo0");
 
-        exportation(listeTest);
-
     }
 
     /**
@@ -360,7 +358,14 @@ public class MainActivity extends AppCompatActivity {
                                         // TODO export SMS
                                         break;
                                     case R.id.option_export_json:
-                                        // TODO export JSON
+                                        // Exportation des JSON stub
+                                        // TODO recherche de fiches dans la BD
+                                        exportationJSON(new FichePlageHoraire[] {
+                                                new FichePlageHoraire("Nom 1","1","Information 1","chemin/1"),
+                                                new FichePlageHoraire("Nom 2","1","Information 1","chemin/2"),
+                                                new FichePlageHoraire("Nom 3","1","Information 1","chemin/3"),
+                                                new FichePlageHoraire("Nom 4","1","Information 1","chemin/4")
+                                        });
                                         break;
                                 }
                             }
@@ -734,7 +739,7 @@ public class MainActivity extends AppCompatActivity {
         try {
 
             for (int i = 0; i < listeFichePlageHoraires.length; i++) {
-                liste.put(listeFichePlageHoraires[i].getJson());
+                liste.put(listeFichePlageHoraires[i].getJson(accesHoraires));
             }
 
             Log.i("JSON", liste.toString());

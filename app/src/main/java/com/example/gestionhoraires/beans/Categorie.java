@@ -1,5 +1,10 @@
 package com.example.gestionhoraires.beans;
 
+import com.example.gestionhoraires.HelperBDHoraire;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Modélise une catégorie de fiche horaire
  */
@@ -63,6 +68,18 @@ public class Categorie {
         this.idLocalisation = idLocalisation;
     }
 
+    /**
+     * @return l'objet json corespondant a l'instance de l'objet catégorie
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject jsonCategorie = new JSONObject();
+        jsonCategorie.put(HelperBDHoraire.CATEGORIE_CLE_LOCALISATION, this.idLocalisation);
+        jsonCategorie.put(HelperBDHoraire.CATEGORIE_NOM, this.nom);
+
+
+        return jsonCategorie;
+    }
+    
     public int getIsDefault() {
         return isDefault;
     }

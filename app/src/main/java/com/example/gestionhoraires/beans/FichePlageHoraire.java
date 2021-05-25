@@ -100,9 +100,13 @@ public class FichePlageHoraire {
         JSONObject jsonFiche = new JSONObject();
         JSONObject jsonHoraire = new JSONObject();
 
-        // Recherche de la localisation et des horaires
+        // Initialisation de l'objet horaires
         Categorie categorie = horaireDAO.getCategorieById(this.idCategorie);
+        jsonCategorie = categorie.getJson();
+
+        // Initialisation de l'objet json Localisation
         Localisation localisation = horaireDAO.getLocalisationById(categorie.getIdLocalisation());
+        jsonLocalisation = localisation.getJson();
 
         // Initialisation de l'objet HoraireDAO
         jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM, this.nom);

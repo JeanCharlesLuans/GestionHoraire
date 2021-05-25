@@ -1,5 +1,11 @@
 package com.example.gestionhoraires.beans;
 
+import com.example.gestionhoraires.HelperBDHoraire;
+import com.example.gestionhoraires.HoraireDAO;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Modélisation d'un localisation
  */
@@ -58,5 +64,14 @@ public class Localisation {
         this.isDefault = isDefault;
     }
 
+    /**
+     * @return l'objet json corespondant a l'instance de l'objet catégorie
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject jsonLocalisation = new JSONObject();
+        jsonLocalisation.put(HelperBDHoraire.LOCALISATION_NOM, this.nom);
+        //jsonLocalisation.put(HelperBDHoraire.LOCALISATION_IS_DEFAULT, this.);
+        return jsonLocalisation;
+    }
 }
 
