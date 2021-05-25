@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.import_option :
                 break;
             case R.id.export_option :
+                showDialogExport();
                 break;
             case R.id.settings_option :
                 GestionParametre();
@@ -277,6 +278,38 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return (super.onOptionsItemSelected(item));
+    }
+
+    /**
+     * affiche une fenêtre de dialogue à l'utilisateur pour qu'il puisse choisir
+     * entre les différent mode d'exportation
+     */
+    private void showDialogExport() {
+        // on désérialise le layout qui est associé à la boîte de saisie
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_export, null);
+
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.titre_boite_export))
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_positif),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                RadioGroup boutonMode =
+                                        boiteSaisie.findViewById(R.id.groupe_export);
+
+                                switch (boutonMode.getCheckedRadioButtonId()) {
+                                    case R.id.option_export_sms:
+                                        // TODO export SMS
+                                        break;
+                                    case R.id.option_export_json:
+                                        // TODO export JSON
+                                        break;
+                                }
+                            }
+                        })
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .show();
     }
 
     /**

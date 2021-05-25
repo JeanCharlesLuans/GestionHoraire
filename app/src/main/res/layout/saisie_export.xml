@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="1,2" >
+
+    <!-- 3 type de dépense possible -->
+    <TableRow>
+        <RadioGroup
+            android:id="@+id/groupe_export"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/marge_grande"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/option_export_sms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textSize="@dimen/taille_radio_bouton"
+                android:text="@string/label_export_sms"/>
+            <RadioButton
+                android:id="@+id/option_export_json"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/taille_radio_bouton"
+                android:text="@string/label_export_json"/>
+        </RadioGroup>
+    </TableRow>
+</TableLayout>
