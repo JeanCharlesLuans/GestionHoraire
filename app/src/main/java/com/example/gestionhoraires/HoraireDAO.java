@@ -765,7 +765,7 @@ public class HoraireDAO {
     public Cursor getCursorCategorieByLocalisation(String idLocalisation) {
         String requete =
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
-                + " WHERE " + HelperBDHoraire.LOCALISATION_CLE + " = " + idLocalisation;
+                + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation;
         return baseHoraire.rawQuery(requete, null);
     }
 }
