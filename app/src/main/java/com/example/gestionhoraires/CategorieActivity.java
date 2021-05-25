@@ -173,20 +173,23 @@ public class CategorieActivity extends AppCompatActivity {
     private void supprimerCategorie() {
         if (!curseurSurBase.getString(3).equals("0")) {
             Toast.makeText(this, R.string.toast_categorie_defaut_supprimer, Toast.LENGTH_LONG).show();
+        } else {
+            // on affiche une boite de confirmation
+            new AlertDialog.Builder(this)
+                    .setTitle(getResources().getString(R.string.alerte_suppression))
+                    .setNegativeButton(getResources().getString(R.string.bouton_non), null)
+                    .setPositiveButton(getResources().getString(R.string.bouton_oui),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    accesHoraire.deleteCategorie(curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
+                                    curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+                                    adaptateur.swapCursor(curseurSurBase);
+                                    onContentChanged();
+                                }
+                            })
+                    .show();
         }
-
-        // on affiche une boite de confirmation
-        new AlertDialog.Builder(this)
-                .setTitle(getResources().getString(R.string.alerte_suppression))
-                .setNegativeButton(getResources().getString(R.string.bouton_non), null)
-                .setPositiveButton(getResources().getString(R.string.bouton_oui),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                accesHoraire.deleteCategorie(curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
-                            }
-                        })
-                .show();
 
         curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
         adaptateur.swapCursor(curseurSurBase);
