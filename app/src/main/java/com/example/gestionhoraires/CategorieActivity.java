@@ -171,6 +171,7 @@ public class CategorieActivity extends AppCompatActivity {
      * permet la suppression d'une catégorie
      */
     private void supprimerCategorie() {
+        String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
         if (!curseurSurBase.getString(3).equals("0")) {
             Toast.makeText(this, R.string.toast_categorie_defaut_supprimer, Toast.LENGTH_LONG).show();
         } else {
@@ -182,7 +183,7 @@ public class CategorieActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    accesHoraire.deleteCategorie(curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
+                                    accesHoraire.deleteCategorie(identifiant);
                                     curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
                                     adaptateur.swapCursor(curseurSurBase);
                                     onContentChanged();

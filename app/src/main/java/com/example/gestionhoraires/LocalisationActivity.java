@@ -167,6 +167,7 @@ public class LocalisationActivity extends AppCompatActivity {
      */
     private void supprimerLocalisation() {
         String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
+        Log.i("Loc", identifiant);
         /* Si la localisation n'est pas celle par défaut */
         if (!curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_DEFAUT).equals("0")) {
             Toast.makeText(this, R.string.toast_localisation_defaut, Toast.LENGTH_LONG).show();
@@ -180,7 +181,7 @@ public class LocalisationActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     boolean isConflit = accesHoraire.conflictWithCategorie(identifiant);
-                                    gestionConflit(isConflit);
+                                    gestionConflit(isConflit, identifiant);
                                 }
                             })
                     .show();
@@ -191,8 +192,7 @@ public class LocalisationActivity extends AppCompatActivity {
         onContentChanged();
     }
 
-    private void gestionConflit(boolean isConflit){
-        String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
+    private void gestionConflit(boolean isConflit, String identifiant){
         if (isConflit) {
             // Si il y a un conflit, on laisse le choix a l'utilisateur de l'actiona effectuer
             AlertDialog dialogConflit = new AlertDialog.Builder(this)
@@ -222,7 +222,7 @@ public class LocalisationActivity extends AppCompatActivity {
                     boutonMove.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            moveLocalisationDialog();
+                            moveLocalisationDialog(identifiant);
                             dialogConflit.dismiss();
                         }
                     });
@@ -244,8 +244,7 @@ public class LocalisationActivity extends AppCompatActivity {
      * affiche une fenetre de dialogue a l'utilisateur pour qu'il puissen choisir la
      * liste qui recevras les localisation
      */
-    private void moveLocalisationDialog() {
-        String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
+    private void moveLocalisationDialog(String identifiant) {
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_spinner_localisation, null);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
