@@ -20,6 +20,9 @@ public class PlageHoraire {
     /** Etat de l'horaire d'ouverture : 0 si pas renseigné 1 si renseigné */
     private int etatFermeture;
 
+    /** Indicateur pour savoir si l'établissement est fermé (1) ou ouvert (0) */
+    private int estFerme;
+
     /**
      * Constructeur sans argument
      */
@@ -30,10 +33,12 @@ public class PlageHoraire {
      * Constructeur avec arguments
      * @param horaireOuverture l'horaire d'ouverture
      * @param etatOuverture l'état de l'horaire d'ouverture
+     * @param estFerme indicateur si l'établissement est fermé
      */
-    public PlageHoraire(String horaireOuverture, int etatOuverture) {
+    public PlageHoraire(String horaireOuverture, int etatOuverture, int estFerme) {
         this.horaireOuverture = horaireOuverture;
         this.etatOuverture = etatOuverture;
+        this.estFerme = estFerme;
     }
 
     /**
@@ -43,11 +48,12 @@ public class PlageHoraire {
      * @param horaireFermeture l'horaire de fermeture
      * @param etatFermeture l'état de l'horaire de fermeture
      */
-    public PlageHoraire(String horaireOuverture, int etatOuverture, String horaireFermeture, int etatFermeture) {
+    public PlageHoraire(String horaireOuverture, int etatOuverture, String horaireFermeture, int etatFermeture, int estFerme) {
         this.horaireOuverture = horaireOuverture;
         this.horaireFermeture = horaireFermeture;
         this.etatOuverture = etatOuverture;
         this.etatFermeture = etatFermeture;
+        this.estFerme = estFerme;
     }
 
     public String getHoraireOuverture() {
@@ -88,5 +94,13 @@ public class PlageHoraire {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getEstFerme() {
+        return estFerme;
+    }
+
+    public void setEstFerme(int estFerme) {
+        this.estFerme = estFerme;
     }
 }
