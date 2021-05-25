@@ -30,12 +30,22 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
+import com.example.gestionhoraires.beans.FichePlageHoraire;
 import android.widget.TimePicker;
 
 import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.Jour;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.graphics.Color.rgb;
@@ -197,6 +207,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        // DEBUG
+        FichePlageHoraire[] listeTest =
+                {
+                    new FichePlageHoraire("Nom 0", "1", "Information 0", "c:/photo0"),
+                    new FichePlageHoraire("Nom 1", "1", "Information 1", "c:/photo1"),
+                    new FichePlageHoraire("Nom 2", "1", "Information 2", "c:/photo2"),
+                    new FichePlageHoraire("Nom 3", "1", "Information 3", "c:/photo3"),
+                };
+
+        FichePlageHoraire test = new FichePlageHoraire("Nom 0", "1", "Information 0", "c:/photo0");
+
+        exportation(listeTest);
+
     }
 
     /**
@@ -694,4 +719,40 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+}
+
+	/**
+     * Serialisation des objets pour l'exportation en JSON
+     * Il permet d'exporter le nom, sa localisation, les horaire d'ouverture et et de fermetures
+     * et les information
+     * @param listeFichePlageHoraires a exporter en JSON
+     */
+    private void exportationJSON(FichePlageHoraire[] listeFichePlageHoraires) {
+
+        JSONArray liste = new JSONArray();
+
+        try {
+
+            for (int i = 0; i < listeFichePlageHoraires.length; i++) {
+                liste.put(listeFichePlageHoraires[i].getJson());
+            }
+
+            Log.i("JSON", liste.toString());
+
+            FileOutputStream fichierExportation = openFileOutput("fichier.json", MODE_PRIVATE);
+            fichierExportation.write(liste.toString().getBytes());
+
+        } catch (JSONException err) {
+            Log.e("JSON", err.getMessage());
+            Toast.makeText(this, "Une erreur c'est produite durant la création du JSON", Toast.LENGTH_LONG);
+        } catch (FileNotFoundException err) {
+            Log.e("JSON", err.getMessage());
+            Toast.makeText(this, "Une erreur c'est produite durant la création du fichier", Toast.LENGTH_LONG);
+        } catch (IOException e) {
+            Log.e("JSON", e.getMessage());
+            Toast.makeText(this, "Une erreur c'est produite durant l'ecriture du fichier", Toast.LENGTH_LONG);
+        }
+
+    }
+}
 }

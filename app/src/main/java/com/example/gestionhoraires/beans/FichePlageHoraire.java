@@ -1,6 +1,14 @@
 package com.example.gestionhoraires.beans;
 
+import com.example.gestionhoraires.HelperBDHoraire;
+import com.example.gestionhoraires.HoraireDAO;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Modélise une fiche de plages horaires
@@ -82,5 +90,26 @@ public class FichePlageHoraire {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public JSONObject getJson(HoraireDAO horaireDAO) throws JSONException {
+
+        // Objet a retourner
+        JSONObject jsonLocalisation = new JSONObject();
+        JSONObject jsonCategorie = new JSONObject();
+        JSONObject jsonFiche = new JSONObject();
+        JSONObject jsonHoraire = new JSONObject();
+
+        // Recherche de la localisation et des horaires
+        Categorie categorie = horaireDAO.getCategorieById(this.idCategorie);
+        Localisation localisation = horaireDAO.getLocalisationById(categorie.getIdLocalisation());
+
+        // Initialisation de l'objet HoraireDAO
+        jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM, this.nom);
+        jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_CLE_CATEGORIE, this.idCategorie);
+        jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION, this.information);
+        jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_CHEMIN_IMAGE, this.cheminPhoto);
+
+        return jsonFiche;
     }
 }
