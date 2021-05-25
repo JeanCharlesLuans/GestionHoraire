@@ -3,6 +3,7 @@ package com.example.gestionhoraires.beans;
 import com.example.gestionhoraires.HelperBDHoraire;
 import com.example.gestionhoraires.HoraireDAO;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -94,11 +95,13 @@ public class FichePlageHoraire {
 
     public JSONObject getJson(HoraireDAO horaireDAO) throws JSONException {
 
+        JSONObject general = new JSONObject();
+
         // Objet a retourner
         JSONObject jsonLocalisation = new JSONObject();
         JSONObject jsonCategorie = new JSONObject();
         JSONObject jsonFiche = new JSONObject();
-        JSONObject jsonHoraire = new JSONObject();
+        JSONArray jsonHoraire = new JSONArray();
 
         // Initialisation de l'objet horaires
         Categorie categorie = horaireDAO.getCategorieById(this.idCategorie);
@@ -108,12 +111,23 @@ public class FichePlageHoraire {
         Localisation localisation = horaireDAO.getLocalisationById(categorie.getIdLocalisation());
         jsonLocalisation = localisation.getJson();
 
+        // Initialisation de l'objets
+        ArrayList<EnsemblePlageHoraire> listeEnsemble = horaireDAO.getEnsembleHorraireOfFiche(this.id);
+        for (int i = 0; i < listeEnsemble.size(); i++) {
+            jsonHoraire.put(listeEnsemble.get(i).getJSON());
+        }
+
         // Initialisation de l'objet HoraireDAO
         jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM, this.nom);
         jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_CLE_CATEGORIE, this.idCategorie);
         jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION, this.information);
         jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_CHEMIN_IMAGE, this.cheminPhoto);
 
-        return jsonFiche;
+        general.put("FICHE",jsonFiche);
+        general.put("CATEGORIE",jsonCategorie);
+        general.put("LOCALISATION",jsonLocalisation);
+        general.put("HORAIRE",jsonHoraire);
+
+        return general;
     }
 }

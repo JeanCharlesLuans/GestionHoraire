@@ -32,12 +32,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
 import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 import android.widget.TimePicker;
 
 import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.Jour;
+import com.example.gestionhoraires.beans.PlageHoraire;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -207,19 +209,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-        // DEBUG
-        FichePlageHoraire[] listeTest =
-                {
-                    new FichePlageHoraire("Nom 0", "1", "Information 0", "c:/photo0"),
-                    new FichePlageHoraire("Nom 1", "1", "Information 1", "c:/photo1"),
-                    new FichePlageHoraire("Nom 2", "1", "Information 2", "c:/photo2"),
-                    new FichePlageHoraire("Nom 3", "1", "Information 3", "c:/photo3"),
-                };
-
-        FichePlageHoraire test = new FichePlageHoraire("Nom 0", "1", "Information 0", "c:/photo0");
-
     }
 
     /**
@@ -312,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
                 afficherFiltre();
                 break;
             case R.id.import_option :
+                initData();
                 break;
             case R.id.export_option :
                 showDialogExport();
@@ -361,10 +351,7 @@ public class MainActivity extends AppCompatActivity {
                                         // Exportation des JSON stub
                                         // TODO recherche de fiches dans la BD
                                         exportationJSON(new FichePlageHoraire[] {
-                                                new FichePlageHoraire("Nom 1","1","Information 1","chemin/1"),
-                                                new FichePlageHoraire("Nom 2","1","Information 1","chemin/2"),
-                                                new FichePlageHoraire("Nom 3","1","Information 1","chemin/3"),
-                                                new FichePlageHoraire("Nom 4","1","Information 1","chemin/4")
+                                                new FichePlageHoraire("Nom 1","1","Information 1","chemin/1")
                                         });
                                         break;
                                 }
@@ -736,6 +723,8 @@ public class MainActivity extends AppCompatActivity {
 
         JSONArray liste = new JSONArray();
 
+        listeFichePlageHoraires[0].setId("1"); // TODO l'enlever
+
         try {
 
             for (int i = 0; i < listeFichePlageHoraires.length; i++) {
@@ -758,6 +747,72 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Une erreur c'est produite durant l'ecriture du fichier", Toast.LENGTH_LONG);
         }
 
+        Toast.makeText(this, "Exportation du JSON terminé", Toast.LENGTH_LONG);
+
     }
+
+    /**
+     * STUB initialise des datas dans la BD
+     */
+    public void initData() {
+
+        PlageHoraire[] listePlage =
+                {
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("14:00", 1, "18:00", 1),
+
+                        new PlageHoraire("08:00", 1, "14:00", 1),
+                        new PlageHoraire("16:00", 1, "20:00", 1),
+
+                        new PlageHoraire("08:00", 1, "", 0),
+                        new PlageHoraire("", 0, "20:00", 1),
+
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+                        new PlageHoraire("10:00", 1, "12:00", 1),
+                };
+
+        EnsemblePlageHoraire[] listeEnsemble =
+                {
+                        new EnsemblePlageHoraire("1","2","1", "1"),
+                        new EnsemblePlageHoraire("3","4","2", "1"),
+                        new EnsemblePlageHoraire("5","6","3", "1"),
+                        new EnsemblePlageHoraire("7","8","4", "1"),
+                        new EnsemblePlageHoraire("9","10","5", "1"),
+                        new EnsemblePlageHoraire("11","12","6", "1"),
+                        new EnsemblePlageHoraire("13","14","7", "1")
+                };
+
+        FichePlageHoraire[] listeFichePlageHorraire =
+                {
+                        new FichePlageHoraire("Nom 0", "1", "Information 0", "c:/photo0"),
+                        new FichePlageHoraire("Nom 1", "1", "Information 1", "c:/photo1"),
+                        new FichePlageHoraire("Nom 2", "1", "Information 2", "c:/photo2"),
+                        new FichePlageHoraire("Nom 3", "1", "Information 3", "c:/photo3"),
+                };
+
+        for (int i = 0; i < listePlage.length; i++) {
+            accesHoraires.addPlageHoraire(listePlage[i]);
+        }
+
+        for (int i = 0; i < listeFichePlageHorraire.length; i++) {
+            accesHoraires.addFichePlageHoraire(listeFichePlageHorraire[i]);
+        }
+
+        for (int i = 0; i < listeEnsemble.length; i++) {
+            accesHoraires.addEnsemblePlageHoraire(listeEnsemble[i]);
+        }
+
+        Log.i("IMPORTATION", "Fin");
+    }
+
 }
 }

@@ -1,5 +1,11 @@
 package com.example.gestionhoraires.beans;
 
+import com.example.gestionhoraires.HelperBDHoraire;
+import com.example.gestionhoraires.HoraireDAO;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Modélise une plage horaire
  */
@@ -91,6 +97,18 @@ public class EnsemblePlageHoraire {
 
     public void setIdFichePlageHoraire(String idFichePlageHoraire) {
         this.idFichePlageHoraire = idFichePlageHoraire;
+    }
+
+    public JSONObject getJSON() throws JSONException {
+        JSONObject jsonEnsemble = new JSONObject();
+
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.id);
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN, this.idPlageHoraireMatin);
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR, this.idPlageHoraireSoir);
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.idJour);
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.idFichePlageHoraire);
+
+        return jsonEnsemble;
     }
 
 }
