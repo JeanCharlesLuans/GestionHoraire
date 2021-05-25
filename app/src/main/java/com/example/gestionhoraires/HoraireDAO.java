@@ -127,7 +127,7 @@ public class HoraireDAO {
     public static final int FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_INFORMATION = 2;
 
     /** Numéro de la colonne contenant le chemin de l'image */
-    public static final int FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CHEMIN_IMAGE = 4;
+    public static final int FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CHEMIN_IMAGE = 3;
 
     //// Jour ////
     /** Numéro de la colonne de la clé */
@@ -237,11 +237,11 @@ public class HoraireDAO {
                 + HelperBDHoraire.FICHE_PLAGE_HORAIRE_CLE + " = " + id;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
         cursor.moveToFirst();
-        fichePlageHoraire.setId(cursor.getString(0));
-        fichePlageHoraire.setNom(cursor.getString(1));
-        fichePlageHoraire.setInformation(cursor.getString(2));
-        fichePlageHoraire.setInformation(cursor.getString(3));
-        fichePlageHoraire.setIdCategorie(cursor.getString(4));
+        fichePlageHoraire.setId(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+        fichePlageHoraire.setNom(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_NOM));
+        fichePlageHoraire.setInformation(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_INFORMATION));
+        fichePlageHoraire.setCheminPhoto(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_CHEMIN_IMAGE));
+        fichePlageHoraire.setIdCategorie(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE_CATEGORIE));
         return fichePlageHoraire;
     }
 
@@ -257,10 +257,10 @@ public class HoraireDAO {
                         + HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE + " = " + id;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
         cursor.moveToFirst();
-        ficheHorairePonctuelle.setId(cursor.getString(0));
-        ficheHorairePonctuelle.setNom(cursor.getString(1));
-        ficheHorairePonctuelle.setInformation(cursor.getString(2));
-        ficheHorairePonctuelle.setCheminPhoto(cursor.getString(3));
+        ficheHorairePonctuelle.setId(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
+        ficheHorairePonctuelle.setNom(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_NOM));
+        ficheHorairePonctuelle.setInformation(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_INFORMATION));
+        ficheHorairePonctuelle.setCheminPhoto(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CHEMIN_IMAGE));
         return ficheHorairePonctuelle;
     }
 
@@ -275,8 +275,9 @@ public class HoraireDAO {
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_LOCALISATION + " WHERE "
                         + HelperBDHoraire.LOCALISATION_CLE + " = " + idLocalisation;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
-        localisation.setId(cursor.getString(0));
-        localisation.setNom(cursor.getString(1));
+        cursor.moveToFirst();
+        localisation.setId(cursor.getString(LOCALISATION_NUM_COLONNE_CLE));
+        localisation.setNom(cursor.getString(LOCALISATION_NUM_COLONNE_NOM));
         localisation.setIsDefault(Integer.parseInt(cursor.getString(LOCALISATION_NUM_COLONNE_DEFAUT)));
         return localisation;
     }
@@ -292,9 +293,10 @@ public class HoraireDAO {
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE + " WHERE "
                         + HelperBDHoraire.CATEGORIE_CLE + " = " + idCategorie;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
-        categorie.setId(cursor.getString(0));
-        categorie.setIdLocalisation(cursor.getString(1));
-        categorie.setNom(cursor.getString(2));
+        cursor.moveToFirst();
+        categorie.setId(cursor.getString(CATEGORIE_NUM_COLONNE_CLE));
+        categorie.setIdLocalisation(cursor.getString(CATEGORIE_NUM_COLONNE_CLE_LOCALISATION));
+        categorie.setNom(cursor.getString(CATEGORIE_NUM_COLONNE_NOM));
         categorie.setIsDefault(Integer.parseInt(cursor.getString(CATEGORIE_NUM_COLONNE_DEFAUT)));
         return categorie;
     }
@@ -311,8 +313,9 @@ public class HoraireDAO {
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_JOUR + " WHERE "
                         + HelperBDHoraire.JOUR_CLE + " = " + idJour;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
-        jour.setId(cursor.getString(0));
-        jour.setJour(cursor.getString(1));
+        cursor.moveToFirst();
+        jour.setId(cursor.getString(JOUR_NUM_COLONNE_CLE));
+        jour.setJour(cursor.getString(JOUR_NUM_COLONNE_LIBELLE));
         return jour;
     }
 
@@ -327,11 +330,12 @@ public class HoraireDAO {
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_HORAIRE_PONCTUELLE + " WHERE "
                         + HelperBDHoraire.HORAIRE_PONCTUELLE_CLE + " = " + idHorairePonctuelle;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
-        horairePonctuelle.setId(cursor.getString(0));
-        horairePonctuelle.setHoraireDebut(cursor.getString(1));
-        horairePonctuelle.setHoraireFin(cursor.getString(2));
-        horairePonctuelle.setIdJour(cursor.getString(3));
-        horairePonctuelle.setIdFicheHorairePonctuelle(cursor.getString(4));
+        cursor.moveToFirst();
+        horairePonctuelle.setId(cursor.getString(HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
+        horairePonctuelle.setHoraireDebut(cursor.getString(HORAIRE_PONCTUELLE_NUM_COLONNE_HORAIRE_OUVERTURE));
+        horairePonctuelle.setHoraireFin(cursor.getString(HORAIRE_PONCTUELLE_NUM_COLONNE_HORAIRE_FERMETURE));
+        horairePonctuelle.setIdJour(cursor.getString(HORAIRE_PONCTUELLE_NUM_COLONNE_CLE_JOUR));
+        horairePonctuelle.setIdFicheHorairePonctuelle(cursor.getString(HORAIRE_PONCTUELLE_NUM_COLONNE_CLE_FICHE_HORAIRE_PONCTUELLE));
         return horairePonctuelle;
     }
 
@@ -340,17 +344,18 @@ public class HoraireDAO {
      * @param idEnsemblePlageHoraire identifiant de l'ensemble que l'on souhaite récupérer
      * @return l'ensemble de plage horaire
      */
-    public EnsemblePlageHoraire getEnsemblePlageHoraire(String idEnsemblePlageHoraire) {
+    public EnsemblePlageHoraire getEnsemblePlageHoraireById(String idEnsemblePlageHoraire) {
         EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire();
         String requete =
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE + " WHERE "
                         + HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE + " = " + idEnsemblePlageHoraire;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
-        ensemblePlageHoraire.setId(cursor.getString(0));
-        ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(1));
-        ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(2));
-        ensemblePlageHoraire.setIdJour(cursor.getString(3));
-        ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(4));
+        cursor.moveToFirst();
+        ensemblePlageHoraire.setId(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+        ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_MATIN));
+        ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_SOIR));
+        ensemblePlageHoraire.setIdJour(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_JOUR));
+        ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_FICHE_PLAGE_HORAIRE));
         return ensemblePlageHoraire;
     }
 
@@ -365,11 +370,12 @@ public class HoraireDAO {
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_PLAGE_HORAIRE + " WHERE "
                         + HelperBDHoraire.PLAGE_HORAIRE_CLE + " = " + idPlageHoraire;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
-        plageHoraire.setId(cursor.getString(0));
-        plageHoraire.setHoraireOuverture(cursor.getString(1));
-        plageHoraire.setHoraireFermeture(cursor.getString(2));
-        plageHoraire.setEtatOuverture(Integer.parseInt(cursor.getString(3)));
-        plageHoraire.setEtatFermeture(Integer.parseInt(cursor.getString(4)));
+        cursor.moveToFirst();
+        plageHoraire.setId(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_CLE));
+        plageHoraire.setHoraireOuverture(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_HORAIRE_OUVERTURE));
+        plageHoraire.setHoraireFermeture(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_HORAIRE_FERMETURE));
+        plageHoraire.setEtatOuverture(Integer.parseInt(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_ETAT_OUVERTURE)));
+        plageHoraire.setEtatFermeture(Integer.parseInt(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_ETAT_FERMETURE)));
         return plageHoraire;
     }
 
