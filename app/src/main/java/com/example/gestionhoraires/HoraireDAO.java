@@ -277,6 +277,7 @@ public class HoraireDAO {
         Cursor cursor = baseHoraire.rawQuery(requete, null);
         localisation.setId(cursor.getString(0));
         localisation.setNom(cursor.getString(1));
+        localisation.setIsDefault(Integer.parseInt(cursor.getString(LOCALISATION_NUM_COLONNE_DEFAUT)));
         return localisation;
     }
 
@@ -294,6 +295,7 @@ public class HoraireDAO {
         categorie.setId(cursor.getString(0));
         categorie.setIdLocalisation(cursor.getString(1));
         categorie.setNom(cursor.getString(2));
+        categorie.setIsDefault(Integer.parseInt(cursor.getString(CATEGORIE_NUM_COLONNE_DEFAUT)));
         return categorie;
     }
 
@@ -742,5 +744,17 @@ public class HoraireDAO {
             position++;
         }
         return -1;
+    }
+
+    /**
+     * Retourne un curseur sur les catégories de la localisation
+     * @param idLocalisation l'identifiant
+     * @return le curseur
+     */
+    public Cursor getCursorCategorieByLocalisation(String idLocalisation) {
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
+                + " WHERE " + HelperBDHoraire.LOCALISATION_CLE + " = " + idLocalisation;
+        return baseHoraire.rawQuery(requete, null);
     }
 }

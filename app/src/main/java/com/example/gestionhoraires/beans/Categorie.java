@@ -14,10 +14,14 @@ public class Categorie {
     /** La lococalisation de la catégorie */
     private String idLocalisation;
 
+    /** L'identifiant qui détermine si c'est la catégorie par défaut */
+    private int isDefault;
+
     /**
      * Constructeur sans argument
      */
     public Categorie() {
+        this.isDefault = 0;
     }
 
     /**
@@ -26,6 +30,7 @@ public class Categorie {
      * @param idLocalisation la catégorie de la localisation
      */
     public Categorie(String nom, String idLocalisation) {
+        this.isDefault = 0;
         this.nom = nom;
         this.idLocalisation = idLocalisation;
     }
@@ -56,5 +61,13 @@ public class Categorie {
 
     public void setIdLocalisation(String idLocalisation) {
         this.idLocalisation = idLocalisation;
+    }
+
+    public int getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(int isDefault) {
+        this.isDefault = isDefault;
     }
 }

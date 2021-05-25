@@ -11,10 +11,14 @@ public class Localisation {
     /** Nom de la localisation */
     private String nom;
 
+    /** L'identifiant qui permet de déterminer s'il s'agit de la localisation par défaut */
+    private int isDefault;
+
     /**
      * Constructeur sans argument
      */
     public Localisation() {
+        this.isDefault = 0;
     }
 
     /**
@@ -22,6 +26,7 @@ public class Localisation {
      * @param nom le nom de la localisation
      */
     public Localisation(String nom) {
+        this.isDefault = 0;
         this.nom = nom;
     }
 
@@ -43,6 +48,14 @@ public class Localisation {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public int getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(int isDefault) {
+        this.isDefault = isDefault;
     }
 
 }
