@@ -1,5 +1,10 @@
 package com.example.gestionhoraires.beans;
 
+import com.example.gestionhoraires.HelperBDHoraire;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Modélise une plage horaire
  */
@@ -102,5 +107,16 @@ public class PlageHoraire {
 
     public void setEstFerme(int estFerme) {
         this.estFerme = estFerme;
+    }
+    
+    public JSONObject getJSON() throws JSONException {
+        JSONObject jsonPlage = new JSONObject();
+        jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_CLE, id);
+        jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE, this.horaireOuverture);
+        jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE, this.horaireFermeture);
+        jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE, this.etatOuverture);
+        jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE, this.etatFermeture);
+
+        return jsonPlage;
     }
 }

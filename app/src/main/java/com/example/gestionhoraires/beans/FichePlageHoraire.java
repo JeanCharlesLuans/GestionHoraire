@@ -93,6 +93,12 @@ public class FichePlageHoraire {
         this.id = id;
     }
 
+    /**
+     * Formate un JSON avec la localisation -> Categorie -> Fiche -> Ensemble -> Horaire
+     * @param horaireDAO acces a la BD
+     * @return le SON formater
+     * @throws JSONException
+     */
     public JSONObject getJson(HoraireDAO horaireDAO) throws JSONException {
 
         JSONObject general = new JSONObject();
@@ -114,7 +120,7 @@ public class FichePlageHoraire {
         // Initialisation de l'objets
         ArrayList<EnsemblePlageHoraire> listeEnsemble = horaireDAO.getEnsembleHorraireOfFiche(this.id);
         for (int i = 0; i < listeEnsemble.size(); i++) {
-            jsonHoraire.put(listeEnsemble.get(i).getJSON());
+            jsonHoraire.put(listeEnsemble.get(i).getJSON(horaireDAO));
         }
 
         // Initialisation de l'objet HoraireDAO
@@ -123,9 +129,10 @@ public class FichePlageHoraire {
         jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION, this.information);
         jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_CHEMIN_IMAGE, this.cheminPhoto);
 
+
+        general.put("LOCALISATION",jsonLocalisation);
         general.put("FICHE",jsonFiche);
         general.put("CATEGORIE",jsonCategorie);
-        general.put("LOCALISATION",jsonLocalisation);
         general.put("HORAIRE",jsonHoraire);
 
         return general;

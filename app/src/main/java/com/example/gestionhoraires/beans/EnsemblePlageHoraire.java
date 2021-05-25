@@ -99,12 +99,16 @@ public class EnsemblePlageHoraire {
         this.idFichePlageHoraire = idFichePlageHoraire;
     }
 
-    public JSONObject getJSON() throws JSONException {
+    public JSONObject getJSON(HoraireDAO accesBD) throws JSONException {
+
+        PlageHoraire plageHoraireMatin = accesBD.getPlageHoraireById(idPlageHoraireMatin);
+        PlageHoraire plageHoraireSoir = accesBD.getPlageHoraireById(idPlageHoraireSoir);
+
         JSONObject jsonEnsemble = new JSONObject();
 
         jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.id);
-        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN, this.idPlageHoraireMatin);
-        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR, this.idPlageHoraireSoir);
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN, plageHoraireMatin.getJSON());
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR, plageHoraireMatin.getJSON());
         jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.idJour);
         jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.idFichePlageHoraire);
 

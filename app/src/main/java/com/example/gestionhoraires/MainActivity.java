@@ -747,7 +747,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Une erreur c'est produite durant l'ecriture du fichier", Toast.LENGTH_LONG);
         }
 
-        Toast.makeText(this, "Exportation du JSON terminé", Toast.LENGTH_LONG);
+        Toast.makeText(this, "Exportation du JSON terminé", Toast.LENGTH_LONG).show();
 
     }
 
