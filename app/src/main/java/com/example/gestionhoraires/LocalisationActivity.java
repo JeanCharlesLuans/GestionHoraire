@@ -169,20 +169,20 @@ public class LocalisationActivity extends AppCompatActivity {
         /* Si la localisation n'est pas celle par défaut */
         if (!curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_DEFAUT).equals("0")) {
             Toast.makeText(this, R.string.toast_localisation_defaut, Toast.LENGTH_LONG).show();
+        } else {
+            // on affiche une boite de confirmation
+            new AlertDialog.Builder(this)
+                    .setTitle(getResources().getString(R.string.alerte_suppression))
+                    .setNegativeButton(getResources().getString(R.string.bouton_non), null)
+                    .setPositiveButton(getResources().getString(R.string.bouton_oui),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    gestionConflit(isConflit);
+                                }
+                            })
+                    .show();
         }
-
-        // on affiche une boite de confirmation
-        new AlertDialog.Builder(this)
-                .setTitle(getResources().getString(R.string.alerte_suppression))
-                .setNegativeButton(getResources().getString(R.string.bouton_non), null)
-                .setPositiveButton(getResources().getString(R.string.bouton_oui),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                gestionConflit(isConflit);
-                            }
-                        })
-                .show();
 
         curseurSurBase = accesHoraire.getCursorAllLocalisation();
         adaptateur.swapCursor(curseurSurBase);
