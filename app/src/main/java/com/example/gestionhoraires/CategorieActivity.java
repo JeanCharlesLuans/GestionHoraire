@@ -200,10 +200,11 @@ public class CategorieActivity extends AppCompatActivity {
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_categorie, null);
 
         /** Création de l'alerte si les données sont invalides */
-        AlertDialog.Builder alerte = new AlertDialog.Builder(this)
+        AlertDialog alerte = new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.alerte_titre))
                 .setMessage(getResources().getString(R.string.alerte_nom))
-                .setPositiveButton(getResources().getString(R.string.bouton_positif), null);
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null)
+                .create();
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.ajout_categorie))

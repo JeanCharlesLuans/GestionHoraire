@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -192,7 +193,8 @@ public class LocalisationActivity extends AppCompatActivity {
         if (isConflit) {
             // Si il y a un conflit, on laisse le choix a l'utilisateur de l'actiona effectuer
             AlertDialog dialogConflit = new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.alerte_conflit))
+                    .setTitle(getResources().getString(R.string.titre_alerte_conflit))
+                    .setMessage(getResources().getString(R.string.alerte_conflit))
                     .setNeutralButton(getResources().getString(R.string.bouton_negatif), null)
                     .setNegativeButton(getResources().getString(R.string.delete_all), null)
                     .setPositiveButton(getResources().getString(R.string.move_all), null)
@@ -215,9 +217,7 @@ public class LocalisationActivity extends AppCompatActivity {
                     boutonMove.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            // TODO Move to other list
-
-                            // when everything is ok
+                            moveLocalisationDialog();
                             dialogConflit.dismiss();
                         }
                     });
@@ -230,6 +230,56 @@ public class LocalisationActivity extends AppCompatActivity {
             accesHoraire.deleteLocalisation(curseurSurBase.getString(
                     accesHoraire.LOCALISATION_NUM_COLONNE_CLE));
         }
+    }
+
+    /**
+     * affiche une fenetre de dialogue a l'utilisateur pour qu'il puissen choisir la
+     * liste qui recevras les localisation
+     */
+    private void moveLocalisationDialog() {
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_spinner_localisation, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.title_move_localisation))
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_deplcaer), null)
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Spinner localisationSpinner = ((AlertDialog) dialog).findViewById(R.id.spinner_localisation);
+                SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
+                adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                localisationSpinner.setAdapter(adapterLocalisation);
+
+
+                Button boutonMove = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                boutonMove.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // TODO déplacer loc
+
+                        // when everything is ok
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * @return un Adapter contenant l'ensemble des localisation
+     */
+    private SimpleCursorAdapter getAdapterLocalisation() {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraire.getCursorAllLocalisation(),
+                new String[] {"nom"}, // TODO nom Colonne
+                new int[] {android.R.id.text1,}, 0);
     }
 
     /**

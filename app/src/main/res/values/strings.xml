@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">Gestion Horaires</string>
 
+    <!-- Floating Button -->
     <string name="fab_description">Ajouter Horaire ou plage horaire</string>
+    <string name="ajout_horaires_ponctuelles">Ajoutez une horaires ponctuelles</string>
+    <string name="ajout_heure_fin">Ajouter une heure de fin</string>
+    <string name="heure_fin">Heure de fin </string>
 
     <!-- boutons -->
     <string name="bouton_oui">Oui</string>
     <string name="bouton_non">Non</string>
     <string name="bouton_positif">OK</string>
     <string name="bouton_ajouter">Ajouter</string>
+    <string name="bouton_deplcaer">Déplacer</string>
     <string name="bouton_retour">Retour</string>
     <string name="bouton_appliquer">Appliquer</string>
     <string name="bouton_effacer">Effacer</string>
@@ -41,6 +46,7 @@
     <string name="colonne_information">Information</string>
     <string name="colonne_jour">Jour</string>
     <string name="colonne_horaire">Horaire</string>
+    <string name="colonne_heure">Heure</string>
 
     <!-- Paramètre -->
     <string name="titre_boite_parametre">Paramètre</string>
@@ -53,9 +59,11 @@
     <string name="alerte_titre">Saisie invalide</string>
     <string name="alerte_nom">Vous devez renseigner le nom.</string>
     <string name="alerte_suppression">Voulez-vous vraiment supprimer cette localisation ?</string>
+    <string name="titre_alerte_conflit">Conflit ! que voulez vous faire ?</string>
     <string name="alerte_conflit">Il semble il y avoir un conflit, que voulez-vous faire ?</string>
     <string name="delete_all">Tout Supprimer</string>
     <string name="move_all">Déplacer dans une autre liste</string>
+    <string name="title_move_localisation">Déplacer dans une autre liste</string>
 
     <!-- Filtre -->
     <string name="titre_boite_filtre">Selectionnez les filtres</string>
@@ -72,5 +80,6 @@
     <string name="titre_boite_export">Quel type d\'export voulez-vous effectuez ?</string>
     <string name="label_export_sms">Export par SMS</string>
     <string name="label_export_json">Eport en JSON</string>
+
 
 </resources>
