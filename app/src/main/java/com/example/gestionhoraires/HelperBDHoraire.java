@@ -251,7 +251,8 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
             + NOM_TABLE_CATEGORIE + "." + CATEGORIE_NOM + ", "
             + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE_LOCALISATION + ", "
             + NOM_TABLE_CATEGORIE + "." + CATEGORIE_IS_DEFAULT + ", "
-            + NOM_TABLE_LOCALISATION + "." + LOCALISATION_NOM
+            + NOM_TABLE_LOCALISATION + "." + LOCALISATION_NOM + ", "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_HORAIRE_PONCTUELLE
             + " FROM " + NOM_TABLE_CATEGORIE + " INNER JOIN " + NOM_TABLE_LOCALISATION + " ON "
             + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE_LOCALISATION + " = "
             + NOM_TABLE_LOCALISATION + "." + LOCALISATION_CLE;
@@ -392,6 +393,16 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
         enregistrement.put(CATEGORIE_NOM, "Principale");
         enregistrement.put(CATEGORIE_CLE_LOCALISATION, 1);
         enregistrement.put(CATEGORIE_IS_DEFAULT, 1);
+        enregistrement.put(CATEGORIE_HORAIRE_PONCTUELLE, 0);
+
+        db.insert(NOM_TABLE_CATEGORIE, CATEGORIE_CLE, enregistrement);
+
+        enregistrement = new ContentValues();
+
+        enregistrement.put(CATEGORIE_NOM, "Principale");
+        enregistrement.put(CATEGORIE_CLE_LOCALISATION, 1);
+        enregistrement.put(CATEGORIE_IS_DEFAULT, 1);
+        enregistrement.put(CATEGORIE_HORAIRE_PONCTUELLE, 1);
 
         db.insert(NOM_TABLE_CATEGORIE, CATEGORIE_CLE, enregistrement);
     }

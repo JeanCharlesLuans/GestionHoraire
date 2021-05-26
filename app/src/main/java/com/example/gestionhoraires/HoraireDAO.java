@@ -182,8 +182,16 @@ public class HoraireDAO {
             "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_JOUR + " ORDER BY " + HelperBDHoraire.JOUR_CLE;
 
     /** Requête pour sélectionner toutes les catégories avec leurs localisations associées */
-    public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION =
-            "SELECT * FROM " + HelperBDHoraire.VUE_CATEGORIE_LOCALISATION + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
+    public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_PLAGE_HORAIRE =
+            "SELECT * FROM " + HelperBDHoraire.VUE_CATEGORIE_LOCALISATION
+                    + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0"
+                    + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
+
+    /** Requête pour sélectionner toutes les catégories avec leurs localisations associées */
+    public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_HORAIRE_PONCTUEL =
+            "SELECT * FROM " + HelperBDHoraire.VUE_CATEGORIE_LOCALISATION
+                    + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 1"
+                    + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
 
     /**
      * Constructeur avec argument
@@ -212,8 +220,16 @@ public class HoraireDAO {
      * Retourne un curseur sur la vue
      * @return le curseur
      */
-    public Cursor getCursorAllCategorieLocalisation() {
-        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION, null);
+    public Cursor getCursorAllCategorieLocalisationPlageHoraire() {
+        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_PLAGE_HORAIRE, null);
+    }
+
+    /**
+     * Retourne un curseur sur la vue
+     * @return le curseur
+     */
+    public Cursor getCursorAllCategorieLocalisationHorairePonctuel() {
+        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_HORAIRE_PONCTUEL, null);
     }
 
     /**
@@ -443,6 +459,7 @@ public class HoraireDAO {
         ajoutCategorie.put(HelperBDHoraire.CATEGORIE_NOM, categorie.getNom());
         ajoutCategorie.put(HelperBDHoraire.CATEGORIE_CLE_LOCALISATION, categorie.getIdLocalisation());
         ajoutCategorie.put(HelperBDHoraire.CATEGORIE_IS_DEFAULT, 0);
+        ajoutCategorie.put(HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE, categorie.getIsHorairePonctuelle());
         baseHoraire.insert(HelperBDHoraire.NOM_TABLE_CATEGORIE, HelperBDHoraire.LOCALISATION_NOM, ajoutCategorie);
     }
 
@@ -578,6 +595,7 @@ public class HoraireDAO {
         ContentValues nouvelleCategorie = new ContentValues();
         nouvelleCategorie.put(HelperBDHoraire.CATEGORIE_NOM, categorie.getNom());
         nouvelleCategorie.put(HelperBDHoraire.CATEGORIE_CLE_LOCALISATION, categorie.getIdLocalisation());
+        nouvelleCategorie.put(HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE, categorie.getIsHorairePonctuelle());
         baseHoraire.update(HelperBDHoraire.NOM_TABLE_CATEGORIE,
                 nouvelleCategorie,
                 HelperBDHoraire.CATEGORIE_CLE + " = ?",
@@ -757,7 +775,6 @@ public class HoraireDAO {
                 + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION
                 + " = " + idLocalisation;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
-        cursor.moveToFirst();
         if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
                 Categorie categorie = new Categorie();

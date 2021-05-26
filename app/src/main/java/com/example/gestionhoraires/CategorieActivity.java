@@ -85,7 +85,7 @@ public class CategorieActivity extends AppCompatActivity {
 
         accesHoraire = new HoraireDAO(this);
         accesHoraire.open();
-        curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+        curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
         curseurSurBase.moveToFirst();
 
         // On crée un adpateur pour rassembler les données à afficher
@@ -205,7 +205,7 @@ public class CategorieActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     accesHoraire.deleteCategorie(identifiant);
-                                    curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+                                    curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
                                     adaptateur.swapCursor(curseurSurBase);
                                     onContentChanged();
                                 }
@@ -213,7 +213,7 @@ public class CategorieActivity extends AppCompatActivity {
                     .show();
         }
 
-        curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+        curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
         adaptateur.swapCursor(curseurSurBase);
         onContentChanged();
     }
@@ -255,14 +255,15 @@ public class CategorieActivity extends AppCompatActivity {
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        int ponctuel = isPonctuel ? 1 : 0;
                         EditText edt_nom = dialog.findViewById(R.id.edt_nom);
                         String name = edt_nom.getText().toString();
                         if (!name.equals("")) {
-                            accesHoraire.addCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + "", 0)); // TODO
+                            accesHoraire.addCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + "", ponctuel));
                         } else {
                             alerte.show();
                         }
-                        curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+                        curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
                         adaptateur.swapCursor(curseurSurBase);
                         onContentChanged();
                         //close when everythings is OK
@@ -322,12 +323,13 @@ public class CategorieActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         String name = edtNom.getText().toString();
+                        int ponctuel = isPonctuel ? 1 : 0;
                         if (!name.equals("")) {
-                            accesHoraire.updateCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + "", 0), identifiant); // TODO
+                            accesHoraire.updateCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + "", ponctuel), identifiant);
                         } else {
                             alerte.show();
                         }
-                        curseurSurBase = accesHoraire.getCursorAllCategorieLocalisation();
+                        curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
                         adaptateur.swapCursor(curseurSurBase);
                         onContentChanged();
                         //close when everythings is OK
