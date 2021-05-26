@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     /** Identifiant de l'intention pour la gestion des localisations */
     private final int CODE_GESTION_LOCALISATION = 20;
 
+    /** Clé pour le message transmis par l'activité secondaire */
+    public final static String CLE_H_PONCTUEL = "com.example.gestionhoraires.PONCTUEL";
+
     /** barre d'outils de l'applications */
     private Toolbar maBarreOutil;
 
@@ -180,16 +183,10 @@ public class MainActivity extends AppCompatActivity {
                         MenuItem filtre = menu.findItem(R.id.filtre);
                         MenuItem import_option = menu.findItem(R.id.import_option);
                         MenuItem export_option = menu.findItem(R.id.export_option);
-                        MenuItem settings_gestion_categorie = menu.findItem(R.id.settings_gestion_categorie);
-                        MenuItem settings_gestion_localisation = menu.findItem(R.id.settings_gestion_localisation);
-                        MenuItem annuler_option = menu.findItem(R.id.annuler_option);
                         recherche.setVisible(visibility);
                         filtre.setVisible(visibility);
                         import_option.setVisible(visibility);
                         export_option.setVisible(visibility);
-                        settings_gestion_categorie.setVisible(visibility);
-                        settings_gestion_localisation.setVisible(visibility);
-                        annuler_option.setVisible(visibility);
                     }
                 }
         );
@@ -309,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.settings_gestion_categorie :
                 Intent catego = new Intent(MainActivity.this,
                         CategorieActivity.class);
+                catego.putExtra(MainActivity.CLE_H_PONCTUEL, lesOnglets.getCurrentTab() == TAB_H_PONCTUEL);
                 startActivityForResult(catego, CODE_GESTION_CATEGORIE);
                 break;
             case R.id.settings_gestion_localisation :
@@ -377,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
      * permet l'ajout d'un plage horaire en appelant une nouvelle activité
      */
     private void ajouterPlageHoraire() {
-
+        // TODO ajout plage horaire
     }
 
     /**

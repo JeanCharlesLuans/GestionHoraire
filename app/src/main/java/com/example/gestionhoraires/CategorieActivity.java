@@ -50,10 +50,28 @@ public class CategorieActivity extends AppCompatActivity {
     /** Liste présenter dans l'application */
     private ListView listeVueCategorie;
 
+    /**
+     * Vrai si l'activité a été lancer depuis l'onglet des horaire ponctuel
+     * Il servira a afficher la bonne liste de catégorie
+     */
+    private boolean isPonctuel; // TODO utiliser isPonctuel
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        // On récupère les options de l'intentions
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                isPonctuel = false;
+            } else {
+                isPonctuel = extras.getBoolean(MainActivity.CLE_H_PONCTUEL);
+            }
+        } else {
+            isPonctuel = (boolean) savedInstanceState.getSerializable(MainActivity.CLE_H_PONCTUEL);
+        }
 
         // On ajoute la ToolBar
         maBarreOutil = findViewById(R.id.settings_tool_bar);
