@@ -51,8 +51,11 @@ public class HoraireDAO {
     /** Numéro de la colonne contenant le nom */
     public static final int CATEGORIE_NUM_COLONNE_NOM = 2;
 
-    /** Numéro de la contenant l'information de catégorie par défaut */
+    /** Numéro de la colonne contenant l'information de catégorie par défaut */
     public static final int CATEGORIE_NUM_COLONNE_DEFAUT = 3;
+
+    /** Numéro de la colonne contenant l'indicateur de plage horaire ou horaire ponctuel */
+    public static final int CATEGORIE_NUM_COLONNE_HORAIRE_PONCTUELLE = 4;
 
     //// Fiche Plage Horaire ////
     /** Numéro de la colonne de la clé */
@@ -154,9 +157,17 @@ public class HoraireDAO {
     public static final String REQUETE_TOUT_SELECTIONNER_LOCALISATION =
             "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_LOCALISATION + " ORDER BY " + HelperBDHoraire.LOCALISATION_NOM;
 
-    /** Requête pour sélectionner toutes les catégories */
-    public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE =
-            "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
+    /** Requête pour sélectionner toutes les catégories des plages horaires */
+    public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_PLAGE_HORAIRE =
+            "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
+                    + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0"
+                    + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
+
+    /** Requête pour sélectionner toutes les catégories des horaires ponctuelles */
+    public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_HORAIRE_PONCTUELLE =
+            "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
+                    + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 1"
+                    + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
 
     /** Requête pour sélectionner toutes fiches plage horaire */
     public static final String REQUETE_TOUT_SELECTIONNER_FICHE_PLAGE_HORAIRE =
@@ -217,8 +228,16 @@ public class HoraireDAO {
      * Retourne un curseur sur toutes les catégories
      * @return le curseur
      */
-    public Cursor getCursorAllCategorie() {
-        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE, null);
+    public Cursor getCursorAllCategoriePlageHoraire() {
+        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_PLAGE_HORAIRE, null);
+    }
+
+    /**
+     * Retourne un curseur sur toutes les catégories
+     * @return le curseur
+     */
+    public Cursor getCursorAllCategorieHorairePonctuelle() {
+        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_HORAIRE_PONCTUELLE, null);
     }
 
     /**
@@ -319,6 +338,7 @@ public class HoraireDAO {
         categorie.setIdLocalisation(cursor.getString(CATEGORIE_NUM_COLONNE_CLE_LOCALISATION));
         categorie.setNom(cursor.getString(CATEGORIE_NUM_COLONNE_NOM));
         categorie.setIsDefault(Integer.parseInt(cursor.getString(CATEGORIE_NUM_COLONNE_DEFAUT)));
+        categorie.setIsHorairePonctuelle(Integer.parseInt(cursor.getString(CATEGORIE_NUM_COLONNE_HORAIRE_PONCTUELLE)));
         return categorie;
     }
 
@@ -669,14 +689,15 @@ public class HoraireDAO {
     }
 
     /**
-     * Retourne un curseur sur les catégories de la localisation
+     * Retourne un curseur sur les catégories de la localisation, uniquement pour les catégories des plages horaires
      * @param idLocalisation l'identifiant
      * @return le curseur
      */
     public Cursor getCursorCategorieByLocalisation(String idLocalisation) {
         String requete =
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
-                + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation;
+                + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation
+                + " AND " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0";
         return baseHoraire.rawQuery(requete, null);
     }
 
@@ -738,14 +759,11 @@ public class HoraireDAO {
         Cursor cursor = baseHoraire.rawQuery(requete, null);
         cursor.moveToFirst();
         if (cursor.getCount() != 0) {
-            Categorie categorie = new Categorie(cursor.getString(2),
-                    idLocalisation);
-            categorie.setId(cursor.getString(0));
-            listeCategories.add(categorie);
-
             while (cursor.moveToNext()) {
+                Categorie categorie = new Categorie();
+                int isPonctuelle = Integer.parseInt(cursor.getString(CATEGORIE_NUM_COLONNE_HORAIRE_PONCTUELLE));
                 categorie = new Categorie(cursor.getString(2),
-                        idLocalisation);
+                        idLocalisation, isPonctuelle);
                 categorie.setId(cursor.getString(0));
                 listeCategories.add(categorie);
             }

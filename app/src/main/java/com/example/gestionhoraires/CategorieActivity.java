@@ -255,7 +255,7 @@ public class CategorieActivity extends AppCompatActivity {
                         EditText edt_nom = dialog.findViewById(R.id.edt_nom);
                         String name = edt_nom.getText().toString();
                         if (!name.equals("")) {
-                            accesHoraire.addCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + ""));
+                            accesHoraire.addCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + "", 0)); // TODO
                         } else {
                             alerte.show();
                         }
@@ -320,7 +320,7 @@ public class CategorieActivity extends AppCompatActivity {
 
                         String name = edtNom.getText().toString();
                         if (!name.equals("")) {
-                            accesHoraire.updateCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + ""), identifiant);
+                            accesHoraire.updateCategorie(new Categorie(name, spinLocalisation.getSelectedItemId() + "", 0), identifiant); // TODO
                         } else {
                             alerte.show();
                         }

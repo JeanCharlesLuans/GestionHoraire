@@ -39,6 +39,9 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
     /** Nom du champs indiquant si la catégorie est celle par défaut */
     public static final String CATEGORIE_IS_DEFAULT = "isDefault";
 
+    /** Nom du champs indiquant si la catégorie est pour les plages horaires ou pour les horaires ponctuelles */
+    public static final String CATEGORIE_HORAIRE_PONCTUELLE = "isHorairePonctuelle";
+
     //// FichePlageHoraire ////
     /** Nom de la table de FichePlageHoraire */
     public static final String NOM_TABLE_FICHE_PLAGE_HORAIRE = "FichePlageHoraire";
@@ -174,6 +177,7 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + CATEGORIE_CLE_LOCALISATION + " INTEGER,"
                     + CATEGORIE_NOM + " TEXT, "
                     + CATEGORIE_IS_DEFAULT + " INTEGER CHECK (" + CATEGORIE_IS_DEFAULT + "= 0 OR " + CATEGORIE_IS_DEFAULT + "= 1),"
+                    + CATEGORIE_HORAIRE_PONCTUELLE +  " INTEGER CHECK (" + CATEGORIE_HORAIRE_PONCTUELLE + "= 0 OR " + CATEGORIE_HORAIRE_PONCTUELLE + "= 1),"
                     + "FOREIGN KEY(" + CATEGORIE_CLE_LOCALISATION + ") REFERENCES "+ NOM_TABLE_LOCALISATION +"(" + LOCALISATION_CLE + ")"
                     + " ON DELETE CASCADE"
                     +");";

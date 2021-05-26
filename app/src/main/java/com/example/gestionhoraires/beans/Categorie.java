@@ -22,6 +22,9 @@ public class Categorie {
     /** L'identifiant qui détermine si c'est la catégorie par défaut */
     private int isDefault;
 
+    /** Détermine s'il s'agit d'une catégorie pour les plages horaires ou pour les horaires ponctuels */
+    private int isHorairePonctuelle;
+
     /**
      * Constructeur sans argument
      */
@@ -34,10 +37,11 @@ public class Categorie {
      * @param nom le nom de la catégorie
      * @param idLocalisation la catégorie de la localisation
      */
-    public Categorie(String nom, String idLocalisation) {
+    public Categorie(String nom, String idLocalisation, int isHorairePonctuelle) {
         this.isDefault = 0;
         this.nom = nom;
         this.idLocalisation = idLocalisation;
+        this.isHorairePonctuelle = isHorairePonctuelle;
     }
 
     /**
@@ -87,5 +91,14 @@ public class Categorie {
 
     public void setIsDefault(int isDefault) {
         this.isDefault = isDefault;
+    }
+
+
+    public int getIsHorairePonctuelle() {
+        return isHorairePonctuelle;
+    }
+
+    public void setIsHorairePonctuelle(int isHorairePonctuelle) {
+        this.isHorairePonctuelle = isHorairePonctuelle;
     }
 }
