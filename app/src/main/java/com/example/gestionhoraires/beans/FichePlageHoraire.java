@@ -104,8 +104,8 @@ public class FichePlageHoraire {
         JSONObject general = new JSONObject();
 
         // Objet a retourner
-        JSONObject jsonLocalisation = new JSONObject();
-        JSONObject jsonCategorie = new JSONObject();
+        JSONObject jsonLocalisation;
+        JSONObject jsonCategorie;
         JSONObject jsonFiche = new JSONObject();
         JSONArray jsonHoraire = new JSONArray();
 
@@ -130,10 +130,10 @@ public class FichePlageHoraire {
         jsonFiche.put(HelperBDHoraire.FICHE_PLAGE_HORAIRE_CHEMIN_IMAGE, this.cheminPhoto);
 
 
-        general.put("LOCALISATION",jsonLocalisation);
-        general.put("FICHE",jsonFiche);
-        general.put("CATEGORIE",jsonCategorie);
-        general.put("HORAIRE",jsonHoraire);
+        general.put(HelperBDHoraire.NOM_TABLE_LOCALISATION,jsonLocalisation);
+        general.put(HelperBDHoraire.NOM_TABLE_CATEGORIE,jsonCategorie);
+        general.put(HelperBDHoraire.NOM_TABLE_FICHE_PLAGE_HORAIRE,jsonFiche);
+        general.put(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE,jsonHoraire);
 
         return general;
     }
