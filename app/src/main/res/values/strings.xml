@@ -13,6 +13,7 @@
     <string name="bouton_positif">OK</string>
     <string name="bouton_ajouter">Ajouter</string>
     <string name="bouton_deplcaer">Déplacer</string>
+    <string name="bouton_deplacer_loc">Déplacer localisation</string>
     <string name="bouton_retour">Retour</string>
     <string name="bouton_appliquer">Appliquer</string>
     <string name="bouton_effacer">Effacer</string>

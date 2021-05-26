@@ -12,6 +12,10 @@
 		android:orderInCategory="1"
 		app:showAsAction="ifRoom" />
 	<item
+		android:id="@+id/deplacer"
+		android:title="@string/bouton_deplacer_loc"
+		app:showAsAction="never" />
+	<item
 		android:id="@+id/ajouter"
 		android:title="@string/bouton_ajouter"
 		app:showAsAction="never" />

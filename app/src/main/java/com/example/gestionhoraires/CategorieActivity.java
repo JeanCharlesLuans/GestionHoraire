@@ -126,6 +126,9 @@ public class CategorieActivity extends AppCompatActivity {
             case R.id.ajouter:
                 ajouterCategorie();
                 break;
+            case R.id.deplacer :
+                // TODO méthode déplacer
+                break;
             case R.id.retour :
                 Intent intentionRetour = new Intent();
                 setResult(Activity.RESULT_OK, intentionRetour);
