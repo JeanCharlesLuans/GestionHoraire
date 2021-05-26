@@ -7,17 +7,18 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -33,12 +34,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
-import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 import android.widget.TimePicker;
 
-import com.example.gestionhoraires.beans.Categorie;
-import com.example.gestionhoraires.beans.Jour;
 import com.example.gestionhoraires.beans.PlageHoraire;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -49,8 +47,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import static android.graphics.Color.rgb;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -343,7 +339,8 @@ public class MainActivity extends AppCompatActivity {
 
                                 switch (boutonMode.getCheckedRadioButtonId()) {
                                     case R.id.option_export_sms:
-                                        // TODO export SMS
+                                        // TODO export SMS mettre message
+                                        composeSmsMessage("ceci est un test");
                                         break;
                                     case R.id.option_export_json:
                                         // Exportation des JSON stub
@@ -357,6 +354,19 @@ public class MainActivity extends AppCompatActivity {
                         })
                 .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
                 .show();
+    }
+
+    /**
+     * Permet l'envoi de SMS
+     * @param message
+     */
+    public void composeSmsMessage(String message) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("sms:"));
+        intent.putExtra("sms_body", message);
+//        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+//        }
     }
 
     /**
@@ -492,7 +502,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Remplissage des spinners
                 SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
-                SimpleCursorAdapter adapterCategorie = getAdapterCategorie();
+                SimpleCursorAdapter adapterCategorie = getAdapterCategoriePlageHoraire();
                 adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 adapterCategorie.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spin_localisation.setAdapter(adapterLocalisation);
@@ -512,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
 
                         SimpleCursorAdapter adapter;
                         if (!check_localisation.isChecked()) {
-                             adapter = getAdapterCategorie();
+                             adapter = getAdapterCategoriePlageHoraire();
                         } else {
                             String idLocalisation = spin_localisation.getSelectedItemId() + "";
                             adapter = getAdapterCategorieByLocalisation(idLocalisation);
@@ -530,7 +540,7 @@ public class MainActivity extends AppCompatActivity {
                         SimpleCursorAdapter adapter;
 
                         if (!check_localisation.isChecked()) {
-                            adapter = getAdapterCategorie();
+                            adapter = getAdapterCategoriePlageHoraire();
                         } else {
                             String idLocalisation = spin_localisation.getSelectedItemId() + "";
                             adapter = getAdapterCategorieByLocalisation(idLocalisation);
@@ -653,7 +663,7 @@ public class MainActivity extends AppCompatActivity {
     private SimpleCursorAdapter getAdapterJour() {
         return new SimpleCursorAdapter(this,
                 android.R.layout.simple_spinner_item,
-                accesHoraires.getCursorAllCategorie(), // TODO CURSOR JOUR getCursorAllJour()
+                accesHoraires.getCursorAllJour(),
                 new String[] {"nom"}, // TODO nom Colonne
                 new int[] {android.R.id.text1,}, 0);
     }
@@ -661,10 +671,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * @return un Adapter contenant l'ensemble des Catégorie
      */
-    private SimpleCursorAdapter getAdapterCategorie() {
+    private SimpleCursorAdapter getAdapterCategoriePlageHoraire() {
         return new SimpleCursorAdapter(this,
                 android.R.layout.simple_spinner_item,
-                accesHoraires.getCursorAllCategorie(),
+                accesHoraires.getCursorAllCategoriePlageHoraire(),
                 new String[] {HelperBDHoraire.CATEGORIE_NOM},
                 new int[] {android.R.id.text1,}, 0);
     }
