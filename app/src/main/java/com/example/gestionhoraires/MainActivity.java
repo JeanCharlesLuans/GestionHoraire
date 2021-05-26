@@ -344,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
                                         break;
                                     case R.id.option_export_json:
                                         // Exportation des JSON stub
-                                        // TODO recherche de fiches dans la BD
+                                        // TODO recherche de fiches dans la BD pour export JSON
                                         exportationJSON(new FichePlageHoraire[] {
                                                 new FichePlageHoraire("Nom 1","1","Information 1","chemin/1")
                                         });
@@ -756,6 +756,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "Exportation du JSON terminé", Toast.LENGTH_LONG).show();
+
+    }
+
+    /**
+     * Envoie d'une fiches horaire par SMS
+     * @param aEnvoyer la fiche a envoyer
+     */
+    private void exportationSMS(FichePlageHoraire aEnvoyer) {
 
     }
 
