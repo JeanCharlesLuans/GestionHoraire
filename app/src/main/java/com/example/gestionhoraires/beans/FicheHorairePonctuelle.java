@@ -19,6 +19,9 @@ public class FicheHorairePonctuelle {
     /** Le chemin de la photo, facultatif */
     private String cheminPhoto;
 
+    /** L'identifiant de la catégorie de la fiche */
+    private String idCategorie;
+
     /**
      * Constructeur sans argument
      */
@@ -71,5 +74,13 @@ public class FicheHorairePonctuelle {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getIdCategorie() {
+        return idCategorie;
+    }
+
+    public void setIdCategorie(String idCategorie) {
+        this.idCategorie = idCategorie;
     }
 }

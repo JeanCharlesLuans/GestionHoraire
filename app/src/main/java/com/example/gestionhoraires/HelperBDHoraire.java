@@ -115,6 +115,9 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
     /** Nom du champs correspondant au chemin de l'image dans la table */
     public static final String FICHE_HORAIRE_PONCTUELLE_IMAGE = "cheminImage";
 
+    /** Nom du champs correspondant à l'identifiant de la catégorie */
+    public static final String FICHE_HORAIRE_PONCTUELLE_CLE_CATEGORIE = "idCategorie";
+
     //// HorairePonctuelle ////
     /** Nom de la Table FicheHorairePonctuelle */
     public static final String NOM_TABLE_HORAIRE_PONCTUELLE = "HorairePonctuelle";
@@ -221,7 +224,8 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
                     + FICHE_HORAIRE_PONCTUELLE_CLE + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + FICHE_HORAIRE_PONCTUELLE_NOM + " TEXT, "
                     + FICHE_HORAIRE_PONCTUELLE_INFORMATION  + " TEXT,"
-                    + FICHE_HORAIRE_PONCTUELLE_IMAGE + " TEXT"
+                    + FICHE_HORAIRE_PONCTUELLE_IMAGE + " TEXT,"
+                    + FICHE_HORAIRE_PONCTUELLE_CLE_CATEGORIE + " TEXT"
                     +");";
 
     /** Requête pour la création de la table FICHE_HORAIRE_PONCTUELLE*/

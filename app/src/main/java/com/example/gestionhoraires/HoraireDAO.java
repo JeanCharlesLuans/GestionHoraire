@@ -134,6 +134,9 @@ public class HoraireDAO {
     /** Numéro de la colonne contenant le chemin de l'image */
     public static final int FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CHEMIN_IMAGE = 3;
 
+    /** Numéro de la colonne contenant l'id de la catégorie */
+    public static final int FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CLE_CATEGORIE = 4;
+
     //// Jour ////
     /** Numéro de la colonne de la clé */
     public static final int JOUR_NUM_COLONNE_CLE = 0;
@@ -278,6 +281,7 @@ public class HoraireDAO {
         ficheHorairePonctuelle.setNom(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_NOM));
         ficheHorairePonctuelle.setInformation(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_INFORMATION));
         ficheHorairePonctuelle.setCheminPhoto(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CHEMIN_IMAGE));
+        ficheHorairePonctuelle.setIdCategorie(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CLE_CATEGORIE));
         return ficheHorairePonctuelle;
     }
 
