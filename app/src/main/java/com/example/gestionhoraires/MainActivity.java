@@ -136,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
         horairesPonctuellesAdapteur = new SimpleCursorAdapter(this,
                 R.layout.ligne_liste_horaires_ponctuelles,
                 curseurHorairesPonctuelles,
-                new String[] {"nom",  //TODO ici regarder les colonne dans ligne_liste.xml
-                        "jour_semaine",      //TODO a adapter comme GestionBDCuisson.CUISSON_ALIMENT
+                new String[] {HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM,
+                        "jour_semaine",
                         "horaire" },
                 new int[] {R.id.name,
                         R.id.jour_semaine,
@@ -668,7 +668,7 @@ public class MainActivity extends AppCompatActivity {
         return new SimpleCursorAdapter(this,
                 android.R.layout.simple_spinner_item,
                 accesHoraires.getCursorAllJour(),
-                new String[] {"nom"}, // TODO nom Colonne
+                new String[] {HelperBDHoraire.JOUR_LIBELLE},
                 new int[] {android.R.id.text1,}, 0);
     }
 
@@ -861,5 +861,4 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("IMPORTATION", "Fin");
     }
-
 }
