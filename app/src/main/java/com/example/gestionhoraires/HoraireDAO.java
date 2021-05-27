@@ -155,7 +155,7 @@ public class HoraireDAO {
 
     /** Requête pour sélectionner toutes les localisations */
     public static final String REQUETE_TOUT_SELECTIONNER_LOCALISATION =
-            "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_LOCALISATION + " ORDER BY " + HelperBDHoraire.LOCALISATION_NOM;
+            "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_LOCALISATION + " ORDER BY " + HelperBDHoraire.LOCALISATION_CLE;
 
     /** Requête pour sélectionner toutes les catégories des plages horaires */
     public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_PLAGE_HORAIRE =
@@ -185,13 +185,17 @@ public class HoraireDAO {
     public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_PLAGE_HORAIRE =
             "SELECT * FROM " + HelperBDHoraire.VUE_CATEGORIE_LOCALISATION
                     + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0"
-                    + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
+                    + " ORDER BY " + HelperBDHoraire.CATEGORIE_CLE;
 
     /** Requête pour sélectionner toutes les catégories avec leurs localisations associées */
     public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_HORAIRE_PONCTUEL =
             "SELECT * FROM " + HelperBDHoraire.VUE_CATEGORIE_LOCALISATION
                     + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 1"
-                    + " ORDER BY " + HelperBDHoraire.CATEGORIE_NOM;
+                    + " ORDER BY " + HelperBDHoraire.CATEGORIE_CLE;
+
+    /** Requête pour sélectionner toutes les catégories */
+    public static final String REQUETE_TOUT_SELECTIONNER_CATEGORIE =
+            "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE + " ORDER BY " + HelperBDHoraire.CATEGORIE_CLE;
 
     /**
      * Constructeur avec argument
@@ -230,6 +234,13 @@ public class HoraireDAO {
      */
     public Cursor getCursorAllCategorieLocalisationHorairePonctuel() {
         return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_HORAIRE_PONCTUEL, null);
+    }
+
+    /**
+     * Retourne un curseur sur toutes les catégories
+     */
+    public Cursor getCursorAllCategorie() {
+        return baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE, null);
     }
 
     /**
