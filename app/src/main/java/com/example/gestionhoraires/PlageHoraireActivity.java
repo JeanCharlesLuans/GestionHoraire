@@ -39,6 +39,9 @@ public class PlageHoraireActivity extends AppCompatActivity {
     /** Identifiant de l'intention pour l'acces a la camera */
     private static final int TAKE_PICTURE = 1;
 
+    /** Identifiant de l'intention pour l'acces a la gallerie d'image */
+    private static final int PICK_IMAGE = 2;
+
     /** Path de l'image */
     private String imagePath;
 
@@ -179,24 +182,13 @@ public class PlageHoraireActivity extends AppCompatActivity {
      * Efface la photo selectionner par l'utilisateur
      */
     public void onClickEffacer(View view) {
-
+        // TODO effacer selection image
     }
 
     /**
      * Active la camera de l'appareil android pour prendre une photo
      */
     public void onClickCamera(View view) {
-        //OLD
-//        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        startActivityForResult(takePicture, TAKE_PICTURE);
-
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-//                Uri.fromFile(photo));
-//        imageUri = Uri.fromFile(photo);
-//        startActivityForResult(intent, TAKE_PICTURE);
-
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -256,7 +248,11 @@ public class PlageHoraireActivity extends AppCompatActivity {
      * Ouvre la gallery afin de selectionner une photo
      */
     public void onClickGallery(View view) {
-
+        // TODO Gallery
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
     }
 
     /**
@@ -272,13 +268,13 @@ public class PlageHoraireActivity extends AppCompatActivity {
      * permet la selection des horaire d'un jour
      */
     public void onClickjour(View view){
-        Log.i("LETAG", (view.getId() == boutonSemaine[0].getId()) + "");
-        changerStyleBoutonSemaine();
+        changerStyleBoutonSemaine(view);
         // TODO methode(s)?
     }
 
-    private void changerStyleBoutonSemaine() {
-
+    private void changerStyleBoutonSemaine(View view) {
+        Button btn = view.findViewById(view.getId());
+        btn.setTextColor(404040);
     }
 
     @Override
@@ -287,8 +283,14 @@ public class PlageHoraireActivity extends AppCompatActivity {
         switch(requestCode) {
             case TAKE_PICTURE:
                 if (resultCode == Activity.RESULT_OK) {
-                    // TODO afficher image ici ?
+                    // TODO afficher image ici from camera ?
                 }
+                break;
+            case PICK_IMAGE:
+                if (resultCode == Activity.RESULT_OK) {
+                    // TODO afficher image ici from gallery ?
+                }
+                break;
         }
     }
 }
