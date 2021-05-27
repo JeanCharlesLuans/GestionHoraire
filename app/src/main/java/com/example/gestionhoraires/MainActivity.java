@@ -38,6 +38,7 @@ import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 import android.widget.TimePicker;
 
+import com.example.gestionhoraires.beans.Jour;
 import com.example.gestionhoraires.beans.Localisation;
 import com.example.gestionhoraires.beans.PlageHoraire;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -798,11 +799,26 @@ public class MainActivity extends AppCompatActivity {
                 = accesHoraires.getEnsembleHorraireOfFiche(aEnvoyer.getId());
 
         // Formatage du message
-        String message = "NOM : " + nomFiche
-                       + "Catégorie : " + nomCategorie
-                       + "Localisation : " + nomLocalisation;
+        String message = "Localisation : " + nomLocalisation + '\n'
+                       + "Catégorie : " + nomCategorie + '\n'
+                       + "NOM : " + nomFiche + '\n'
+                       + "    Information : " + informationFiche + '\n';
+
+        for (int i = 0; i < listeEnsemblePlageHoraire.size(); i++) {
+            PlageHoraire matin = accesHoraires.getPlageHoraireById(
+                    listeEnsemblePlageHoraire.get(i).getIdPlageHoraireMatin());
+            PlageHoraire soir = accesHoraires.getPlageHoraireById(
+                    listeEnsemblePlageHoraire.get(i).getIdPlageHoraireSoir());
+
+            Jour jour = accesHoraires.getJourById(listeEnsemblePlageHoraire.get(i).getIdJour());
+
+            message += "    Horraires du " + jour.getJour() + " :\n";
+            message += "        Matin : " +  matin.getHoraireOuverture() + " - " + matin.getHoraireFermeture() + '\n';
+            message += "        Soir : "  +  soir.getHoraireOuverture() + " - " + soir.getHoraireFermeture() +'\n';
+        }
 
         composeSmsMessage(message);
+        Log.e("SMS", message);
     }
 
     /**
