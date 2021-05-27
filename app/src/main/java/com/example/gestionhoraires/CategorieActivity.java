@@ -76,6 +76,13 @@ public class CategorieActivity extends AppCompatActivity {
         // On ajoute la ToolBar
         maBarreOutil = findViewById(R.id.settings_tool_bar);
         setSupportActionBar(maBarreOutil);
+        maBarreOutil.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        maBarreOutil.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                retour();
+            }
+        });
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) maBarreOutil.findViewById(R.id.toolbar_title);
         mTitle.setText(getString(R.string.label_gestion_categorie));
@@ -130,9 +137,7 @@ public class CategorieActivity extends AppCompatActivity {
                 // TODO méthode déplacer
                 break;
             case R.id.retour :
-                Intent intentionRetour = new Intent();
-                setResult(Activity.RESULT_OK, intentionRetour);
-                finish();
+                retour();
                 break;
             case R.id.annuler_option :
                 break;
@@ -340,6 +345,15 @@ public class CategorieActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+    /**
+     * retourne a l'activiter principale
+     */
+    private void retour() {
+        Intent intentionRetour = new Intent();
+        setResult(Activity.RESULT_OK, intentionRetour);
+        finish();
     }
 
     /**

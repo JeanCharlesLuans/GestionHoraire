@@ -83,5 +83,18 @@
     <string name="label_export_json">Eport en JSON</string>
     <string name="toast_erreur_sms">Vous n\'avez pas d\'application SMS par defaut</string>
 
+    <!-- Ajout plage horaire -->
+    <string name="titre_ajout_plage_horaire">Ajouter une plage horaire</string>
+    <string name="image">Image</string>
+    <string name="horaire_matin">Matin</string>
+    <string name="horaire_aprem">Aprés-midi</string>
+    <string name="bouton_camera">Camera</string>
+    <string name="bouton_lundi">Lundi</string>
+    <string name="bouton_mardi">Mardi</string>
+    <string name="bouton_mercredi">Mercredi</string>
+    <string name="bouton_jeudi">Jeudi</string>
+    <string name="bouton_vendredi">Vendredi</string>
+    <string name="bouton_samedi">Samedi</string>
+    <string name="bouton_dimanche">Dimanche</string>
 
 </resources>

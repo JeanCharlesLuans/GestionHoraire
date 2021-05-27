@@ -13,6 +13,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:textColorSecondary">@color/gris</item>
         <!-- Customize your theme here. -->
+        <item name="android:textSize">@dimen/text_size</item>
     </style>
 
     <style name="toolBarStyle" parent="Theme.AppCompat">
@@ -37,4 +38,27 @@
          <item name="android:color">@color/secondary</item>
          <item name="android:colorAccent">@color/secondary_variant</item>
      </style>
+
+    <style name="titre" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_marginTop">@dimen/marge_grande</item>
+        <item name="android:layout_marginBottom">@dimen/marge_grande</item>
+        <item name="android:textSize">@dimen/text_size_titre</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/secondary</item>
+    </style>
+
+    <style name="element_left" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_marginStart">@dimen/marge_tres_grande</item>
+        <item name="android:layout_marginTop">@dimen/marge_grande</item>
+    </style>
+
+    <style name="element_right" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_marginEnd">@dimen/marge_tres_grande</item>
+    </style>
+
+    <style name="element_center" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_marginEnd">@dimen/marge_tres_grande</item>
+        <item name="android:layout_marginTop">@dimen/marge_grande</item>
+        <item name="android:layout_marginStart">@dimen/marge_tres_grande</item>
+    </style>
 </resources>

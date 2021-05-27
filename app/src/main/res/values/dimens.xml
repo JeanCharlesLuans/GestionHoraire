@@ -5,10 +5,17 @@
     <dimen name="toolbar_heigth">50dp</dimen>
     <dimen name="marge_normale">10dp</dimen>
     <dimen name="marge_grande">15dp</dimen>
+    <dimen name="marge_tres_grande">35dp</dimen>
     <dimen name="marge_dropdown">30dp</dimen>
     <dimen name="grande_hauteur">50dp</dimen>
+
+    <dimen name="width_edt_text">200dp</dimen>
+    <dimen name="width_spinner">150dp</dimen>
+    <dimen name="edt_info_heigth">100dp</dimen>
 
     <!-- taille des caractères -->
     <dimen name="taille_radio_bouton">12sp</dimen>
     <dimen name="taille_titre">18sp</dimen>
+    <dimen name="text_size">20sp</dimen>
+    <dimen name="text_size_titre">25sp</dimen>
 </resources>

@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     /** Identifiant de l'intention pour la gestion des localisations */
     private final int CODE_GESTION_LOCALISATION = 20;
 
+    /** Identifiant de l'intention pour l'ajout de la plage horaire */
+    private final int CODE_PLAGE_HORAIRE = 30;
+
     /** Clé pour le message transmis par l'activité secondaire */
     public final static String CLE_H_PONCTUEL = "com.example.gestionhoraires.PONCTUEL";
 
@@ -190,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
         );
         lesOnglets.setCurrentTab(TAB_PLAGE_HORAIRE);
 
+        // On ajoute un bouton flotant
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -389,7 +393,9 @@ public class MainActivity extends AppCompatActivity {
      * permet l'ajout d'un plage horaire en appelant une nouvelle activité
      */
     private void ajouterPlageHoraire() {
-        // TODO ajout plage horaire
+        Intent plageHoraire = new Intent(MainActivity.this,
+                PlageHoraireActivity.class);
+        startActivityForResult(plageHoraire, CODE_PLAGE_HORAIRE);
     }
 
     /**
@@ -715,9 +721,9 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
+        // TODO Avons nous besoin de faire qq chose au retour ?
         switch(requestCode) {
             case CODE_GESTION_CATEGORIE:
-                // TODO Avons nous besoin de faire qq chose au retour ?
                 break;
             case CODE_GESTION_LOCALISATION:
                 break;
