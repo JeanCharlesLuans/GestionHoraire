@@ -69,6 +69,9 @@ public class PlageHoraireActivity extends AppCompatActivity {
     /** EditText contenant les horaire de l'apres-midi du jour courant */
     private EditText editTextAprem;
 
+    /** La photo de la fiche */
+    private ImageView imageView;
+
     /**
      * tableaux contenant les différent boutons de la semaine,
      * le lundi commencant a l'index 0 et le dimanche finissant a l'index 6
@@ -101,6 +104,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
         spinnerLocalisation = findViewById(R.id.spinner_localisation);
         spinnerCategorie = findViewById(R.id.spinner_categorie);
         editTextInformation = findViewById(R.id.editText_info);
+        imageView = findViewById(R.id.imageView);
         // boutons de la semaine
         boutonSemaine = new Button[7];
         boutonSemaine[0] = findViewById(R.id.btn_lundi);
@@ -182,7 +186,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
      * Efface la photo selectionner par l'utilisateur
      */
     public void onClickEffacer(View view) {
-        // TODO effacer selection image
+        imageView.setImageURI(Uri.parse(""));
     }
 
     /**
@@ -236,6 +240,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
      * Ajoute l'image à la gallerie
      */
     private void galleryAddPic(String path) {
+        System.out.println(path);
         imagePath = path;
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(path);
@@ -283,12 +288,13 @@ public class PlageHoraireActivity extends AppCompatActivity {
         switch(requestCode) {
             case TAKE_PICTURE:
                 if (resultCode == Activity.RESULT_OK) {
-                    // TODO afficher image ici from camera ?
+                    imageView.setImageURI(Uri.parse(imagePath));
                 }
                 break;
             case PICK_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
-                    // TODO afficher image ici from gallery ?
+                    imageView.setImageURI(returnedIntent.getData());
+                    imagePath = returnedIntent.getData().toString();
                 }
                 break;
         }
