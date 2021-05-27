@@ -110,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
     /** Adaptateur permettant de gérer la liste des horaire ponctuelle */
     private SimpleCursorAdapter horairesPonctuellesAdapteur;
 
+    /** Indicateur ouvert des filtres */
+    private boolean ouvert;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         accesHoraires = new HoraireDAO(this);
         accesHoraires.open();
 
-//        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
 //        curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
 
         // Liste de l'onglet 1 : Plages Horaires
@@ -237,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
-                // supprimer element()  // TODO action supprimer
+                accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(accesHoraires.FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
                 break;
             case R.id.modifier :
                 //modifierElement(information.id); // TODO action modifier
@@ -246,6 +249,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
         }
+        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+        plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+        onContentChanged();
         return (super.onContextItemSelected(item));
     }
 
@@ -323,6 +329,9 @@ public class MainActivity extends AppCompatActivity {
                 afficheAide();
                 break;
         }
+        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+        plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+        onContentChanged();
         return (super.onOptionsItemSelected(item));
     }
 
@@ -600,8 +609,21 @@ public class MainActivity extends AppCompatActivity {
                 boutonAppliquer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        String strCategorie = "";
+                        String strLocalisation = "";
+                        boolean estOuvert = true;   // stub, ne fonctionne pas
                         // TODO Do something
-
+                        if (check_categorie.isChecked() && spin_categorie.isSelected()) {
+                            Categorie categorie = accesHoraires.getCategorieById(spin_categorie.getSelectedItemId() + "");
+                            strCategorie += categorie.getNom();
+                        }
+                        if (check_localisation.isChecked()) {
+                            Localisation localisation = accesHoraires.getLocalisationById(spin_localisation.getSelectedItemId() + "");
+                            strLocalisation += localisation.getNom();
+                        }
+                        curseurPlageHoraire = accesHoraires.getCursorFichePlageHoraireByLocalisationAndCategorie(strLocalisation, strCategorie, true);
+                        plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+                        onContentChanged();
                         //ferme la dialog quand tout est bon
                         dialog.dismiss();
                     }
@@ -701,6 +723,15 @@ public class MainActivity extends AppCompatActivity {
                 accesHoraires.getCursorCategorieByLocalisation(idLocalisation),
                 new String[] {HelperBDHoraire.CATEGORIE_NOM},
                 new int[] {android.R.id.text1,}, 0);
+    }
+
+    private SimpleCursorAdapter getAdapterPlageHoraireByFiltres(String localisation, String categorie, boolean ouvert) {
+        return new SimpleCursorAdapter(this,
+                R.layout.ligne_liste_plage_horaire,
+                accesHoraires.getCursorFichePlageHoraireByLocalisationAndCategorie(localisation, categorie, ouvert),
+                new String[] {HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM,
+                HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION},
+                new int[] {R.id.name, R.id.information}, 0);
     }
 
     /**

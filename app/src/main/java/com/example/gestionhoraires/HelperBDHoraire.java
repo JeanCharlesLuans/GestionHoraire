@@ -153,6 +153,9 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
     /** Vue des catégories avec leur localisation */
     public  static final String VUE_CATEGORIE_LOCALISATION = "V_Categorie";
 
+    /** Vue des fiches plages horaires */
+    public static final String VUE_FICHE_PLAGE_HORAIRE = "V_Fiche_Plage_Horaire";
+
     //// Création des tables ////
     /** Requête pour la création de la table JOUR */
     private static final  String CREATION_TABLE_JOUR =
@@ -257,6 +260,23 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
             + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE_LOCALISATION + " = "
             + NOM_TABLE_LOCALISATION + "." + LOCALISATION_CLE;
 
+    /** Requête de création d'une vue pour les fiches plages horaires */
+    private final String CREATION_VUE_FICHE_PLAGE_HORAIRE =
+            "CREATE VIEW " + VUE_FICHE_PLAGE_HORAIRE + " AS "
+            + "SELECT " + NOM_TABLE_FICHE_PLAGE_HORAIRE + "." + FICHE_PLAGE_HORAIRE_CLE + ", "
+            + NOM_TABLE_FICHE_PLAGE_HORAIRE + "." + FICHE_PLAGE_HORAIRE_NOM + ", "
+            + NOM_TABLE_FICHE_PLAGE_HORAIRE + "." + FICHE_PLAGE_HORAIRE_INFORMATION + ", "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_NOM + " AS categorie, "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_HORAIRE_PONCTUELLE + ", "
+            + NOM_TABLE_LOCALISATION + "." + LOCALISATION_NOM + " AS localisation "
+            + " FROM " + NOM_TABLE_FICHE_PLAGE_HORAIRE + " INNER JOIN " + NOM_TABLE_CATEGORIE + " ON "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE + " = "
+            + NOM_TABLE_FICHE_PLAGE_HORAIRE + "." + FICHE_PLAGE_HORAIRE_CLE_CATEGORIE
+            + " INNER JOIN " + NOM_TABLE_LOCALISATION + " ON "
+            + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE_LOCALISATION + " = "
+            + NOM_TABLE_LOCALISATION + "." + LOCALISATION_CLE + ";";
+
+
     /** Requête pour supprimer la table JOUR */
     public static final String SUPPRIMER_TABLE_JOUR =
             "DROP TABLE IF EXISTS " + NOM_TABLE_JOUR+ " ;" ;
@@ -351,6 +371,7 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
         db.execSQL(CREATION_TABLE_ENSEMBLE_PLAGE_HORAIRE);
 
         db.execSQL(CREATION_VUE_CATEGORIE_LOCALISATION);
+        db.execSQL(CREATION_VUE_FICHE_PLAGE_HORAIRE);
     }
 
     private void initJourSemaine(SQLiteDatabase db) {

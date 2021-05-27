@@ -909,4 +909,20 @@ public class HoraireDAO {
         ArrayList<Categorie> categories = getCategoriesByLocalisation(idLocalisation);
         return getCategoriesByLocalisation(idLocalisation).size() != 0;
     }
+
+    /**
+     * Retourne un curseur en fonction de la localisation, du lieu et
+     * de l'état d'ouverture passés en argument
+     * @param localisation la localisation souhaitée, vide si rien n'est spécifiée
+     * @param categorie la catégorie souhaitée, vide si rien n'est spécifiée
+     * @param ouvert l'état d'ouverture, true si uniquement ouvert false, sinon
+     * @return
+     */
+    public Cursor getCursorFichePlageHoraireByLocalisationAndCategorie(String localisation, String categorie, boolean ouvert) {
+        String requete = "SELECT * FROM " + HelperBDHoraire.VUE_FICHE_PLAGE_HORAIRE
+                + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0 "
+                + " AND categorie like '%" + categorie + "%' "
+                + " AND localisation like '%" + localisation + "%';";
+        return baseHoraire.rawQuery(requete, null);
+    }
 }
