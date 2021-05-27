@@ -33,10 +33,12 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 import android.widget.TimePicker;
 
+import com.example.gestionhoraires.beans.Localisation;
 import com.example.gestionhoraires.beans.PlageHoraire;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -340,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                                 switch (boutonMode.getCheckedRadioButtonId()) {
                                     case R.id.option_export_sms:
                                         // TODO export SMS mettre message
-                                        composeSmsMessage("ceci est un test");
+                                        exportationSMS(new FichePlageHoraire("Nom 1","1","Information 1","chemin/1"));
                                         break;
                                     case R.id.option_export_json:
                                         // Exportation des JSON stub
@@ -364,9 +366,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("sms:"));
         intent.putExtra("sms_body", message);
-//        if (intent.resolveActivity(getPackageManager()) != null) {
+        if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
-//        }
+        } else {
+            Toast.makeText(this, getString(R.string.toast_erreur_sms), Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -731,7 +735,7 @@ public class MainActivity extends AppCompatActivity {
 
         JSONArray liste = new JSONArray();
 
-        listeFichePlageHoraires[0].setId("1"); // TODO l'enlever
+        listeFichePlageHoraires[0].setId("1"); // TODO l'enlever STUB
 
         try {
 
@@ -765,6 +769,34 @@ public class MainActivity extends AppCompatActivity {
      */
     private void exportationSMS(FichePlageHoraire aEnvoyer) {
 
+        aEnvoyer.setId("1"); // TODO l'enlever STUB
+
+        String[] tabEnsemble;
+
+        // Catégorie de la fiche a envoyer
+        Categorie categorie = accesHoraires.getCategorieById(aEnvoyer.getIdCategorie());
+
+        // Localisation de la catégorie de la fiche
+        Localisation localisation = accesHoraires.getLocalisationById(categorie.getIdLocalisation());
+
+        // Recuperation des inforamtion lié a la catégorie ou a la localisation
+        String nomLocalisation = localisation.getNom();
+        String nomCategorie = categorie.getNom();
+
+        // Information de la fiche
+        String nomFiche = aEnvoyer.getNom();
+        String informationFiche = aEnvoyer.getInformation();
+
+        // Récupération des inforamtions des ensemble de la fiche
+        ArrayList<EnsemblePlageHoraire> listeEnsemblePlageHoraire
+                = accesHoraires.getEnsembleHorraireOfFiche(aEnvoyer.getId());
+
+        // Formatage du message
+        String message = "NOM : " + nomFiche
+                       + "Catégorie : " + nomCategorie
+                       + "Localisation : " + nomLocalisation;
+
+        composeSmsMessage(message);
     }
 
     /**

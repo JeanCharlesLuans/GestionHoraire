@@ -81,6 +81,7 @@
     <string name="titre_boite_export">Quel type d\'export voulez-vous effectuez ?</string>
     <string name="label_export_sms">Export par SMS</string>
     <string name="label_export_json">Eport en JSON</string>
+    <string name="toast_erreur_sms">Vous n\'avez pas d\'application SMS par defaut</string>
 
 
 </resources>
