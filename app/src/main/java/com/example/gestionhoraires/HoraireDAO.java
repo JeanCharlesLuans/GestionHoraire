@@ -484,7 +484,6 @@ public class HoraireDAO {
         ContentValues ajoutEnsemblePlageHoraire = new ContentValues();
         ajoutEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN, ensemblePlageHoraire.getIdPlageHoraireMatin());
         ajoutEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR, ensemblePlageHoraire.getIdPlageHoraireSoir());
-        ajoutEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR, ensemblePlageHoraire.getIdPlageHoraireSoir());
         ajoutEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR, ensemblePlageHoraire.getIdJour());
         ajoutEnsemblePlageHoraire.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE, ensemblePlageHoraire.getIdFichePlageHoraire());
         baseHoraire.insert(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE, HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, ajoutEnsemblePlageHoraire);
@@ -500,6 +499,7 @@ public class HoraireDAO {
         ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE, plageHoraire.getHoraireFermeture());
         ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE, plageHoraire.getEtatOuverture());
         ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE, plageHoraire.getEtatFermeture());
+        ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME, plageHoraire.getEstFerme());
         baseHoraire.insert(HelperBDHoraire.NOM_TABLE_PLAGE_HORAIRE, HelperBDHoraire.PLAGE_HORAIRE_CLE, ajoutPlageHoraire);
     }
 
