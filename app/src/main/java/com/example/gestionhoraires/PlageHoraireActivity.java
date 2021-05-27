@@ -27,6 +27,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -109,6 +111,15 @@ public class PlageHoraireActivity extends AppCompatActivity {
         editTextMatin = findViewById(R.id.editText_matin);
         editTextAprem = findViewById(R.id.editText_aprem);
 
+        // On ajoute un bouton flotant
+        FloatingActionButton fab = findViewById(R.id.fab_ajouter);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    ajouterPlageHoraire();
+                }
+            }
+        );
     }
 
     /**
@@ -251,7 +262,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
     /**
      * ajoute la plage horaire a la base de donner et retourne a l'activité principale
      */
-    public void onClickAjouter(View view) {
+    public void ajouterPlageHoraire() {
         // TODO ajout plage horaire
         // when everything is ok
         retour();
