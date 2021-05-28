@@ -65,6 +65,7 @@
     <string name="delete_all">Tout Supprimer</string>
     <string name="move_all">Déplacer dans une autre liste</string>
     <string name="title_move_localisation">Déplacer dans une autre liste</string>
+    <string name="title_parametre_categorie_ponctuel">Gestion catégorie horaire ponctuel</string>
 
     <!-- Filtre -->
     <string name="titre_boite_filtre">Selectionnez les filtres</string>

@@ -54,7 +54,7 @@ public class CategorieActivity extends AppCompatActivity {
      * Vrai si l'activité a été lancer depuis l'onglet des horaire ponctuel
      * Il servira a afficher la bonne liste de catégorie
      */
-    private boolean isPonctuel; // TODO utiliser isPonctuel
+    private boolean isPonctuel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,7 +85,7 @@ public class CategorieActivity extends AppCompatActivity {
         });
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) maBarreOutil.findViewById(R.id.toolbar_title);
-        mTitle.setText(getString(R.string.label_gestion_categorie));
+        mTitle.setText(isPonctuel ? getString(R.string.title_parametre_categorie_ponctuel) : getString(R.string.label_gestion_categorie));
 
         listeCategorie = new ArrayList<String>();
         listeVueCategorie = findViewById(R.id.liste_gestion);
