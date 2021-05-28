@@ -83,6 +83,8 @@
     <string name="label_export_sms">Export par SMS</string>
     <string name="label_export_json">Eport en JSON</string>
     <string name="toast_erreur_sms">Vous n\'avez pas d\'application SMS par defaut</string>
+    <string name="label_export_json_mail">Export par Mail</string>
+    <string name="label_export_json_nfc">Export par NFC</string>
 
     <!-- Ajout plage horaire -->
     <string name="titre_ajout_plage_horaire">Ajouter une plage horaire</string>

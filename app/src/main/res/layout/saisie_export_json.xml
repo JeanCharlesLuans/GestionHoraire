@@ -6,7 +6,7 @@
 
     <TableRow>
         <RadioGroup
-            android:id="@+id/groupe_export"
+            android:id="@+id/groupe_export_json"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -14,16 +14,16 @@
             android:orientation="vertical">
 
             <RadioButton
-                android:id="@+id/option_export_sms"
+                android:id="@+id/option_export_mail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="@string/label_export_sms"/>
+                android:text="@string/label_export_json_mail"/>
             <RadioButton
-                android:id="@+id/option_export_json"
+                android:id="@+id/option_export_nfc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_export_json"/>
+                android:text="@string/label_export_json_nfc"/>
         </RadioGroup>
     </TableRow>
 </TableLayout>

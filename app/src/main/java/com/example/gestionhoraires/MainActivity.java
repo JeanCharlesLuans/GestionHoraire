@@ -340,7 +340,6 @@ public class MainActivity extends AppCompatActivity {
      * entre les différent mode d'exportation
      */
     private void showDialogExport() {
-        // on désérialise le layout qui est associé à la boîte de saisie
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_export, null);
 
         new AlertDialog.Builder(this)
@@ -359,17 +358,51 @@ public class MainActivity extends AppCompatActivity {
                                         exportationSMS(new FichePlageHoraire("Nom 1","1","Information 1","chemin/1"));
                                         break;
                                     case R.id.option_export_json:
-                                        // Exportation des JSON stub
-                                        // TODO recherche de fiches dans la BD pour export JSON
-                                        exportationJSON(new FichePlageHoraire[] {
-                                                new FichePlageHoraire("Nom 1","1","Information 1","chemin/1")
-                                        });
+                                        showDialogExportJson();
                                         break;
                                 }
                             }
                         })
                 .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
                 .show();
+    }
+
+    /**
+     * affiche une fenêtre de dialogue à l'utilisateur pour qu'il puissen choisir
+     * entre les différent mode d'exportation de JSON
+     */
+    private void showDialogExportJson() {
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_export_json, null);
+
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.titre_boite_export))
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_positif),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                RadioGroup boutonMode =
+                                        boiteSaisie.findViewById(R.id.groupe_export_json);
+
+                                switch (boutonMode.getCheckedRadioButtonId()) {
+                                    case R.id.option_export_mail:
+                                        // TODO export mail
+                                        // Exportation des JSON stub
+                                        // TODO recherche de fiches dans la BD pour export JSON
+                                        exportationJSON(new FichePlageHoraire[] {
+                                                new FichePlageHoraire("Nom 1","1","Information 1","chemin/1")
+                                        });
+                                        break;
+                                    case R.id.option_export_nfc:
+                                        // TODO export nfc
+
+                                        break;
+                                }
+                            }
+                        })
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .show();
+
     }
 
     /**
