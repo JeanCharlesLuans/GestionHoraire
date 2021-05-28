@@ -105,6 +105,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
         // edit Text pour présenter les horaire du jour courant
         editTextMatin = findViewById(R.id.editText_matin);
         editTextAprem = findViewById(R.id.editText_aprem);
+        imageView = findViewById(R.id.imageView);
 
         SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
         adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -177,17 +178,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 .setMessage(getResources().getString(R.string.message_aide))
                 .setPositiveButton(R.string.bouton_positif, null)
                 .show();
-    }
-
-    /**
-     * @return un Adapter contenant l'ensemble des localisation
-     */
-    private SimpleCursorAdapter getAdapterLocalisation() {
-        return new SimpleCursorAdapter(this,
-                android.R.layout.simple_spinner_item,
-                accesHoraires.getCursorAllLocalisation(),
-                new String[] {HelperBDHoraire.LOCALISATION_NOM},
-                new int[] {android.R.id.text1,}, 0);
     }
 
     /**
