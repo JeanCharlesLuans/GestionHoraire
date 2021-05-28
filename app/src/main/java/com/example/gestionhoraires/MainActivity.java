@@ -454,6 +454,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Envoie du fichier JSON par mail
+     * @param message
+     */
+    private void composeMailMessage(String message) {
+
+        String localisationFichier = "/data/data/com.example.gestionhoraires/files/fichier.json";
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Fiche Gestion Horaire");
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+localisationFichier));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, getString(R.string.toast_erreur_sms), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
      * Change le style des onglets
      */
     private void changeStyleOnglet() {
