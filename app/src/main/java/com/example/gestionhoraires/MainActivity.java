@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                 afficherFiltre();
                 break;
             case R.id.import_option :
-                initData();
+                showDialogImport();
                 break;
             case R.id.export_option :
                 showDialogExport();
@@ -333,6 +333,39 @@ public class MainActivity extends AppCompatActivity {
         plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
         onContentChanged();
         return (super.onOptionsItemSelected(item));
+    }
+
+    /**
+     * affiche une fenêtre de dialogue a l'utilisateur pourqu'il puisse chosir
+     * entre les différent mode d'importation
+     */
+    private void showDialogImport() {
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_import, null);
+
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.titre_boite_import))
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_positif),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                RadioGroup boutonMode =
+                                        boiteSaisie.findViewById(R.id.groupe_import);
+
+                                switch (boutonMode.getCheckedRadioButtonId()) {
+                                    case R.id.option_import_csv:
+                                        // TODO import CSV
+                                        initData();
+                                        break;
+                                    case R.id.option_import_json:
+                                        // TODO import JSON
+                                        break;
+                                }
+                            }
+                        })
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .show();
+
     }
 
     /**
