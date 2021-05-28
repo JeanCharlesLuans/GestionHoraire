@@ -19,13 +19,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:textSize="@dimen/taille_radio_bouton"
                 android:text="@string/label_export_sms"/>
             <RadioButton
                 android:id="@+id/option_export_json"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/taille_radio_bouton"
                 android:text="@string/label_export_json"/>
         </RadioGroup>
     </TableRow>

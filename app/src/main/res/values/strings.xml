@@ -90,6 +90,12 @@
     <string name="horaire_matin">Matin</string>
     <string name="horaire_aprem">Aprés-midi</string>
     <string name="bouton_camera">Camera</string>
+    <string name="label_jour_entier">Jour Entier</string>
+    <string name="label_2_plage_h">2 plages horaires</string>
+    <string name="horaire_ouverte">Horaire d\'ouverture</string>
+    <string name="horaire_fermer">Fermé</string>
+
+    <!-- jour semaine -->
     <string name="bouton_lundi">Lundi</string>
     <string name="bouton_mardi">Mardi</string>
     <string name="bouton_mercredi">Mercredi</string>

@@ -10,8 +10,11 @@
     <dimen name="grande_hauteur">50dp</dimen>
 
     <dimen name="width_edt_text">200dp</dimen>
+    <dimen name="edt_heigth">100dp</dimen>
     <dimen name="width_spinner">150dp</dimen>
     <dimen name="edt_info_heigth">100dp</dimen>
+    <dimen name="time_spinner_width">150dp</dimen>
+    <dimen name="time_spinner_height">125dp</dimen>
 
     <!-- taille des caractères -->
     <dimen name="taille_radio_bouton">12sp</dimen>

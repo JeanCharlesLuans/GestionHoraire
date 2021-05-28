@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/groupe_horaire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/marge_normale"
+        android:layout_marginEnd="@dimen/marge_normale"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/option_jour_entier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/label_jour_entier" />
+
+        <RadioButton
+            android:id="@+id/option_2_plage_h"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/label_2_plage_h" />
+    </RadioGroup>
+
+
+    <TextView
+        android:id="@+id/textView_matin"
+        style="@style/element_left"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/grande_hauteur"
+        android:layout_marginStart="@dimen/marge_normale"
+        android:layout_marginTop="@dimen/marge_normale"
+        android:gravity="center_vertical"
+        android:text="@string/colonne_horaire"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupe_horaire" />
+
+    <CheckBox
+        android:id="@+id/chb_ferme_matin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/horaire_fermer"
+        android:layout_marginStart="@dimen/marge_grande"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_matin"
+        app:layout_constraintStart_toEndOf="@+id/textView_matin"
+        app:layout_constraintTop_toTopOf="@+id/textView_matin" />
+
+    <TimePicker
+        android:id="@+id/tp_matin_debut"
+        android:layout_width="@dimen/time_spinner_width"
+        android:layout_height="@dimen/time_spinner_height"
+        android:timePickerMode="spinner"
+        app:layout_constraintStart_toStartOf="@+id/textView_matin"
+        app:layout_constraintTop_toBottomOf="@+id/textView_matin" />
+
+    <TimePicker
+        android:id="@+id/tp_matin_fin"
+        android:layout_width="@dimen/time_spinner_width"
+        android:layout_height="@dimen/time_spinner_height"
+        android:timePickerMode="spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tp_matin_debut"
+        app:layout_constraintTop_toBottomOf="@+id/textView_matin" />
+
+    <TextView
+        android:id="@+id/textView_aprem"
+        style="@style/element_left"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/grande_hauteur"
+        android:layout_marginStart="@dimen/marge_normale"
+        android:gravity="center_vertical"
+        android:text="@string/horaire_aprem"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tp_matin_debut" />
+
+    <CheckBox
+        android:id="@+id/chb_ferme_aprem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/horaire_fermer"
+        android:layout_marginStart="@dimen/marge_grande"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_aprem"
+        app:layout_constraintStart_toEndOf="@+id/textView_aprem"
+        app:layout_constraintTop_toTopOf="@+id/textView_aprem" />
+
+    <TimePicker
+        android:id="@+id/tp_aprem_debut"
+        android:layout_width="@dimen/time_spinner_width"
+        android:layout_height="@dimen/time_spinner_height"
+        android:timePickerMode="spinner"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/textView_aprem"
+        app:layout_constraintTop_toBottomOf="@+id/textView_aprem" />
+
+    <TimePicker
+        android:id="@+id/tp_aprem_fin"
+        android:layout_width="@dimen/time_spinner_width"
+        android:layout_height="@dimen/time_spinner_height"
+        android:timePickerMode="spinner"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tp_aprem_debut"
+        app:layout_constraintTop_toBottomOf="@+id/textView_aprem" />
+
+    <Button
+        android:id="@+id/btn_effacer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/primary"
+        android:onClick="onClickEffacer"
+        android:text="@string/bouton_effacer"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tp_aprem_debut"
+        app:layout_constraintTop_toBottomOf="@+id/tp_aprem_debut" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

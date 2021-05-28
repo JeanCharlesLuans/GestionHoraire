@@ -3,6 +3,7 @@ package com.example.gestionhoraires;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -17,10 +18,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -73,14 +78,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
     /** La photo de la fiche */
     private ImageView imageView;
 
-    /**
-     * tableaux contenant les différent boutons de la semaine,
-     * le lundi commencant a l'index 0 et le dimanche finissant a l'index 6
-     * */
-    private Button[] boutonSemaine;
-
-    // TODO Add image global
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,16 +102,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
         spinnerLocalisation = findViewById(R.id.spinner_localisation);
         spinnerCategorie = findViewById(R.id.spinner_categorie);
         editTextInformation = findViewById(R.id.editText_info);
-        imageView = findViewById(R.id.imageView);
-        // boutons de la semaine
-        boutonSemaine = new Button[7];
-        boutonSemaine[0] = findViewById(R.id.btn_lundi);
-        boutonSemaine[1] = findViewById(R.id.btn_mardi);
-        boutonSemaine[2] = findViewById(R.id.btn_mercredi);
-        boutonSemaine[3] = findViewById(R.id.btn_jeudi);
-        boutonSemaine[4] = findViewById(R.id.btn_vendredi);
-        boutonSemaine[5] = findViewById(R.id.btn_samedi);
-        boutonSemaine[6] = findViewById(R.id.btn_dimanche);
         // edit Text pour présenter les horaire du jour courant
         editTextMatin = findViewById(R.id.editText_matin);
         editTextAprem = findViewById(R.id.editText_aprem);
@@ -190,6 +177,28 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 .setMessage(getResources().getString(R.string.message_aide))
                 .setPositiveButton(R.string.bouton_positif, null)
                 .show();
+    }
+
+    /**
+     * @return un Adapter contenant l'ensemble des localisation
+     */
+    private SimpleCursorAdapter getAdapterLocalisation() {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorAllLocalisation(),
+                new String[] {HelperBDHoraire.LOCALISATION_NOM},
+                new int[] {android.R.id.text1,}, 0);
+    }
+
+    /**
+     * @return un Adapter contenant l'ensemble des catégories
+     */
+    private SimpleCursorAdapter getAdapterCategorie() {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorAllCategorie(),
+                new String[] {HelperBDHoraire.LOCALISATION_NOM},
+                new int[] {android.R.id.text1,}, 0);
     }
 
     /**
@@ -293,13 +302,103 @@ public class PlageHoraireActivity extends AppCompatActivity {
      * permet la selection des horaire d'un jour
      */
     public void onClickjour(View view){
-        changerStyleBoutonSemaine(view);
-        // TODO methode(s)?
+        // on recupere le bouton qui a été cliquer
+        Button btn = view.findViewById(view.getId());
+
+        // on créer la boite de dialogue
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_horaire_jour, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(btn.getText())
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null)
+                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialoginterface) {
+                RadioGroup radioGroup = dialog.findViewById(R.id.groupe_horaire);
+                TextView textViewMatin = dialog.findViewById(R.id.textView_matin);
+                TextView textViewAprem = dialog.findViewById(R.id.textView_aprem);
+                CheckBox chbFermeMatin = dialog.findViewById(R.id.chb_ferme_matin);
+                TimePicker tpMatinDebut = dialog.findViewById(R.id.tp_matin_debut);
+                TimePicker tpMatinFin = dialog.findViewById(R.id.tp_matin_fin);
+                CheckBox chbFermeAprem = dialog.findViewById(R.id.chb_ferme_aprem);
+                TimePicker tpApremDebut = dialog.findViewById(R.id.tp_aprem_debut);
+                TimePicker tpApremFin = dialog.findViewById(R.id.tp_aprem_fin);
+                Button buttonEffacer = dialog.findViewById(R.id.btn_effacer);
+
+                tpMatinDebut.setIs24HourView(true);
+                tpMatinFin.setIs24HourView(true);
+                tpApremDebut.setIs24HourView(true);
+                tpApremFin.setIs24HourView(true);
+
+                buttonEffacer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // TODO effacer
+
+                        // when everything is ok
+                        toogleStyleBoutonSemaine(btn, false);
+                        dialog.dismiss();
+                    }
+                });
+
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        switch (radioGroup.getCheckedRadioButtonId()) {
+                            case R.id.option_jour_entier:
+                                textViewMatin.setText(getString(R.string.colonne_horaire));
+                                textViewAprem.setVisibility(View.INVISIBLE);
+                                tpApremDebut.setVisibility(View.INVISIBLE);
+                                tpApremFin.setVisibility(View.INVISIBLE);
+                                chbFermeAprem.setVisibility(View.INVISIBLE);
+                                break;
+                            case R.id.option_2_plage_h:
+                                textViewMatin.setText(getString(R.string.horaire_matin));
+                                textViewAprem.setVisibility(View.VISIBLE);
+                                tpApremDebut.setVisibility(View.VISIBLE);
+                                tpApremFin.setVisibility(View.VISIBLE);
+                                chbFermeAprem.setVisibility(View.VISIBLE);
+                                break;
+                        }
+                    }
+                });
+
+
+                // on ajout un écouteur sur le boutons OK
+                Button boutonPositif = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                boutonPositif.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // on change le style du bouton pour qu'il soit actif
+                        toogleStyleBoutonSemaine(btn, true);
+                        // TODO Action ajout horaire jour semaine
+
+                        //when everything is ok
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        dialog.show();
     }
 
-    private void changerStyleBoutonSemaine(View view) {
-        Button btn = view.findViewById(view.getId());
-        btn.setTextColor(404040);
+    /**
+     * change le style du bouton selectionné
+     * @param button
+     */
+    private void toogleStyleBoutonSemaine(Button button, boolean isActive) {
+        if (button.getCurrentTextColor() == getColor(R.color.primary) && isActive) {
+            button.setTextColor(getColor(R.color.white));
+            button.setBackgroundColor(getColor(R.color.secondary));
+        } else if (button.getCurrentTextColor() == getColor(R.color.white) && !isActive) {
+            button.setTextColor(getColor(R.color.primary));
+            button.setBackgroundColor(getColor(R.color.white));
+        }
     }
 
     /**
@@ -337,6 +436,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 new int[] {android.R.id.text1,}, 0);
     }
 
+	/**
+     * Appelé automatiquement lorsque une activité fille se termine
+     * @param requestCode
+     * @param resultCode
+     * @param returnedIntent
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
