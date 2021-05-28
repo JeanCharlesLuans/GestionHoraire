@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -117,6 +118,24 @@ public class PlageHoraireActivity extends AppCompatActivity {
         // edit Text pour présenter les horaire du jour courant
         editTextMatin = findViewById(R.id.editText_matin);
         editTextAprem = findViewById(R.id.editText_aprem);
+
+        SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
+        adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLocalisation.setAdapter(adapterLocalisation);
+
+        spinnerLocalisation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SimpleCursorAdapter adapterCategorie = getAdapterCategorieByLocalisation(spinnerLocalisation.getSelectedItemId() + "");
+                adapterCategorie.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerCategorie.setAdapter(adapterCategorie);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // On ajoute un bouton flotant
         FloatingActionButton fab = findViewById(R.id.fab_ajouter);
@@ -253,11 +272,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
      * Ouvre la gallery afin de selectionner une photo
      */
     public void onClickGallery(View view) {
-        // TODO Gallery
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+
+
     }
 
     /**
@@ -280,6 +300,41 @@ public class PlageHoraireActivity extends AppCompatActivity {
     private void changerStyleBoutonSemaine(View view) {
         Button btn = view.findViewById(view.getId());
         btn.setTextColor(404040);
+    }
+
+    /**
+     * @return un Adapter contenant l'ensemble des Catégorie
+     */
+    private SimpleCursorAdapter getAdapterCategoriePlageHoraire() {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorAllCategoriePlageHoraire(),
+                new String[] {HelperBDHoraire.CATEGORIE_NOM},
+                new int[] {android.R.id.text1,}, 0);
+    }
+
+    /**
+     * Retourne un adapter sur une liste de catégorie en fonction d'une localisation
+     * @param idLocalisation
+     * @return
+     */
+    private SimpleCursorAdapter getAdapterCategorieByLocalisation(String idLocalisation) {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorCategorieByLocalisation(idLocalisation),
+                new String[] {HelperBDHoraire.CATEGORIE_NOM},
+                new int[] {android.R.id.text1,}, 0);
+    }
+
+    /**
+     * @return un Adapter contenant l'ensemble des localisation
+     */
+    private SimpleCursorAdapter getAdapterLocalisation() {
+        return new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                accesHoraires.getCursorAllLocalisation(),
+                new String[] {HelperBDHoraire.LOCALISATION_NOM},
+                new int[] {android.R.id.text1,}, 0);
     }
 
     @Override
