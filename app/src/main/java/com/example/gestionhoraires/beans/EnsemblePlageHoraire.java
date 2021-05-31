@@ -43,6 +43,7 @@ public class EnsemblePlageHoraire {
     public EnsemblePlageHoraire(String idPlageHoraireMatin, String idJour, String idFichePlageHoraire) {
         this.idPlageHoraireMatin = idPlageHoraireMatin;
         this.idJour = idJour;
+        this.idFichePlageHoraire = idFichePlageHoraire;
     }
 
     /**
