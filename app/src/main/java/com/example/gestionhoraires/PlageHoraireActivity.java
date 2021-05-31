@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,12 +34,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
+import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
+import com.example.gestionhoraires.beans.FichePlageHoraire;
+import com.example.gestionhoraires.beans.Jour;
+import com.example.gestionhoraires.beans.PlageHoraire;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.xml.transform.Result;
 
 public class PlageHoraireActivity extends AppCompatActivity {
 
@@ -78,6 +85,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
     /** La photo de la fiche */
     private ImageView imageView;
 
+    /** La fiche plage horaire */
+    private static FichePlageHoraire fichePlageHoraire;
+
+    /** Le tableau contenant les 7 plages horaires */
+    private EnsemblePlageHoraire[] ensemblesPlagesHoraire;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +109,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 retour();
             }
         });
+
+        fichePlageHoraire = new FichePlageHoraire();
+        accesHoraires.addFichePlageHoraire(fichePlageHoraire);
+
+        /* Initialisation du tableau */
+        ensemblesPlagesHoraire = new EnsemblePlageHoraire[7];
 
         // on récupere toutes les widgets
         editTextNom = findViewById(R.id.editText_nom);
@@ -130,7 +149,9 @@ public class PlageHoraireActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    ajouterPlageHoraire();
+                    if (!editTextNom.getText().equals("")) {
+                        ajouterFichePlageHoraire();
+                    }
                 }
             }
         );
@@ -197,6 +218,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
     private void retour() {
         Intent intentionRetour = new Intent();
         setResult(Activity.RESULT_OK, intentionRetour);
+        accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
         finish();
     }
 
@@ -282,7 +304,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
     /**
      * ajoute la plage horaire a la base de donner et retourne a l'activité principale
      */
-    public void ajouterPlageHoraire() {
+    public void ajouterFichePlageHoraire() {
         // TODO ajout plage horaire
         // when everything is ok
         retour();
@@ -294,6 +316,8 @@ public class PlageHoraireActivity extends AppCompatActivity {
     public void onClickjour(View view){
         // on recupere le bouton qui a été cliquer
         Button btn = view.findViewById(view.getId());
+
+        //EnsemblePlageHoraire ensemblePlageHoraire = accesHoraires.getEnsemblePlageHoraireById()
 
         // on créer la boite de dialogue
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_horaire_jour, null);
@@ -324,10 +348,62 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 tpApremDebut.setIs24HourView(true);
                 tpApremFin.setIs24HourView(true);
 
+                PlageHoraire plageHoraireMatin;
+                PlageHoraire plageHoraireSoir;
+                Jour jour = accesHoraires.getJourByNom(btn.getText().toString());
+                int position = Integer.parseInt(jour.getId()) - 1;
+
+                boolean dejaEnregistre = ensemblesPlagesHoraire[position] == null ? false : true;
+                ensemblesPlagesHoraire[position] = dejaEnregistre ? accesHoraires.getEnsemblePlageHoraireByIdFicheAndJour(getIdLastFiche(),
+                        jour.getId()) : null;
+
+                if (dejaEnregistre) {
+                    EnsemblePlageHoraire ensemblePlageHoraire = ensemblesPlagesHoraire[position];
+                    plageHoraireMatin = accesHoraires.getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireMatin());
+                    plageHoraireSoir = accesHoraires.getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireSoir());
+                    String[] tabHoraireMatinDebut = plageHoraireMatin.getHoraireOuverture().split(":");
+                    String[] tabHoraireMatinFin = plageHoraireMatin.getHoraireFermeture().split(":");
+                    int heureHoraireMatinDebut = Integer.parseInt(tabHoraireMatinDebut[0]);
+                    int minuteHoraireMatinDebut = Integer.parseInt(tabHoraireMatinDebut[1]);
+                    int heureHoraireMatinFin = Integer.parseInt(tabHoraireMatinFin[0]);
+                    int minuteHoraireMatinFin = Integer.parseInt(tabHoraireMatinFin[1]);
+                    tpMatinDebut.setHour(heureHoraireMatinDebut);
+                    tpMatinDebut.setMinute(minuteHoraireMatinDebut);
+                    tpMatinFin.setHour(heureHoraireMatinFin);
+                    tpMatinFin.setMinute(minuteHoraireMatinFin);
+                    chbFermeMatin.setChecked(plageHoraireMatin.getEstFerme() == 0 ? false : true);
+                    if (plageHoraireSoir.getHoraireFermeture() != null) {
+                        radioGroup.check(R.id.option_2_plage_h);
+                        textViewMatin.setText(getString(R.string.horaire_matin));
+                        textViewAprem.setVisibility(View.VISIBLE);
+                        tpApremDebut.setVisibility(View.VISIBLE);
+                        tpApremFin.setVisibility(View.VISIBLE);
+                        chbFermeAprem.setVisibility(View.VISIBLE);
+                        chbFermeAprem.setChecked(plageHoraireSoir.getEstFerme() == 0 ? false : true);
+
+                        String[] tabHoraireSoirDebut = plageHoraireSoir.getHoraireOuverture().split(":");
+                        String[] tabHoraireSoirFin = plageHoraireSoir.getHoraireFermeture().split(":");
+                        int heureHoraireSoirDebut = Integer.parseInt(tabHoraireSoirDebut[0]);
+                        int minuteHoraireSoirDebut = Integer.parseInt(tabHoraireSoirDebut[1]);
+                        int heureHoraireSoirFin = Integer.parseInt(tabHoraireSoirFin[0]);
+                        int minuteHoraireSoirFin = Integer.parseInt(tabHoraireSoirFin[1]);
+                        tpApremDebut.setHour(heureHoraireSoirDebut);
+                        tpApremDebut.setMinute(minuteHoraireSoirDebut);
+                        tpApremFin.setHour(heureHoraireSoirFin);
+                        tpApremFin.setMinute(minuteHoraireSoirFin);
+                    }
+                } else {
+                    System.out.println("Nouvelle initialisation");
+                }
+
                 buttonEffacer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO effacer
+                        if (dejaEnregistre) {
+                            System.out.println("Id de l'ensemble : " + ensemblesPlagesHoraire[position].getId());
+                            accesHoraires.deleteEnsemblePlageHoraire(ensemblesPlagesHoraire[position].getId());
+                            ensemblesPlagesHoraire[position] = null;
+                        }
 
                         // when everything is ok
                         toogleStyleBoutonSemaine(btn, false);
@@ -345,6 +421,13 @@ public class PlageHoraireActivity extends AppCompatActivity {
                                 tpApremDebut.setVisibility(View.INVISIBLE);
                                 tpApremFin.setVisibility(View.INVISIBLE);
                                 chbFermeAprem.setVisibility(View.INVISIBLE);
+                                if (dejaEnregistre) {
+                                    EnsemblePlageHoraire ensemblePlageHoraire = ensemblesPlagesHoraire[position];
+                                    PlageHoraire plageHoraire = accesHoraires.getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireSoir());
+                                    plageHoraire.setHoraireOuverture(null);
+                                    plageHoraire.setHoraireFermeture(null);
+                                    accesHoraires.updatePlageHoraire(plageHoraire, ensemblePlageHoraire.getIdPlageHoraireSoir());
+                                }
                                 break;
                             case R.id.option_2_plage_h:
                                 textViewMatin.setText(getString(R.string.horaire_matin));
@@ -365,7 +448,85 @@ public class PlageHoraireActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         // on change le style du bouton pour qu'il soit actif
                         toogleStyleBoutonSemaine(btn, true);
-                        // TODO Action ajout horaire jour semaine
+                        PlageHoraire plageHoraireMatin;
+                        PlageHoraire plageHoraireSoir;
+                        Jour jour = accesHoraires.getJourByNom(btn.getText().toString());
+                        int position = Integer.parseInt(jour.getId()) - 1;
+
+                        switch (radioGroup.getCheckedRadioButtonId()) {
+
+                            case R.id.option_jour_entier:
+                                String horaireDebut = tpMatinDebut.getHour() + ":" + tpMatinDebut.getMinute();
+                                String horaireFin = tpMatinFin.getHour() + ":" + tpMatinFin.getMinute();
+                                int estFerme = chbFermeMatin.isChecked() ? 1 : 0;
+                                plageHoraireMatin = new PlageHoraire(horaireDebut, horaireFin, estFerme);
+
+                                if (!dejaEnregistre) {
+                                    System.out.println("Ajout plage horaire");
+                                    accesHoraires.addPlageHoraire(plageHoraireMatin);
+                                    Cursor cursor = accesHoraires.getCursorAllPlageHoraire();
+                                    cursor.moveToLast();
+                                    plageHoraireMatin = accesHoraires.getPlageHoraireById(cursor.getString(0));
+                                    ensemblesPlagesHoraire[position] = new EnsemblePlageHoraire(plageHoraireMatin.getId(),
+                                            jour.getId(),
+                                            getIdLastFiche());
+                                    accesHoraires.addEnsemblePlageHoraire(ensemblesPlagesHoraire[position]);
+                                } else {
+                                    accesHoraires.updatePlageHoraire(plageHoraireMatin,
+                                            ensemblesPlagesHoraire[position].getIdPlageHoraireMatin());
+
+                                    accesHoraires.updateEnsemblePlageHoraire(ensemblesPlagesHoraire[position],
+                                            ensemblesPlagesHoraire[position].getId());
+
+                                }
+
+                                break;
+                            case R.id.option_2_plage_h:
+                                String horaireMatinDebut = tpMatinDebut.getHour() + ":" + tpMatinDebut.getMinute();
+                                String horaireMatinFin = tpMatinFin.getHour() + ":" + tpMatinFin.getMinute();
+                                String horaireSoirDebut = tpApremDebut.getHour() + ":" + tpApremDebut.getMinute();
+                                String horaireSoirFin = tpApremFin.getHour() + ":" + tpApremFin.getMinute();
+                                int estFermeMatin = chbFermeMatin.isChecked() ? 1 : 0;
+                                int estFermeSoir = chbFermeAprem.isChecked() ? 1 : 0;
+                                plageHoraireMatin = new PlageHoraire(horaireMatinDebut, horaireMatinFin, estFermeMatin);
+                                plageHoraireSoir = new PlageHoraire(horaireSoirDebut, horaireSoirFin, estFermeSoir);
+
+                                if (!dejaEnregistre) {
+                                    accesHoraires.addPlageHoraire(plageHoraireMatin);
+                                    Cursor cursor = accesHoraires.getCursorAllPlageHoraire();
+                                    cursor.moveToLast();
+                                    plageHoraireMatin = accesHoraires.getPlageHoraireById(cursor.getString(0));
+
+                                    accesHoraires.addPlageHoraire(plageHoraireSoir);
+                                    cursor = accesHoraires.getCursorAllPlageHoraire();
+                                    cursor.moveToLast();
+                                    plageHoraireSoir = accesHoraires.getPlageHoraireById(cursor.getString(0));
+                                    ensemblesPlagesHoraire[position] = new EnsemblePlageHoraire(plageHoraireMatin.getId(),
+                                            plageHoraireSoir.getId(),
+                                            jour.getId(),
+                                            getIdLastFiche());
+                                    accesHoraires.addEnsemblePlageHoraire(ensemblesPlagesHoraire[position]);
+
+                                } else {
+                                    accesHoraires.updatePlageHoraire(plageHoraireMatin,
+                                            ensemblesPlagesHoraire[position].getIdPlageHoraireMatin());
+                                    if (ensemblesPlagesHoraire[position].getIdPlageHoraireSoir() == null) {
+                                        accesHoraires.addPlageHoraire(plageHoraireSoir);
+                                        Cursor cursor = accesHoraires.getCursorAllPlageHoraire();
+                                        cursor.moveToLast();
+                                        plageHoraireSoir.setId(cursor.getString(0));
+                                        ensemblesPlagesHoraire[position].setIdPlageHoraireSoir(plageHoraireSoir.getId());
+                                    } else {
+                                        accesHoraires.updatePlageHoraire(plageHoraireSoir,
+                                                ensemblesPlagesHoraire[position].getIdPlageHoraireSoir());
+                                    }
+                                    accesHoraires.updateEnsemblePlageHoraire(ensemblesPlagesHoraire[position],
+                                            ensemblesPlagesHoraire[position].getId());
+                                }
+
+
+                                break;
+                        }
 
                         //when everything is ok
                         dialog.dismiss();
@@ -435,18 +596,33 @@ public class PlageHoraireActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
-        switch(requestCode) {
-            case TAKE_PICTURE:
-                if (resultCode == Activity.RESULT_OK) {
-                    imageView.setImageURI(Uri.parse(imagePath));
-                }
-                break;
-            case PICK_IMAGE:
-                if (resultCode == Activity.RESULT_OK) {
-                    imageView.setImageURI(returnedIntent.getData());
-                    imagePath = returnedIntent.getData().toString();
-                }
-                break;
+        if (resultCode == RESULT_OK) {
+            switch(requestCode) {
+                case TAKE_PICTURE:
+                    if (resultCode == Activity.RESULT_OK) {
+                        imageView.setImageURI(Uri.parse(imagePath));
+                    }
+                    break;
+                case PICK_IMAGE:
+                    if (resultCode == Activity.RESULT_OK) {
+                        imageView.setImageURI(returnedIntent.getData());
+                        imagePath = returnedIntent.getData().toString();
+                    }
+                    break;
+            }
+        } else {
+            accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
         }
+
+    }
+
+    /**
+     * Retourne l'identifiant de la derniere fiche créée
+     * @return l'identifiant
+     */
+    private String getIdLastFiche() {
+        Cursor cursor = accesHoraires.getCursorAllFichePlageHoraire();
+        cursor.moveToLast();
+        return accesHoraires.getFichePlageHoraireById(cursor.getString(0)).getId();
     }
 }
