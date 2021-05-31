@@ -11,7 +11,8 @@
         android:roundIcon="@drawable/launcher_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.GestionHoraires">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.SEND" />
@@ -19,9 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CategorieActivity"/>
-        <activity android:name=".LocalisationActivity"/>
-        <activity android:name=".PlageHoraireActivity">
+        <activity android:name=".CategorieActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".LocalisationActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".PlageHoraireActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
