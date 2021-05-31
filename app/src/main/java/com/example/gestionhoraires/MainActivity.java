@@ -228,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.supprimer :   // supprimer un élément
                 accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(accesHoraires.FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
                 break;
+            case R.id.export_option:
+                // TODO export SMS
+                break;
             case R.id.modifier :
                 //modifierElement(information.id); // TODO action modifier
                 break;
@@ -297,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                 showDialogImport();
                 break;
             case R.id.export_option :
-                showDialogExport();
+                selectionnerElement();
                 break;
             case R.id.settings_gestion_categorie :
                 Intent catego = new Intent(MainActivity.this,
@@ -356,39 +359,6 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
                 .show();
 
-    }
-
-    /**
-     * affiche une fenêtre de dialogue à l'utilisateur pour qu'il puisse choisir
-     * entre les différent mode d'exportation
-     */
-    private void showDialogExport() {
-        final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_export, null);
-
-        new AlertDialog.Builder(this)
-                .setTitle(getResources().getString(R.string.titre_boite_export))
-                .setView(boiteSaisie)
-                .setPositiveButton(getResources().getString(R.string.bouton_positif),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                RadioGroup boutonMode =
-                                        boiteSaisie.findViewById(R.id.groupe_export);
-
-                                switch (boutonMode.getCheckedRadioButtonId()) {
-                                    case R.id.option_export_sms:
-                                        // TODO export SMS mettre message
-                                        //exportationSMS(new FichePlageHoraire("Nom 1","1","Information 1","chemin/1"));
-
-                                        break;
-                                    case R.id.option_export_json:
-                                        selectionnerElement();
-                                        break;
-                                }
-                            }
-                        })
-                .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
-                .show();
     }
 
     /**
@@ -457,7 +427,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ArrayList<Integer> checkedItemIds = getCheckedItemPositions(listViewPlageHoraire);
-                showDialogExportJson();
+//                showDialogExportJson(exportationJSON()); TODO export JSON
+
                 // when everything is ok
                 resetInterface();
             }

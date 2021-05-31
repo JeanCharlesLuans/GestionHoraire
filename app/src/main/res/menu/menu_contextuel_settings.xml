@@ -5,6 +5,10 @@
         android:title="@string/option_supprimer" />
 
     <item
+        android:id="@+id/export_option"
+        android:title="@string/label_export_sms" />
+
+    <item
         android:id="@+id/modifier"
         android:title="@string/option_modifier" />
 

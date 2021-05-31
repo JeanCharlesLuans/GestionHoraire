@@ -30,7 +30,7 @@
 		app:showAsAction="never" />
 	<item
 		android:id="@+id/export_option"
-		android:title="@string/option_export"
+		android:title="@string/label_export_json"
 		app:showAsAction="never" />
 	<item
 		android:id="@+id/settings_gestion_categorie"
