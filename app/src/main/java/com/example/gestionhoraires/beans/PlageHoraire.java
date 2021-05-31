@@ -1,5 +1,7 @@
 package com.example.gestionhoraires.beans;
 
+import android.content.pm.PermissionGroupInfo;
+
 import com.example.gestionhoraires.HelperBDHoraire;
 
 import org.json.JSONException;
@@ -37,12 +39,33 @@ public class PlageHoraire {
     /**
      * Constructeur avec arguments
      * @param horaireOuverture l'horaire d'ouverture
+     * @param estFerme indicateur si l'établissement est fermé
+     */
+    public PlageHoraire(String horaireOuverture, int estFerme) {
+        this.horaireOuverture = horaireOuverture;
+        this.estFerme = estFerme;
+    }
+
+    /**
+     * Constructeur avec arguments
+     * @param horaireOuverture l'horaire d'ouverture
      * @param etatOuverture l'état de l'horaire d'ouverture
      * @param estFerme indicateur si l'établissement est fermé
      */
     public PlageHoraire(String horaireOuverture, int etatOuverture, int estFerme) {
         this.horaireOuverture = horaireOuverture;
         this.etatOuverture = etatOuverture;
+        this.estFerme = estFerme;
+    }
+
+    /**
+     * Constructeur avec arguments
+     * @param horaireOuverture l'horaire d'ouverture
+     * @param horaireFermeture l'horaire de fermeture
+     */
+    public PlageHoraire(String horaireOuverture, String horaireFermeture, int estFerme) {
+        this.horaireOuverture = horaireOuverture;
+        this.horaireFermeture = horaireFermeture;
         this.estFerme = estFerme;
     }
 
