@@ -5,6 +5,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.FileProvider;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -14,6 +15,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -46,9 +48,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -392,10 +400,10 @@ public class MainActivity extends AppCompatActivity {
                                         break;
                                     case R.id.option_export_json:
                                         // TODO recherche de fiches dans la BD pour export JSON elever STUB
-                                        exportationJSON(new FichePlageHoraire[] {
+                                        File aExporter = exportationJSON(new FichePlageHoraire[] {
                                                 new FichePlageHoraire("Nom 1","1","Information 1","chemin/1")
                                         });
-                                        showDialogExportJson();
+                                        showDialogExportJson(aExporter);
                                         break;
                                 }
                             }
@@ -408,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
      * affiche une fenêtre de dialogue à l'utilisateur pour qu'il puissen choisir
      * entre les différent mode d'exportation de JSON
      */
-    private void showDialogExportJson() {
+    private void showDialogExportJson(File aExporter) {
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_export_json, null);
 
         new AlertDialog.Builder(this)
@@ -423,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 switch (boutonMode.getCheckedRadioButtonId()) {
                                     case R.id.option_export_mail:
-                                        composeMailMessage("");
+                                        composeMailMessage(aExporter);
                                         break;
                                     case R.id.option_export_nfc:
                                         // TODO export nfc
@@ -454,29 +462,20 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Envoie du fichier JSON par mail
-     * @param message
+     * @param
      */
-    private void composeMailMessage(String message) {
+    private void composeMailMessage(File file) {
 
-        String localisationFichier = "/data/data/com.example.gestionhoraires/files/fichier.json";
-//
-//        Intent intent = new Intent(Intent.ACTION_SEND);
-//        intent.setData(Uri.parse("mailto:"));
-//        intent.putExtra(Intent.EXTRA_SUBJECT, "Fiche Gestion Horaire");
-//        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+localisationFichier));
-//        if (intent.resolveActivity(getPackageManager()) != null) {
-//            startActivity(intent);
-//        } else {
-//            Toast.makeText(this, getString(R.string.toast_erreur_sms), Toast.LENGTH_LONG).show();
-//        }
+        //String localisationFichier = "/data/data/com/example/gestionhoraires/files/fichier.json";
 
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
+        emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putExtra(Intent.EXTRA_EMAIL, "");
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Fiche Gestion Horaire");
         emailIntent.setType("message/rfc882");
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(localisationFichier));
+        emailIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", file));
 
         startActivity(Intent.createChooser(emailIntent, "Envoi Mail"));
 
@@ -864,12 +863,14 @@ public class MainActivity extends AppCompatActivity {
      * et les information
      * @param listeFichePlageHoraires a exporter en JSON
      */
-    private void exportationJSON(FichePlageHoraire[] listeFichePlageHoraires) {
+    private File exportationJSON(FichePlageHoraire[] listeFichePlageHoraires) {
 
         JSONArray liste = new JSONArray();
 
         listeFichePlageHoraires[0].setId("1"); // TODO l'enlever STUB
 
+        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        File fichierJSON = new File(root, "FichierJSON");
         try {
 
             for (int i = 0; i < listeFichePlageHoraires.length; i++) {
@@ -878,8 +879,10 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i("JSON", liste.toString());
 
-            FileOutputStream fichierExportation = openFileOutput("fichier.json", MODE_APPEND);
-            fichierExportation.write(liste.toString().getBytes());
+            FileOutputStream fos = new FileOutputStream(fichierJSON);
+            Writer w = new BufferedWriter(new OutputStreamWriter(fos));
+            w.write(liste.toString());
+            w.flush();
 
         } catch (JSONException err) {
             Log.e("JSON", err.getMessage());
@@ -893,7 +896,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "Exportation du JSON terminé", Toast.LENGTH_LONG).show();
-
+        return fichierJSON;
     }
 
     /**
