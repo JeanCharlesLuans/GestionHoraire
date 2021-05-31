@@ -364,6 +364,9 @@ public class MainActivity extends AppCompatActivity {
                                     case R.id.option_import_csv:
                                         // TODO import CSV
                                         initData();
+                                        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+                                        plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+                                        onContentChanged();
                                         break;
                                     case R.id.option_import_json:
                                         // TODO import JSON
