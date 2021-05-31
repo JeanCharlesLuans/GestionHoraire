@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.icu.util.Currency;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -112,6 +113,9 @@ public class PlageHoraireActivity extends AppCompatActivity {
 
         fichePlageHoraire = new FichePlageHoraire();
         accesHoraires.addFichePlageHoraire(fichePlageHoraire);
+        Cursor cursor = accesHoraires.getCursorAllFichePlageHoraire();
+        cursor.moveToLast();
+        fichePlageHoraire.setId(cursor.getString(0));
 
         /* Initialisation du tableau */
         ensemblesPlagesHoraire = new EnsemblePlageHoraire[7];
@@ -143,14 +147,20 @@ public class PlageHoraireActivity extends AppCompatActivity {
 
             }
         });
-
         // On ajoute un bouton flotant
         FloatingActionButton fab = findViewById(R.id.fab_ajouter);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    if (!editTextNom.getText().equals("")) {
-                        ajouterFichePlageHoraire();
+                    if (!editTextNom.getText().toString().equals("")) {
+                        if (spinnerCategorie.getSelectedItem() == null) {
+                            Toast.makeText(getApplicationContext(), R.string.toast_pas_de_categorie, Toast.LENGTH_LONG).show();
+                        } else {
+                            ajouterFichePlageHoraire();
+                            retour();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.toast_pas_de_nom, Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -218,6 +228,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
     private void retour() {
         Intent intentionRetour = new Intent();
         setResult(Activity.RESULT_OK, intentionRetour);
+        System.out.println("ID : "  + fichePlageHoraire.getId());
         accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
         finish();
     }
@@ -297,17 +308,18 @@ public class PlageHoraireActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-
-
     }
 
     /**
      * ajoute la plage horaire a la base de donner et retourne a l'activité principale
      */
     public void ajouterFichePlageHoraire() {
-        // TODO ajout plage horaire
-        // when everything is ok
-        retour();
+        String identifiant = fichePlageHoraire.getId();
+        fichePlageHoraire = new FichePlageHoraire(editTextNom.getText().toString(),
+                accesHoraires.getCategorieById(spinnerCategorie.getSelectedItemId() + "").getId(),
+                editTextInformation.getText().toString(),
+                imagePath);
+        accesHoraires.updateFichePlageHoraire(fichePlageHoraire, identifiant);
     }
 
     /**
@@ -524,7 +536,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
                                             ensemblesPlagesHoraire[position].getId());
                                 }
 
-
                                 break;
                         }
 
@@ -609,9 +620,9 @@ public class PlageHoraireActivity extends AppCompatActivity {
                         imagePath = returnedIntent.getData().toString();
                     }
                     break;
+                default:
+                    break;
             }
-        } else {
-            accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
         }
 
     }

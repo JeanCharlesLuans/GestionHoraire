@@ -972,11 +972,25 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
-        // TODO Avons nous besoin de faire qq chose au retour ?
         switch(requestCode) {
             case CODE_GESTION_CATEGORIE:
                 break;
             case CODE_GESTION_LOCALISATION:
+                break;
+            case CODE_PLAGE_HORAIRE:
+                if (resultCode != RESULT_OK) {
+                    Cursor cursor = accesHoraires.getCursorAllFichePlageHoraire();
+                    cursor.moveToLast();
+                    accesHoraires.deleteFichePlageHoraire(cursor.getString(0));
+                    curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+                    plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+                    onContentChanged();
+                }
+                curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+                plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+                onContentChanged();
+                break;
+            default:
                 break;
         }
     }

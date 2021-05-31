@@ -91,7 +91,7 @@
     <string name="label_import_json">Importation par JSON</string>
 
     <!-- Ajout plage horaire -->
-    <string name="titre_ajout_plage_horaire">Ajouter une plage horaire</string>
+    <string name="titre_ajout_plage_horaire">Ajouter une fiche plage horaire</string>
     <string name="image">Image</string>
     <string name="horaire_matin">Matin</string>
     <string name="horaire_aprem">Aprés-midi</string>
@@ -109,5 +109,9 @@
     <string name="bouton_vendredi">Vendredi</string>
     <string name="bouton_samedi">Samedi</string>
     <string name="bouton_dimanche">Dimanche</string>
+
+    <!-- Toast -->
+    <string name="toast_pas_de_nom">Vous devez saisir un nom.</string>
+    <string name="toast_pas_de_categorie">Cette localisation ne possède pas de catégorie.</string>
 
 </resources>
