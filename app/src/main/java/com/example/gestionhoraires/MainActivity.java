@@ -391,6 +391,10 @@ public class MainActivity extends AppCompatActivity {
                                         exportationSMS(new FichePlageHoraire("Nom 1","1","Information 1","chemin/1"));
                                         break;
                                     case R.id.option_export_json:
+                                        // TODO recherche de fiches dans la BD pour export JSON elever STUB
+                                        exportationJSON(new FichePlageHoraire[] {
+                                                new FichePlageHoraire("Nom 1","1","Information 1","chemin/1")
+                                        });
                                         showDialogExportJson();
                                         break;
                                 }
@@ -419,12 +423,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 switch (boutonMode.getCheckedRadioButtonId()) {
                                     case R.id.option_export_mail:
-                                        // TODO export mail
-                                        // Exportation des JSON stub
-                                        // TODO recherche de fiches dans la BD pour export JSON
-                                        exportationJSON(new FichePlageHoraire[] {
-                                                new FichePlageHoraire("Nom 1","1","Information 1","chemin/1")
-                                        });
+                                        composeMailMessage("");
                                         break;
                                     case R.id.option_export_nfc:
                                         // TODO export nfc
@@ -460,16 +459,27 @@ public class MainActivity extends AppCompatActivity {
     private void composeMailMessage(String message) {
 
         String localisationFichier = "/data/data/com.example.gestionhoraires/files/fichier.json";
+//
+//        Intent intent = new Intent(Intent.ACTION_SEND);
+//        intent.setData(Uri.parse("mailto:"));
+//        intent.putExtra(Intent.EXTRA_SUBJECT, "Fiche Gestion Horaire");
+//        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+localisationFichier));
+//        if (intent.resolveActivity(getPackageManager()) != null) {
+//            startActivity(intent);
+//        } else {
+//            Toast.makeText(this, getString(R.string.toast_erreur_sms), Toast.LENGTH_LONG).show();
+//        }
 
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setData(Uri.parse("mailto:"));
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Fiche Gestion Horaire");
-        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+localisationFichier));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            Toast.makeText(this, getString(R.string.toast_erreur_sms), Toast.LENGTH_LONG).show();
-        }
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, "");
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Fiche Gestion Horaire");
+        emailIntent.setType("message/rfc882");
+        emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(localisationFichier));
+
+        startActivity(Intent.createChooser(emailIntent, "Envoi Mail"));
+
     }
 
     /**
@@ -868,7 +878,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i("JSON", liste.toString());
 
-            FileOutputStream fichierExportation = openFileOutput("fichier.json", MODE_PRIVATE);
+            FileOutputStream fichierExportation = openFileOutput("fichier.json", MODE_APPEND);
             fichierExportation.write(liste.toString().getBytes());
 
         } catch (JSONException err) {
