@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,14 +18,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -43,6 +48,7 @@ import android.widget.TimePicker;
 import com.example.gestionhoraires.beans.Jour;
 import com.example.gestionhoraires.beans.Localisation;
 import com.example.gestionhoraires.beans.PlageHoraire;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -87,6 +93,12 @@ public class MainActivity extends AppCompatActivity {
     /** numéro de l'onglet des horaires ponctuels */
     private final int TAB_H_PONCTUEL = 1;
 
+    /** bouton flottant servant a ajouter une fiche horaire */
+    private FloatingActionButton floatingActionButtonAJout;
+
+    /** bouton flottant servant a l'export */
+    private ExtendedFloatingActionButton floatingActionButtonExport;
+
     /** Objet destiné à faciliter l'accès à la table des horaires */
     private HoraireDAO accesHoraires;
 
@@ -94,9 +106,6 @@ public class MainActivity extends AppCompatActivity {
 
     /** Curseur sur l'ensemble des plages horaires de la base */
     private Cursor curseurPlageHoraire;
-
-    /** Liste contenant les plages horaires à afficher */
-    private ArrayList<String> listePlageHoraire;
 
     /** Liste présenter dans le premiere onglet de l'application */
     private ListView listViewPlageHoraire;
@@ -108,9 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
     /** Curseur sur l'ensemble des horaires ponctuelles de la base */
     private Cursor curseurHorairesPonctuelles; // TODO vérifier si on a vraiment besoin de deux curseur.
-
-    /** Liste contenant les horaires ponctuelles à afficher */
-    private ArrayList<String> listeHPonctuelles;
 
     /** Liste présenter dans le deuxieme onglet de l'application */
     private ListView listViewHPonctuelles;
@@ -134,34 +140,13 @@ public class MainActivity extends AppCompatActivity {
 //        curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
 
         // Liste de l'onglet 1 : Plages Horaires
-        listePlageHoraire = new ArrayList<String>();
-        listViewPlageHoraire = findViewById(R.id.liste_plage_horaire);
-        plageHoraireAdaptateur = new SimpleCursorAdapter(this,
-                R.layout.ligne_liste_plage_horaire,
-                curseurPlageHoraire,
-                new String[] {HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM,
-                        HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION},
-                new int[] {R.id.name,
-                        R.id.information}, 0);
-        listViewPlageHoraire.setAdapter(plageHoraireAdaptateur);
+        setPlageHoraireAdapter();
 
         // Liste de l'onglet 2 : Horaires Ponctuelles
-        listeHPonctuelles = new ArrayList<String>();
-        listViewHPonctuelles = findViewById(R.id.liste_horaires_ponctuelles);
-        horairesPonctuellesAdapteur = new SimpleCursorAdapter(this,
-                R.layout.ligne_liste_horaires_ponctuelles,
-                curseurHorairesPonctuelles,
-                new String[] {HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM,
-                        "jour_semaine",
-                        "horaire" },
-                new int[] {R.id.name,
-                        R.id.jour_semaine,
-                        R.id.horaire}, 0);
-        listViewHPonctuelles.setAdapter(horairesPonctuellesAdapteur);
+        setHPonctuelAdapter();
 
         registerForContextMenu(listViewPlageHoraire);
         registerForContextMenu(listViewHPonctuelles);
-        // TODO Menu Contextuel des listes
 
         // On ajoute la ToolBar
         maBarreOutil = findViewById(R.id.main_tool_bar);
@@ -191,23 +176,16 @@ public class MainActivity extends AppCompatActivity {
                          * l'utilisateur est sur le deuxieme onglet
                          */
                         boolean visibility = !tabId.equals("onglet_horaires_ponctuelles");
-                        Menu menu = maBarreOutil.getMenu();
-                        MenuItem recherche = menu.findItem(R.id.recherche);
-                        MenuItem filtre = menu.findItem(R.id.filtre);
-                        MenuItem import_option = menu.findItem(R.id.import_option);
-                        MenuItem export_option = menu.findItem(R.id.export_option);
-                        recherche.setVisible(visibility);
-                        filtre.setVisible(visibility);
-                        import_option.setVisible(visibility);
-                        export_option.setVisible(visibility);
+                        setToolBarVisibility(visibility);
                     }
                 }
         );
         lesOnglets.setCurrentTab(TAB_PLAGE_HORAIRE);
 
         // On ajoute un bouton flotant
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        floatingActionButtonAJout = findViewById(R.id.fab_ajout);
+        floatingActionButtonExport = findViewById(R.id.fab_export);
+        floatingActionButtonAJout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (lesOnglets.getCurrentTab()){
@@ -277,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
         SearchView vuePourRecherche = (SearchView) itemRecherche.getActionView();
         vuePourRecherche.setQueryHint(getResources().getString(R.string.aide_recherche));
         vuePourRecherche.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             /**
              * Méthode invoquée quand l'utilisateur valide la recherche,
              * i.e. quand il clique sur la loupe du clavier virtuel
@@ -399,14 +378,11 @@ public class MainActivity extends AppCompatActivity {
                                 switch (boutonMode.getCheckedRadioButtonId()) {
                                     case R.id.option_export_sms:
                                         // TODO export SMS mettre message
-                                        exportationSMS(new FichePlageHoraire("Nom 1","1","Information 1","chemin/1"));
+                                        //exportationSMS(new FichePlageHoraire("Nom 1","1","Information 1","chemin/1"));
+
                                         break;
                                     case R.id.option_export_json:
-                                        // TODO recherche de fiches dans la BD pour export JSON elever STUB
-                                        File aExporter = exportationJSON(new FichePlageHoraire[] {
-                                                new FichePlageHoraire("Nom 1","1","Information 1","chemin/1")
-                                        });
-                                        showDialogExportJson(aExporter);
+                                        selectionnerElement();
                                         break;
                                 }
                             }
@@ -446,6 +422,174 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(getResources().getString(R.string.bouton_negatif), null)
                 .show();
 
+    }
+
+    /**
+     * permet a l'utilisateur de slectionner des élément de la liste,
+     * affiche aussi un boutons d'export et change l'état de la toolbar
+     */
+    private void selectionnerElement() {
+        setPlageHoraireAdapterForExport();
+
+        listViewPlageHoraire.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CheckedTextView checkedTextView = (CheckedTextView) view.findViewById(android.R.id.text1);
+                checkedTextView.setChecked(!checkedTextView.isChecked());
+            }
+        });
+
+        // changement de l'état de la toolbar
+        setToolBarVisibility(false, false);
+        maBarreOutil.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        maBarreOutil.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // retour a la normale de l'interface
+                resetInterface();
+            }
+        });
+
+        // ajout du bouton de confirmation
+        floatingActionButtonAJout.setVisibility(View.GONE);
+        floatingActionButtonExport.setVisibility(View.VISIBLE);
+        floatingActionButtonExport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<Integer> checkedItemIds = getCheckedItemPositions(listViewPlageHoraire);
+                showDialogExportJson();
+                // when everything is ok
+                resetInterface();
+            }
+        });
+    }
+
+    /**
+     * retourne une liste de position correspondant au élément selectionner de la liste
+     * @param listViewPlageHoraire
+     * @return une liste de positions
+     */
+    private ArrayList<Integer> getCheckedItemPositions(ListView listViewPlageHoraire) {
+        ArrayList<Integer> aReturn = new ArrayList<Integer>();
+        for(int i = 0; i < listViewPlageHoraire.getAdapter().getCount(); i++) {
+            CheckedTextView checkedTextView = listViewPlageHoraire.getChildAt(i).findViewById(android.R.id.text1);
+            boolean isChecked = checkedTextView.isChecked();
+            if (isChecked) {
+                aReturn.add(i);
+            }
+        }
+        return aReturn;
+    }
+
+    /**
+     * réinitalise une partie de l'interface dans son état intial
+     * rétablie la visibilité de la toolbar
+     * les boutons flottants
+     * la liste et son adaptateur
+     */
+    private void resetInterface() {
+        setToolBarVisibility(true, true);
+        floatingActionButtonAJout.setVisibility(View.VISIBLE);
+        floatingActionButtonExport.setVisibility(View.GONE);
+        maBarreOutil.setNavigationIcon(null);
+        maBarreOutil.setNavigationOnClickListener(null);
+        setPlageHoraireAdapter();
+    }
+
+    /**
+     * initialise la listeView et son adaptateur en vue d'un futur export
+     * la layout est celui contenant des checkbox afin que l'utilisateur
+     * puisse choisir des éléments de la liste
+     */
+    private void setPlageHoraireAdapterForExport() {
+        listViewPlageHoraire = findViewById(R.id.liste_plage_horaire);
+        plageHoraireAdaptateur = new SimpleCursorAdapter(this,
+                android.R.layout.simple_list_item_multiple_choice, //R.layout.ligne_liste_plage_horaire,
+                curseurPlageHoraire,
+                new String[] {HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM},
+                new int[] {android.R.id.text1}, 0);
+        listViewPlageHoraire.setAdapter(plageHoraireAdaptateur);
+        plageHoraireAdaptateur.notifyDataSetChanged();
+    }
+
+    /**
+     * initialise la listeView et son adaptateur avec les plage Horaire
+     */
+    private void setPlageHoraireAdapter() {
+        listViewPlageHoraire = findViewById(R.id.liste_plage_horaire);
+        plageHoraireAdaptateur = new SimpleCursorAdapter(this,
+                R.layout.ligne_liste_plage_horaire,
+                curseurPlageHoraire,
+                new String[] {HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM,
+                        HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION},
+                new int[] {R.id.name,
+                        R.id.information}, 0);
+        listViewPlageHoraire.setAdapter(plageHoraireAdaptateur);
+        plageHoraireAdaptateur.notifyDataSetChanged();
+    }
+
+    /**
+     * initialise la listeView et son adaptateur avec les horaires ponctuels
+     */
+    private void setHPonctuelAdapter() {
+        listViewHPonctuelles = findViewById(R.id.liste_horaires_ponctuelles);
+        horairesPonctuellesAdapteur = new SimpleCursorAdapter(this,
+                R.layout.ligne_liste_horaires_ponctuelles,
+                curseurHorairesPonctuelles,
+                new String[] {HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM,
+                        "jour_semaine", // TODO euh stp change moi ca Tanguy
+                        "horaire" },
+                new int[] {R.id.name,
+                        R.id.jour_semaine,
+                        R.id.horaire}, 0);
+        listViewHPonctuelles.setAdapter(horairesPonctuellesAdapteur);
+        horairesPonctuellesAdapteur.notifyDataSetChanged();
+    }
+
+    /**
+     * permet de changer la visibilité des éléments de barre d'outils
+     * les élément qui vont changer d'état seront :
+     *  le menu recherche
+     *  le menu des filtre
+     *  le menu d'import
+     *  le menu d'export
+     * @param visibility
+     */
+    private void setToolBarVisibility(boolean visibility) {
+        Menu menu = maBarreOutil.getMenu();
+        MenuItem recherche = menu.findItem(R.id.recherche);
+        MenuItem filtre = menu.findItem(R.id.filtre);
+        MenuItem import_option = menu.findItem(R.id.import_option);
+        MenuItem export_option = menu.findItem(R.id.export_option);
+        recherche.setVisible(visibility);
+        filtre.setVisible(visibility);
+        import_option.setVisible(visibility);
+        export_option.setVisible(visibility);
+    }
+
+    /**
+     * permet de changer la visibilité des éléments de barre d'outils
+     * les élément qui vont changer d'état selon "visibility' seront :
+     *  le menu recherche
+     *  le menu des filtre
+     *  le menu d'import
+     *  le menu d'export
+     * les élément qui vont changer d'état selon "visibilityOfOther' seront :
+     *  le menu gestion catégorie
+     *  le menu gestion horaire
+     *  le'option annuler
+     * @param visibility
+     * @param visibilityOfOther
+     */
+    private void setToolBarVisibility(boolean visibility, boolean visibilityOfOther) {
+        setToolBarVisibility(visibility);
+        Menu menu = maBarreOutil.getMenu();
+        MenuItem gestionCatego = menu.findItem(R.id.settings_gestion_categorie);
+        MenuItem gestionLoc = menu.findItem(R.id.settings_gestion_localisation);
+        MenuItem annulerOption = menu.findItem(R.id.annuler_option);
+        gestionCatego.setVisible(visibilityOfOther);
+        gestionLoc.setVisible(visibilityOfOther);
+        annulerOption.setVisible(visibilityOfOther);
     }
 
     /**
@@ -822,6 +966,13 @@ public class MainActivity extends AppCompatActivity {
                 new int[] {android.R.id.text1,}, 0);
     }
 
+    /**
+     * TODO commentaire Tanguy ou JC
+     * @param localisation
+     * @param categorie
+     * @param ouvert
+     * @return
+     */
     private SimpleCursorAdapter getAdapterPlageHoraireByFiltres(String localisation, String categorie, boolean ouvert) {
         return new SimpleCursorAdapter(this,
                 R.layout.ligne_liste_plage_horaire,
