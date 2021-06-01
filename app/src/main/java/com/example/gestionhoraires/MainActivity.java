@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
+import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 import android.widget.TimePicker;
 
@@ -226,10 +227,11 @@ public class MainActivity extends AppCompatActivity {
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
-                accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(accesHoraires.FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
+                accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
                 break;
             case R.id.export_option:
-                // TODO export SMS
+                Cursor curseur = (Cursor) plageHoraireAdaptateur.getItem(information.position);
+                exportationSMS(curseur.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
                 break;
             case R.id.modifier :
                 //modifierElement(information.id); // TODO action modifier
@@ -427,6 +429,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ArrayList<Integer> checkedItemIds = getCheckedItemPositions(listViewPlageHoraire);
+                //plageHoraireAdaptateur.getItem();
 //                showDialogExportJson(exportationJSON()); TODO export JSON
 
                 // when everything is ok
@@ -583,8 +586,6 @@ public class MainActivity extends AppCompatActivity {
      * @param
      */
     private void composeMailMessage(File file) {
-
-        //String localisationFichier = "/data/data/com/example/gestionhoraires/files/fichier.json";
 
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
@@ -1042,11 +1043,10 @@ public class MainActivity extends AppCompatActivity {
      * Envoie d'une fiches horaire par SMS
      * @param aEnvoyer la fiche a envoyer
      */
-    private void exportationSMS(FichePlageHoraire aEnvoyer) {
+    private void exportationSMS(String id) {
 
-        aEnvoyer.setId("1"); // TODO l'enlever STUB
-
-        String[] tabEnsemble;
+        // recherche de la fiche horraire
+        FichePlageHoraire aEnvoyer = accesHoraires.getFichePlageHoraireById(id);
 
         // Catégorie de la fiche a envoyer
         Categorie categorie = accesHoraires.getCategorieById(aEnvoyer.getIdCategorie());
