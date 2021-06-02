@@ -55,7 +55,8 @@
                     android:layout_width="@dimen/width_edt_text"
                     android:layout_height="wrap_content"
                     android:hint="@string/colonne_nom"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:inputType="text"/>
             </TableRow>
             <TableRow
                 android:layout_marginTop="@dimen/marge_normale">

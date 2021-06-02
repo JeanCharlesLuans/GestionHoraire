@@ -8,24 +8,6 @@
     <TableRow>
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/grande_hauteur"
-            android:gravity="center_vertical"
-            android:layout_marginStart="@dimen/marge_normale"
-            android:text="@string/colonne_nom" />
-
-        <EditText
-            android:id="@+id/edt_nom"
-            android:layout_width="331dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/marge_normale"
-            android:layout_marginEnd="@dimen/marge_normale"
-            android:maxLines="1"
-            android:layout_span="2" />
-    </TableRow>
-
-    <TableRow>
-        <TextView
-            android:layout_width="match_parent"
             android:gravity="center_vertical"
             android:layout_height="@dimen/grande_hauteur"
             android:layout_marginStart="@dimen/marge_normale"
@@ -53,6 +35,7 @@
             android:layout_width="@dimen/grande_hauteur"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/marge_normale"
+            android:maxLines="1"
             android:editable="false"
             android:enabled="false"
             android:inputType="time"
@@ -95,6 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/marge_normale"
             android:ems="10"
+            android:maxLines="1"
             android:inputType="time"
             android:editable="false"
             android:enabled="false"
