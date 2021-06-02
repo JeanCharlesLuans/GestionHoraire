@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
     /** Identifiant de l'intention pour l'ajout de la plage horaire */
     private final int CODE_PLAGE_HORAIRE = 30;
 
+    /** Identifiant de l'intention pour l'ajout de la plage horaire */
+    private final int CODE_FICHE_HORAIRE = 40;
+
     /** Clé pour le message transmis par l'activité secondaire */
     public final static String CLE_H_PONCTUEL = "com.example.gestionhoraires.PONCTUEL";
 
@@ -402,6 +405,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void selectionnerElement() {
         setPlageHoraireAdapterForExport();
+        
 
         listViewPlageHoraire.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -632,85 +636,9 @@ public class MainActivity extends AppCompatActivity {
      * permet l'ajout d'une horaire ponctuel grace a une boite de dialogue
      */
     private void ajouterHorairePonctuel() {
-        final View boiteSaisie = getLayoutInflater().inflate(R.layout.ajout_h_ponctuel, null);
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.ajout_horaires_ponctuelles)
-                .setView(boiteSaisie)
-                .setPositiveButton(getResources().getString(R.string.bouton_ajouter), null)
-                .setNeutralButton(getResources().getString(R.string.bouton_negatif),null)
-                .create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button boutonAjout = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                EditText editTextHeure = ((AlertDialog) dialog).findViewById(R.id.heure_editText);
-                EditText editTextHeureFin = ((AlertDialog) dialog).findViewById(R.id.heure_fin_editText);
-                Button bouton_heure = ((AlertDialog) dialog).findViewById(R.id.btn_heure);
-                Button bouton_heure_fin = ((AlertDialog) dialog).findViewById(R.id.btn_heure_fin);
-                CheckBox checkBoxAjoutFin = ((AlertDialog) dialog).findViewById(R.id.checkbox_ajout_fin);
-                TableRow rowHeureFin = ((AlertDialog) dialog).findViewById(R.id.table_row_heure_fin);
-                Spinner spinnerJour = ((AlertDialog) dialog).findViewById(R.id.jour_spinner);
-
-                //remplissage du Spinner
-                SimpleCursorAdapter adapterJour = getAdapterJour();
-                adapterJour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinnerJour.setAdapter(adapterJour);
-
-                // listener pour l'affichage de l'ajout de l'heure de fin
-                checkBoxAjoutFin.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (checkBoxAjoutFin.isChecked()) {
-                            rowHeureFin.setVisibility(View.VISIBLE);
-                        } else {
-                            rowHeureFin.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                });
-                // listener pour ajouter l'heure a l'editText
-                bouton_heure.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                editTextHeure.setText(hourOfDay + ":" + minute );
-                            }
-                        };
-                        TimePickerDialog timePickerDialog = new TimePickerDialog(((AlertDialog) dialog).getContext(),
-                                R.style.timePickerDialog, timeSetListener, 12, 30, true);
-                        timePickerDialog.show();
-                    }
-                });
-                // listener pour ajouter l'heure a l'editText
-                bouton_heure_fin.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                editTextHeureFin.setText(hourOfDay + ":" + minute );
-                            }
-                        };
-                        TimePickerDialog timePickerDialog = new TimePickerDialog(((AlertDialog) dialog).getContext(),
-                                R.style.timePickerDialog, timeSetListener, 12, 30, true);
-                        timePickerDialog.show();
-                    }
-                });
-                // listener pour ajouter l'horaire ponctuelle
-                boutonAjout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        // TODO action ajout horaire ponctuelle
-                    }
-                });
-            }
-        });
-
-        dialog.show();
+        Intent plageHoraire = new Intent(MainActivity.this,
+                FichePonctuel.class);
+        startActivityForResult(plageHoraire, CODE_FICHE_HORAIRE);
     }
 
     /**
@@ -979,6 +907,7 @@ public class MainActivity extends AppCompatActivity {
      * @param returnedIntent
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        // TODO les différent cas de retour
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch(requestCode) {
             case CODE_GESTION_CATEGORIE:
@@ -997,6 +926,8 @@ public class MainActivity extends AppCompatActivity {
                 curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
                 plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
                 onContentChanged();
+                break;
+            case CODE_FICHE_HORAIRE :
                 break;
             default:
                 break;

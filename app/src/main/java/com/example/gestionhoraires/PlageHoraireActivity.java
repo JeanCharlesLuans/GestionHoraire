@@ -174,7 +174,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menuActivite) {
-        getMenuInflater().inflate(R.menu.menu_plage_horaire_tool_bar, menuActivite);
+        getMenuInflater().inflate(R.menu.menu_ponctuel_tool_bar, menuActivite);
         return super.onCreateOptionsMenu(menuActivite);
     }
 

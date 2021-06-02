@@ -90,8 +90,8 @@
     <string name="label_import_csv">Importation par CSV</string>
     <string name="label_import_json">Importation par JSON</string>
 
-    <!-- Ajout plage horaire -->
-    <string name="titre_ajout_plage_horaire">Ajouter une fiche plage horaire</string>
+    <!-- Plage horaire -->
+    <string name="titre_ajout_plage_horaire">Ajouter une plage horaire</string>
     <string name="image">Image</string>
     <string name="horaire_matin">Matin</string>
     <string name="horaire_aprem">Aprés-midi</string>
@@ -113,5 +113,12 @@
     <!-- Toast -->
     <string name="toast_pas_de_nom">Vous devez saisir un nom.</string>
     <string name="toast_pas_de_categorie">Cette localisation ne possède pas de catégorie.</string>
+    
+    <!-- Horaires Ponctuel -->
+    <string name="titre_detail_plage_horaire">Ajout d\'une fiche d\'horaires ponctuels</string>
+    <string name="fab_ajout_fiche">Ajouter la fiche</string>
+    <string name="fab_ajout_fiche_description">Ajout d\'une fiche d\'horaires ponctuels</string>
+    <string name="ajout_horaire_ponctuel">Ajout Horaire +</string>
+
 
 </resources>

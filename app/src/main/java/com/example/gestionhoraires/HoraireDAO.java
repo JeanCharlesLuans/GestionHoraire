@@ -777,8 +777,21 @@ public class HoraireDAO {
     public Cursor getCursorCategorieByLocalisation(String idLocalisation) {
         String requete =
                 "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
-                + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation
-                + " AND " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0";
+                        + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation
+                        + " AND " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0";
+        return baseHoraire.rawQuery(requete, null);
+    }
+
+    /**
+     * Retourne un curseur sur les catégories de la localisation, uniquement pour les catégories des plages horaires
+     * @param idLocalisation l'identifiant
+     * @return le curseur
+     */
+    public Cursor getCursorCategoriePonctuelsByLocalisation(String idLocalisation) {
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
+                        + " WHERE " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation
+                        + " AND " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 1";
         return baseHoraire.rawQuery(requete, null);
     }
 
