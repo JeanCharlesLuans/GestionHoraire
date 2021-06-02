@@ -1069,7 +1069,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Récupération des inforamtions des ensemble de la fiche
         ArrayList<EnsemblePlageHoraire> listeEnsemblePlageHoraire
-                = accesHoraires.getEnsembleHorraireOfFiche(aEnvoyer.getId());
+                = accesHoraires.getEnsembleHoraireByFiche(aEnvoyer.getId());
 
         // Formatage du message
         String message = "Localisation : " + nomLocalisation + '\n'

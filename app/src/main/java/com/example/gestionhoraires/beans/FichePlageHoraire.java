@@ -118,7 +118,7 @@ public class FichePlageHoraire {
         jsonLocalisation = localisation.getJson();
 
         // Initialisation de l'objets
-        ArrayList<EnsemblePlageHoraire> listeEnsemble = horaireDAO.getEnsembleHorraireOfFiche(this.id);
+        ArrayList<EnsemblePlageHoraire> listeEnsemble = horaireDAO.getEnsembleHoraireByFiche(this.id);
         for (int i = 0; i < listeEnsemble.size(); i++) {
             jsonHoraire.put(listeEnsemble.get(i).getJSON(horaireDAO));
         }

@@ -229,6 +229,11 @@ public class PlageHoraireActivity extends AppCompatActivity {
         Intent intentionRetour = new Intent();
         setResult(Activity.RESULT_OK, intentionRetour);
         System.out.println("ID : "  + fichePlageHoraire.getId());
+        for (EnsemblePlageHoraire ensemblePlageHoraire : ensemblesPlagesHoraire) {
+            if (ensemblePlageHoraire != null) {
+                accesHoraires.deleteEnsemblePlageHoraire(ensemblePlageHoraire.getId());
+            }
+        }
         accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
         finish();
     }

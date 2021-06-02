@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.sax.EndElementListener;
 import android.support.v4.app.INotificationSideChannel;
+import android.telephony.emergency.EmergencyNumber;
 
 import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
@@ -18,6 +20,7 @@ import com.example.gestionhoraires.beans.Localisation;
 import com.example.gestionhoraires.beans.PlageHoraire;
 import com.google.android.material.animation.ChildrenAlphaProperty;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -605,9 +608,19 @@ public class HoraireDAO {
      * @return un indicateur sur la suppression
      */
     public int deleteEnsemblePlageHoraire(String idEnsemblePlageHoraire) {
+        EnsemblePlageHoraire ensemblePlageHoraire = getEnsemblePlageHoraireById(idEnsemblePlageHoraire);
+        baseHoraire.delete(HelperBDHoraire.NOM_TABLE_PLAGE_HORAIRE,
+                HelperBDHoraire.PLAGE_HORAIRE_CLE + " = ?",
+                new String[] {ensemblePlageHoraire.getIdPlageHoraireMatin()});
+        if (ensemblePlageHoraire.getIdPlageHoraireSoir() != null) {
+            baseHoraire.delete(HelperBDHoraire.NOM_TABLE_PLAGE_HORAIRE,
+                    HelperBDHoraire.PLAGE_HORAIRE_CLE + " = ?",
+                    new String[] {ensemblePlageHoraire.getIdPlageHoraireSoir()});
+        }
         return baseHoraire.delete(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE,
                 HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE + " = ?",
                 new String[] {idEnsemblePlageHoraire});
+
     }
 
     /**
@@ -772,7 +785,7 @@ public class HoraireDAO {
     /**
      * @return tout les ensemble horraire d'une fiche horraire
      */
-    public ArrayList<EnsemblePlageHoraire> getEnsembleHorraireOfFiche(String idFicheHorraire) {
+    public ArrayList<EnsemblePlageHoraire> getEnsembleHoraireByFiche(String idFicheHorraire) {
         ArrayList<EnsemblePlageHoraire> listeEnsemble = new ArrayList<>();
 
         String requete =
