@@ -113,6 +113,7 @@
     <!-- Toast -->
     <string name="toast_pas_de_nom">Vous devez saisir un nom.</string>
     <string name="toast_pas_de_categorie">Cette localisation ne possède pas de catégorie.</string>
+    <string name="erreur_ouverture">Impossible de lire le fichier</string>
     
     <!-- Horaires Ponctuel -->
     <string name="titre_detail_plage_horaire">Ajout d\'une fiche d\'horaires ponctuels</string>

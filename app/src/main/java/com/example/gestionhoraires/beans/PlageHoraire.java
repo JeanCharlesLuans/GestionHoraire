@@ -139,6 +139,7 @@ public class PlageHoraire {
         jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE, this.horaireFermeture);
         jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE, this.etatOuverture);
         jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE, this.etatFermeture);
+        jsonPlage.put(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME, this.estFerme);
 
         return jsonPlage;
     }

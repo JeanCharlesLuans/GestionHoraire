@@ -109,9 +109,9 @@ public class EnsemblePlageHoraire {
 
         jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.id);
         jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN, plageHoraireMatin.getJSON());
-        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR, plageHoraireMatin.getJSON());
-        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.idJour);
-        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE, this.idFichePlageHoraire);
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR, plageHoraireSoir.getJSON());
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR, this.idJour);
+        jsonEnsemble.put(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE, this.idFichePlageHoraire);
 
         return jsonEnsemble;
     }
