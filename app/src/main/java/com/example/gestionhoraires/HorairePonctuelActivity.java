@@ -25,11 +25,15 @@ import android.widget.TimePicker;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.os.ParcelableCompatCreatorCallbacks;
 
+import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
+import com.example.gestionhoraires.beans.FichePlageHoraire;
+import com.example.gestionhoraires.beans.HorairePonctuelle;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class FichePonctuel extends AppCompatActivity {
+public class HorairePonctuelActivity extends AppCompatActivity {
 
     /** Objet destiné à faciliter l'accès à la table des horaires */
     private HoraireDAO accesHoraires;
@@ -52,6 +56,12 @@ public class FichePonctuel extends AppCompatActivity {
     /** Spinner contenant les Catégories */
     private Spinner spinnerCategorie;
 
+    /** Curseur contenant les horaires ponctuels de la fiche */
+    private Cursor curseurSurBase;
+
+    /** La fiche horaire ponctuel */
+    private FicheHorairePonctuelle ficheHorairePonctuelle;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,17 +81,23 @@ public class FichePonctuel extends AppCompatActivity {
             }
         });
 
+        ficheHorairePonctuelle = new FicheHorairePonctuelle();
+        accesHoraires.addFicheHorairePonctuelle(ficheHorairePonctuelle);
+        Cursor cursor = accesHoraires.getCursorAllFicheHorairePonctuelle();
+        cursor.moveToLast();
+        ficheHorairePonctuelle.setId(cursor.getString(0));
+
+        curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(ficheHorairePonctuelle.getId());
+
         // on remplie la liste
         listViewHPonctuel = findViewById(R.id.liste_horaires_ponctuel);
         horairesPonctuelAdapteur = new SimpleCursorAdapter(this,
-                R.layout.ligne_liste_horaires_ponctuelles,
-                accesHoraires.getCursorAllCategorieHorairePonctuelle(),// TODO remplacer par la liste des horaire de la fiche nouvellement crée
-                new String[] {HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM,
-                        "idLocalisation", // TODO remplacer par jour_semaine
-                        "isDefault" },    // TODO remplacer par horaire
-                new int[] {R.id.name,
-                        R.id.jour_semaine,
-                        R.id.horaire}, 0);
+                android.R.layout.simple_list_item_2,
+                curseurSurBase,
+                new String[] {"libelle",
+                        "horaireOuverture"},
+                new int[] {android.R.id.text1,
+                        android.R.id.text2}, 0);
         listViewHPonctuel.setAdapter(horairesPonctuelAdapteur);
         registerForContextMenu(listViewHPonctuel);
 
@@ -145,22 +161,26 @@ public class FichePonctuel extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
 
+        String identifiant = curseurSurBase.getString(HoraireDAO.HORAIRE_PONCTUELLE_NUM_COLONNE_CLE);
+
         AdapterView.AdapterContextMenuInfo information =
                 (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
-                // TODO Suppression
-//                accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                accesHoraires.deleteHorairePonctuel(identifiant);
                 break;
             case R.id.modifier :
-                //modifierElement(information.id); // TODO action modifier
+                modifierHoraire(identifiant);
                 break;
             case R.id.annuler :		 // retour à la liste principale
                 break;
 
         }
+        curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(ficheHorairePonctuelle.getId());
+        horairesPonctuelAdapteur.swapCursor(curseurSurBase);
+        onContentChanged();
         return (super.onContextItemSelected(item));
     }
 
@@ -282,7 +302,133 @@ public class FichePonctuel extends AppCompatActivity {
                 boutonAjout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO action ajout horaire ponctuelle
+                        HorairePonctuelle horairePonctuelle;
+                        if (checkBoxAjoutFin.isChecked()) {
+                            horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
+                                    spinnerJour.getSelectedItemId() + "",
+                                    ficheHorairePonctuelle.getId());
+                        } else {
+                            horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
+                                    editTextHeureFin.getText().toString(),
+                                    spinnerJour.getSelectedItemId() + "",
+                                    ficheHorairePonctuelle.getId());
+                        }
+                        accesHoraires.addHorairePonctuelle(horairePonctuelle);
+                        curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(ficheHorairePonctuelle.getId());
+                        horairesPonctuelAdapteur.swapCursor(curseurSurBase);
+                        onContentChanged();
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * Permet la modification d'une horaire ponctuel
+     * @param idHorairePonctuel
+     */
+    public void modifierHoraire(String idHorairePonctuel) {
+        final View boiteSaisie = getLayoutInflater().inflate(R.layout.ajout_h_ponctuel, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.update_horaire_ponctuel)
+                .setView(boiteSaisie)
+                .setPositiveButton(getResources().getString(R.string.option_modifier), null)
+                .setNeutralButton(getResources().getString(R.string.bouton_negatif),null)
+                .create();
+
+        HorairePonctuelle horairePonctuelle = accesHoraires.getHorairePonctuelleById(idHorairePonctuel);
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button boutonAjout = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                EditText editTextHeure = ((AlertDialog) dialog).findViewById(R.id.heure_editText);
+                EditText editTextHeureFin = ((AlertDialog) dialog).findViewById(R.id.heure_fin_editText);
+                Button bouton_heure = ((AlertDialog) dialog).findViewById(R.id.btn_heure);
+                Button bouton_heure_fin = ((AlertDialog) dialog).findViewById(R.id.btn_heure_fin);
+                CheckBox checkBoxAjoutFin = ((AlertDialog) dialog).findViewById(R.id.checkbox_ajout_fin);
+                TableRow rowHeureFin = ((AlertDialog) dialog).findViewById(R.id.table_row_heure_fin);
+                Spinner spinnerJour = ((AlertDialog) dialog).findViewById(R.id.jour_spinner);
+
+                //remplissage du Spinner
+                SimpleCursorAdapter adapterJour = getAdapterJour();
+                adapterJour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerJour.setAdapter(adapterJour);
+
+                rowHeureFin.setVisibility(horairePonctuelle.getHoraireFin() == null ? View.VISIBLE : View.INVISIBLE);
+
+                editTextHeure.setText(horairePonctuelle.getHoraireDebut());
+                spinnerJour.setSelection(Integer.parseInt(horairePonctuelle.getIdJour()) - 1);
+
+                if (horairePonctuelle.getHoraireFin() == null) {
+                    editTextHeureFin.setText(horairePonctuelle.getHoraireFin());
+                }
+
+                // listener pour l'affichage de l'ajout de l'heure de fin
+                checkBoxAjoutFin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (checkBoxAjoutFin.isChecked()) {
+                            rowHeureFin.setVisibility(View.VISIBLE);
+                        } else {
+                            rowHeureFin.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+                // listener pour ajouter l'heure a l'editText
+                bouton_heure.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                editTextHeure.setText(hourOfDay + ":" + minute );
+                            }
+                        };
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(((AlertDialog) dialog).getContext(),
+                                R.style.timePickerDialog, timeSetListener, 12, 30, true);
+                        timePickerDialog.show();
+                    }
+                });
+                // listener pour ajouter l'heure a l'editText
+                bouton_heure_fin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                editTextHeureFin.setText(hourOfDay + ":" + minute );
+                            }
+                        };
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(((AlertDialog) dialog).getContext(),
+                                R.style.timePickerDialog, timeSetListener, 12, 30, true);
+                        timePickerDialog.show();
+                    }
+                });
+                // listener pour ajouter l'horaire ponctuelle
+                boutonAjout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        HorairePonctuelle horairePonctuelle;
+                        if (checkBoxAjoutFin.isChecked()) {
+                            horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
+                                    spinnerJour.getSelectedItemId() + "",
+                                    ficheHorairePonctuelle.getId());
+                        } else {
+                            horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
+                                    editTextHeureFin.getText().toString(),
+                                    spinnerJour.getSelectedItemId() + "",
+                                    ficheHorairePonctuelle.getId());
+                        }
+                        accesHoraires.updateHorairePonctuelle(horairePonctuelle, idHorairePonctuel);
+                        curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(ficheHorairePonctuelle.getId());
+                        horairesPonctuelAdapteur.swapCursor(curseurSurBase);
+                        onContentChanged();
+                        dialog.dismiss();
                     }
                 });
             }

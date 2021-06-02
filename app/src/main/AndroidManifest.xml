@@ -24,7 +24,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".LocalisationActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".FichePonctuel"
+        <activity android:name=".HorairePonctuelActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".PlageHoraireActivity"
             android:screenOrientation="portrait">

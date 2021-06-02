@@ -156,6 +156,9 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
     /** Vue des fiches plages horaires */
     public static final String VUE_FICHE_PLAGE_HORAIRE = "V_Fiche_Plage_Horaire";
 
+    /** Vue des horaires ponctuels */
+    public static final String VUE_HORAIRE_PONCTUEL = "V_Horaire_Ponctuel";
+
     //// Création des tables ////
     /** Requête pour la création de la table JOUR */
     private static final  String CREATION_TABLE_JOUR =
@@ -276,6 +279,17 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
             + NOM_TABLE_CATEGORIE + "." + CATEGORIE_CLE_LOCALISATION + " = "
             + NOM_TABLE_LOCALISATION + "." + LOCALISATION_CLE + ";";
 
+    /** Requête de création d'une vue pour les horaires ponctuels */
+    private  final String CREATION_VUE_HORAIRE_PONCTUEL =
+            "CREATE VIEW " + VUE_HORAIRE_PONCTUEL + " AS "
+            + "SELECT " + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_CLE + ", "
+            + NOM_TABLE_JOUR + "." + JOUR_LIBELLE + " AS libelle, "
+            + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_CLE_FICHE + " AS idFiche, "
+            + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_OUVERTURE + " AS horaireOuverture"
+            + " FROM " + NOM_TABLE_HORAIRE_PONCTUELLE + " INNER JOIN " + NOM_TABLE_JOUR + " ON "
+            + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_CLE_JOUR + " = "
+            + NOM_TABLE_JOUR + "." + JOUR_CLE + ";";
+
 
     /** Requête pour supprimer la table JOUR */
     public static final String SUPPRIMER_TABLE_JOUR =
@@ -372,6 +386,7 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
 
         db.execSQL(CREATION_VUE_CATEGORIE_LOCALISATION);
         db.execSQL(CREATION_VUE_FICHE_PLAGE_HORAIRE);
+        db.execSQL(CREATION_VUE_HORAIRE_PONCTUEL);
     }
 
     private void initJourSemaine(SQLiteDatabase db) {

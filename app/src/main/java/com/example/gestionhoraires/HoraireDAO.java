@@ -603,6 +603,17 @@ public class HoraireDAO {
     }
 
     /**
+     * Suppression d'une plage horaire ponctuel
+     * @param idPlageHorairePonctuel id de la plage horaire ponctuel à supprimer
+     * @return un indicateur sur la suppression
+     */
+    public int deleteHorairePonctuel(String idPlageHorairePonctuel) {
+        return baseHoraire.delete(HelperBDHoraire.NOM_TABLE_HORAIRE_PONCTUELLE,
+                HelperBDHoraire.HORAIRE_PONCTUELLE_CLE + " = ?",
+                new String[] {idPlageHorairePonctuel});
+    }
+
+    /**
      * Suppression d'un ensemble de plage horaire
      * @param idEnsemblePlageHoraire l'id de l'ensemble de plage horaire
      * @return un indicateur sur la suppression
@@ -1032,5 +1043,18 @@ public class HoraireDAO {
         jour.setId(cursor.getString(JOUR_NUM_COLONNE_CLE));
         jour.setJour(cursor.getString(JOUR_NUM_COLONNE_LIBELLE));
         return jour;
+    }
+
+    /**
+     * Retourne un curseur sur les horaires ponctuelles en fonction de la fiche
+     * @param idFiche
+     * @return
+     */
+    public Cursor getCursorAllHorairePonctuelleByIdFiche(String idFiche) {
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.VUE_HORAIRE_PONCTUEL
+                + " WHERE idFiche " + " = " + idFiche
+                + " ORDER BY " + HelperBDHoraire.HORAIRE_PONCTUELLE_CLE;
+        return baseHoraire.rawQuery(requete, null);
     }
 }

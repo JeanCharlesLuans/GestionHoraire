@@ -4,7 +4,7 @@
     <!-- Floating Button -->
     <string name="fab_description">Ajouter Horaire ou plage horaire</string>
     <string name="fab_export_description">Import des fiche sélèctionné</string>
-    <string name="ajout_horaires_ponctuelles">Ajoutez une horaires ponctuelles</string>
+    <string name="ajout_horaires_ponctuelles">Ajouter une horaire ponctuel</string>
     <string name="ajout_heure_fin">Ajouter une heure de fin</string>
     <string name="heure_fin">Heure de fin </string>
 
@@ -118,7 +118,7 @@
     <string name="titre_detail_plage_horaire">Ajout d\'une fiche d\'horaires ponctuels</string>
     <string name="fab_ajout_fiche">Ajouter la fiche</string>
     <string name="fab_ajout_fiche_description">Ajout d\'une fiche d\'horaires ponctuels</string>
-    <string name="ajout_horaire_ponctuel">Ajout Horaire +</string>
-
+    <string name="ajout_horaire_ponctuel">Ajout Horaire</string>
+    <string name="update_horaire_ponctuel">Modifier l\'horaire ponctuel</string>
 
 </resources>
