@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Jour de la semaine -->
+    <TextView
+        android:id="@+id/jour_semaine"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="40" />
+
+    <!-- Horaire Ouverture-->
+    <TextView
+        android:id="@+id/horaire_ouverture"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="30" />
+
+    <!-- Horaire Fermeture-->
+    <TextView
+        android:id="@+id/horaire_fermeture"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="30" />
+
+</LinearLayout>

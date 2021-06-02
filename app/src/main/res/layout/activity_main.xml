@@ -101,19 +101,13 @@
                             android:layout_width="0dp"
                             android:layout_marginLeft="@dimen/marge_normale"
                             android:layout_height="fill_parent"
-                            android:layout_weight="30" />
+                            android:layout_weight="50" />
 
                         <TextView
-                            android:text="@string/colonne_jour"
+                            android:text="@string/filtre_categorie"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="30" />
-
-                        <TextView
-                            android:text="@string/colonne_horaire"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="40" />
+                            android:layout_weight="50" />
 
                     </LinearLayout>
 

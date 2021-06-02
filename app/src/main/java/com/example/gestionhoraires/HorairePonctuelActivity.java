@@ -92,12 +92,14 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         // on remplie la liste
         listViewHPonctuel = findViewById(R.id.liste_horaires_ponctuel);
         horairesPonctuelAdapteur = new SimpleCursorAdapter(this,
-                android.R.layout.simple_list_item_2,
+                R.layout.ligne_liste_fiche_horaire_ponctuel,
                 curseurSurBase,
-                new String[] {"libelle",
-                        "horaireOuverture"},
-                new int[] {android.R.id.text1,
-                        android.R.id.text2}, 0);
+                new String[] {"libelle", // TODO mettre constante
+                        "horaireOuverture",
+                        "horaireFermeture"},
+                new int[] {R.id.jour_semaine,
+                        R.id.horaire_ouverture,
+                        R.id.horaire_fermeture}, 0);
         listViewHPonctuel.setAdapter(horairesPonctuelAdapteur);
         registerForContextMenu(listViewHPonctuel);
 

@@ -507,14 +507,12 @@ public class MainActivity extends AppCompatActivity {
     private void setHPonctuelAdapter() {
         listViewHPonctuelles = findViewById(R.id.liste_horaires_ponctuelles);
         horairesPonctuellesAdapteur = new SimpleCursorAdapter(this,
-                R.layout.ligne_liste_horaires_ponctuelles,
+                R.layout.ligne_liste_horaire_ponctuel,
                 curseurHorairesPonctuelles,
                 new String[] {HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM,
-                        "jour_semaine", // TODO euh stp change moi ca Tanguy
-                        "horaire" },
+                        "jour_semaine"}, // TODO mettre la bonne colonne
                 new int[] {R.id.name,
-                        R.id.jour_semaine,
-                        R.id.horaire}, 0);
+                        R.id.categorie}, 0);
         listViewHPonctuelles.setAdapter(horairesPonctuellesAdapteur);
         horairesPonctuellesAdapteur.notifyDataSetChanged();
     }

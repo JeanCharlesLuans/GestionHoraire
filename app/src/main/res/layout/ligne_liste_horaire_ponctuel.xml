@@ -9,20 +9,13 @@
         android:layout_width="0dp"
         android:layout_marginLeft="@dimen/marge_normale"
         android:layout_height="match_parent"
-        android:layout_weight="30" />
+        android:layout_weight="50" />
 
-    <!-- Jour de la semaine -->
+    <!-- Categorie -->
     <TextView
-        android:id="@+id/jour_semaine"
+        android:id="@+id/categorie"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="30" />
-
-    <!-- Horaire -->
-    <TextView
-        android:id="@+id/horaire"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="40" />
+        android:layout_weight="50" />
 
 </LinearLayout>
