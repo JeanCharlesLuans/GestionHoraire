@@ -107,6 +107,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
         maBarreOutil.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                for (EnsemblePlageHoraire ensemblePlageHoraire : ensemblesPlagesHoraire) {
+                    if (ensemblePlageHoraire != null) {
+                        accesHoraires.deleteEnsemblePlageHoraire(ensemblePlageHoraire.getId());
+                    }
+                }
+                accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
                 retour();
             }
         });
@@ -189,6 +195,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.retour :
+                for (EnsemblePlageHoraire ensemblePlageHoraire : ensemblesPlagesHoraire) {
+                    if (ensemblePlageHoraire != null) {
+                        accesHoraires.deleteEnsemblePlageHoraire(ensemblePlageHoraire.getId());
+                    }
+                }
+                accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
                 retour();
                 break;
             case R.id.annuler_option :
@@ -228,13 +240,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
     private void retour() {
         Intent intentionRetour = new Intent();
         setResult(Activity.RESULT_OK, intentionRetour);
-        System.out.println("ID : "  + fichePlageHoraire.getId());
-        for (EnsemblePlageHoraire ensemblePlageHoraire : ensemblesPlagesHoraire) {
-            if (ensemblePlageHoraire != null) {
-                accesHoraires.deleteEnsemblePlageHoraire(ensemblePlageHoraire.getId());
-            }
-        }
-        accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
         finish();
     }
 
