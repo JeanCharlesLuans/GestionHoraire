@@ -429,8 +429,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ArrayList<Integer> checkedItemIds = getCheckedItemPositions(listViewPlageHoraire);
-                //plageHoraireAdaptateur.getItem();
-//                showDialogExportJson(exportationJSON()); TODO export JSON
+                FichePlageHoraire[] listeFiche = new FichePlageHoraire[checkedItemIds.size()];
+
+                for (int i = 0; i < checkedItemIds.size(); i++) {
+                    Cursor tmp = (Cursor) plageHoraireAdaptateur.getItem(checkedItemIds.get(i));
+                    String id = tmp.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE);
+                    listeFiche[i] = accesHoraires.getFichePlageHoraireById(id);
+                }
+
+                showDialogExportJson(exportationJSON(listeFiche));
 
                 // when everything is ok
                 resetInterface();
@@ -583,7 +590,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Envoie du fichier JSON par mail
-     * @param
+     * @param file Fichier a envoyer
      */
     private void composeMailMessage(File file) {
 
@@ -939,7 +946,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * TODO commentaire Tanguy ou JC
+     * TODO commentaire Tanguy
      * @param localisation
      * @param categorie
      * @param ouvert
@@ -1007,8 +1014,6 @@ public class MainActivity extends AppCompatActivity {
 
         JSONArray liste = new JSONArray();
 
-        listeFichePlageHoraires[0].setId("1"); // TODO l'enlever STUB
-
         File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
         File fichierJSON = new File(root, "FichierJSON");
         try {
@@ -1041,7 +1046,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Envoie d'une fiches horaire par SMS
-     * @param aEnvoyer la fiche a envoyer
+     * @param id de la fiche a envoyer
      */
     private void exportationSMS(String id) {
 
