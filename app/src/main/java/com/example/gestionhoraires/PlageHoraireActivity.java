@@ -166,6 +166,26 @@ public class PlageHoraireActivity extends AppCompatActivity {
         editTextMatin = findViewById(R.id.editText_matin);
         editTextAprem = findViewById(R.id.editText_aprem);
         imageView = findViewById(R.id.imageView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View boiteSaisie = getLayoutInflater().inflate(R.layout.image_view, null);
+
+                AlertDialog dialog = new AlertDialog.Builder(PlageHoraireActivity.this)
+                        .setView(boiteSaisie)
+                        .setPositiveButton(getResources().getString(R.string.bouton_positif), null)
+                        .create();
+
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        ImageView dialogImageView = dialog.findViewById(R.id.dialog_imageview);
+                        dialogImageView.setImageURI(Uri.parse(imagePath));
+                    }
+                });
+                dialog.show();
+            }
+        });
 
         // On récupère les button des jours
         Button btnLundi = findViewById(R.id.btn_lundi);
