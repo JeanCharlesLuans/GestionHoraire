@@ -197,6 +197,15 @@ public class PlageHoraireActivity extends AppCompatActivity {
         Button btnSamedi = findViewById(R.id.btn_samedi);
         Button btnDimanche = findViewById(R.id.btn_dimanche);
 
+        // On récupère les button des jours
+        Button btnLundi = findViewById(R.id.btn_lundi);
+        Button btnMardi = findViewById(R.id.btn_mardi);
+        Button btnMercredi = findViewById(R.id.btn_mercredi);
+        Button btnJeudi = findViewById(R.id.btn_jeudi);
+        Button btnVendredi = findViewById(R.id.btn_vendredi);
+        Button btnSamedi = findViewById(R.id.btn_samedi);
+        Button btnDimanche = findViewById(R.id.btn_dimanche);
+
         SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
         adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLocalisation.setAdapter(adapterLocalisation);
