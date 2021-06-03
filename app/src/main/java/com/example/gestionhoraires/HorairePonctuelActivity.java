@@ -6,7 +6,11 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -26,6 +31,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.core.os.ParcelableCompatCreatorCallbacks;
 
 import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
@@ -34,7 +40,18 @@ import com.example.gestionhoraires.beans.HorairePonctuelle;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class HorairePonctuelActivity extends AppCompatActivity {
+
+    /** Identifiant de l'intention pour l'acces a la camera */
+    private static final int TAKE_PICTURE = 1;
+
+    /** Identifiant de l'intention pour l'acces a la gallerie d'image */
+    private static final int PICK_IMAGE = 2;
 
     /** Objet destiné à faciliter l'accès à la table des horaires */
     private HoraireDAO accesHoraires;
@@ -65,6 +82,12 @@ public class HorairePonctuelActivity extends AppCompatActivity {
 
     /** La fiche horaire ponctuel */
     private FicheHorairePonctuelle ficheHorairePonctuelle;
+
+    /** La photo de la fiche */
+    private ImageView imageView;
+
+    /** Path de l'image */
+    private String imagePath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,6 +136,7 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         editTextInformation = findViewById(R.id.editText_info);
         spinnerLocalisation = findViewById(R.id.spinner_localisation);
         spinnerCategorie = findViewById(R.id.spinner_categorie);
+        imageView = findViewById(R.id.imageView);
 
         SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
         adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -129,6 +153,26 @@ public class HorairePonctuelActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View boiteSaisie = getLayoutInflater().inflate(R.layout.image_view, null);
+
+                AlertDialog dialog = new AlertDialog.Builder(HorairePonctuelActivity.this)
+                        .setView(boiteSaisie)
+                        .setPositiveButton(getResources().getString(R.string.bouton_positif), null)
+                        .create();
+
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        ImageView dialogImageView = dialog.findViewById(R.id.dialog_imageview);
+                        dialogImageView.setImageURI(Uri.parse(imagePath));
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -506,5 +550,111 @@ public class HorairePonctuelActivity extends AppCompatActivity {
                 accesHoraires.getCursorCategoriePonctuelsByLocalisation(idLocalisation),
                 new String[] {HelperBDHoraire.CATEGORIE_NOM},
                 new int[] {android.R.id.text1,}, 0);
+    }
+
+    /**
+     * Efface la photo selectionner par l'utilisateur
+     */
+    public void onClickEffacerP(View view) {
+        imageView.setImageURI(Uri.parse(""));
+    }
+
+    /**
+     * Active la camera de l'appareil android pour prendre une photo
+     */
+    public void onClickCameraP(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFileP();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                Log.e("ERREUR", ex +"");
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, TAKE_PICTURE);
+            }
+        }
+    }
+
+    /**
+     * Créer l'image
+     * @return
+     * @throws IOException
+     */
+    private File createImageFileP() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        galleryAddPicP(image.getAbsolutePath());
+        return image;
+    }
+
+    /**
+     * Ajoute l'image à la gallerie
+     */
+    private void galleryAddPicP(String path) {
+        System.out.println(path);
+        imagePath = path;
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(path);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
+    /**
+     * Ouvre la gallery afin de selectionner une photo
+     */
+    public void onClickGalleryP(View view) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+    }
+
+    /**
+     * Appelé automatiquement lorsque une activité fille se termine
+     * @param requestCode
+     * @param resultCode
+     * @param returnedIntent
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        super.onActivityResult(requestCode, resultCode, returnedIntent);
+        if (resultCode == RESULT_OK) {
+            switch(requestCode) {
+                case TAKE_PICTURE:
+                    if (resultCode == Activity.RESULT_OK) {
+                        imageView.setImageURI(Uri.parse(imagePath));
+                    }
+                    break;
+                case PICK_IMAGE:
+                    if (resultCode == Activity.RESULT_OK) {
+                        imageView.setImageURI(returnedIntent.getData());
+                        imagePath = returnedIntent.getData().toString();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
     }
 }

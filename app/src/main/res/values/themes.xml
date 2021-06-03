@@ -67,4 +67,9 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_marginEnd">@dimen/marge_tres_grande</item>
     </style>
+
+    <style name="liste_vue" parent="Widget.AppCompat.ListView">
+        <item name="android:layout_marginStart">@dimen/marge_normale</item>
+        <item name="android:layout_marginEnd">@dimen/marge_normale</item>
+    </style>
 </resources>

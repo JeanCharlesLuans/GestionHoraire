@@ -76,6 +76,7 @@
                     <!--  liste dans laquelle les informations seront affichées -->
                     <ListView
                         android:id="@+id/liste_plage_horaire"
+                        style="@style/liste_vue"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
@@ -101,13 +102,13 @@
                             android:layout_width="0dp"
                             android:layout_marginLeft="@dimen/marge_normale"
                             android:layout_height="fill_parent"
-                            android:layout_weight="50" />
+                            android:layout_weight="40" />
 
                         <TextView
-                            android:text="@string/filtre_categorie"
+                            android:text="@string/colonne_information"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="50" />
+                            android:layout_weight="70" />
 
                     </LinearLayout>
 
@@ -119,6 +120,7 @@
                     <!--  liste dans laquelle les informations seront affichées -->
                     <ListView
                         android:id="@+id/liste_horaires_ponctuelles"
+                        style="@style/liste_vue"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:choiceMode="multipleChoice"/>

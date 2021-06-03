@@ -14,126 +14,187 @@
         android:theme="@style/toolBarStyle"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/toolbar_heigth"
-        android:orientation="vertical">
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true">
 
-        <TextView
-            android:id="@+id/titre_ajout"
-            style="@style/titre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/titre_detail_plage_horaire"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/toolbar_heigth"
+            android:orientation="vertical">
 
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:stretchColumns="0,1">
+            <TextView
+                android:id="@+id/titre_ajout"
+                style="@style/titre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/titre_detail_plage_horaire"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TableRow
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/marge_normale">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/label_nom"
+                        style="@style/element_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/colonne_nom" />
+
+                    <EditText
+                        android:id="@+id/editText_nom"
+                        style="@style/element_right"
+                        android:layout_width="@dimen/width_edt_text"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/colonne_nom"
+                        android:inputType="text"
+                        android:maxLines="1" />
+                </TableRow>
+
+                <TableRow android:layout_marginTop="@dimen/marge_normale">
+
+                    <TextView
+                        android:id="@+id/label_localisation"
+                        style="@style/element_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/filtre_localisation" />
+
+                    <Spinner
+                        android:id="@+id/spinner_localisation"
+                        style="@style/element_right"
+                        android:layout_width="@dimen/width_spinner"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp" />
+                </TableRow>
+
+                <TableRow android:layout_marginTop="@dimen/marge_normale">
+
+                    <TextView
+                        android:id="@+id/label_categorie"
+                        style="@style/element_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/filtre_categorie" />
+
+                    <Spinner
+                        android:id="@+id/spinner_categorie"
+                        style="@style/element_right"
+                        android:layout_width="@dimen/width_spinner"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/label_info"
+                style="@style/element_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/colonne_information" />
+
+            <EditText
+                android:id="@+id/editText_info"
+                style="@style/element_center"
                 android:layout_width="match_parent"
+                android:layout_height="@dimen/edt_info_heigth"
+                android:hint="@string/colonne_information"
+                android:inputType="text"
+                android:maxLines="3" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/label_nom"
+                    android:id="@+id/label_image"
                     style="@style/element_left"
-                    android:layout_marginTop="0dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/colonne_nom" />
+                    android:text="@string/image"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
-                    android:id="@+id/editText_nom"
+                <Button
+                    android:id="@+id/btn_effacer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/primary"
+                    android:onClick="onClickEffacerP"
+                    android:text="@string/bouton_effacer"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView" />
+
+                <ImageButton
+                    android:id="@+id/imageButton2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/primary"
+                    android:onClick="onClickCameraP"
+                    android:src="@drawable/ic_baseline_camera_alt_24"
+                    app:layout_constraintEnd_toStartOf="@+id/imageButton"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="@+id/label_image" />
+
+                <ImageButton
+                    android:id="@+id/imageButton"
                     style="@style/element_right"
-                    android:layout_width="@dimen/width_edt_text"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/colonne_nom"
-                    android:maxLines="1"
-                    android:inputType="text"/>
-            </TableRow>
-            <TableRow
-                android:layout_marginTop="@dimen/marge_normale">
-                <TextView
-                    android:id="@+id/label_localisation"
-                    style="@style/element_left"
-                    android:layout_marginTop="0dp"
-                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/filtre_localisation" />
-
-                <Spinner
-                    android:id="@+id/spinner_localisation"
-                    style="@style/element_right"
-                    android:layout_marginTop="0dp"
-                    android:layout_width="@dimen/width_spinner"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-            <TableRow
-                android:layout_marginTop="@dimen/marge_normale">
-                <TextView
-                    android:id="@+id/label_categorie"
-                    style="@style/element_left"
-                    android:layout_marginTop="0dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/filtre_categorie" />
-
-                <Spinner
-                    android:id="@+id/spinner_categorie"
-                    style="@style/element_right"
-                    android:layout_marginTop="0dp"
-                    android:layout_width="@dimen/width_spinner"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-            <TableRow
-                android:layout_marginTop="@dimen/marge_normale">
-
-                <TextView
-                    android:layout_marginTop="0dp"
-                    style="@style/element_left"
-                    android:id="@+id/label_info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/colonne_information"/>
-
-                <EditText
-                    android:id="@+id/editText_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/edt_info_heigth"
-                    android:hint="@string/colonne_information"
-                    android:maxLines="3"
-                    android:inputType="text"
-                    style="@style/element_right"/>
-
-            </TableRow>
-        </TableLayout>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:text="@string/ajout_horaire_ponctuel"
-            android:onClick="ajoutHoraire"
-            android:layout_marginTop="@dimen/marge_normale"
-            style="@style/bouton"/>
-
-        <ListView
-            android:id="@+id/liste_horaires_ponctuel"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/marge_grande"/>
+                    android:backgroundTint="@color/primary"
+                    android:onClick="onClickGalleryP"
+                    android:src="@drawable/ic_baseline_add_photo_alternate_24"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/imageButton2" />
 
     </LinearLayout>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="102dp"
+                    android:layout_height="97dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintStart_toEndOf="@+id/label_image"
+                    app:layout_constraintTop_toTopOf="@+id/label_image" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                style="@style/bouton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/marge_normale"
+                android:onClick="ajoutHoraire"
+                android:text="@string/ajout_horaire_ponctuel" />
+
+            <ListView
+                android:id="@+id/liste_horaires_ponctuel"
+                style="@style/liste_vue"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_marginTop="@dimen/marge_grande" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_ajout_fiche"
@@ -144,5 +205,4 @@
         android:contentDescription="@string/fab_ajout_fiche_description"
         android:text="@string/fab_ajout_fiche"
         android:textColor="@color/white" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
