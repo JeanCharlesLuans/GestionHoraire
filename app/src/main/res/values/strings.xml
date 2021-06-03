@@ -121,5 +121,6 @@
     <string name="fab_ajout_fiche_description">Ajout d\'une fiche d\'horaires ponctuels</string>
     <string name="ajout_horaire_ponctuel">Ajout Horaire</string>
     <string name="update_horaire_ponctuel">Modifier l\'horaire ponctuel</string>
+    <string name="toast_champs_vides">Vous devez saisir les horaires.</string>
 
 </resources>

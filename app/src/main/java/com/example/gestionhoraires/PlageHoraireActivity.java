@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.telephony.emergency.EmergencyNumber;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -35,6 +36,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
+import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 import com.example.gestionhoraires.beans.Jour;
@@ -44,6 +46,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.xml.transform.Result;
@@ -55,6 +58,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
 
     /** Identifiant de l'intention pour l'acces a la gallerie d'image */
     private static final int PICK_IMAGE = 2;
+
+    /** Identifiant de modification */
+    private final static String CODE_MODIFICATION = "MODIFIER";
+
+    /** Code identifiant modification */
+    private static final String CODE_IDENTIFICATION = "IDENTIFIANT_MODIFICATION";
 
     /** Path de l'image */
     private String imagePath;
@@ -92,10 +101,26 @@ public class PlageHoraireActivity extends AppCompatActivity {
     /** Le tableau contenant les 7 plages horaires */
     private EnsemblePlageHoraire[] ensemblesPlagesHoraire;
 
+    /** Indicateur de modification */
+    private boolean modification;
+
+    /** Identifiant de la fiche à modifier */
+    private String idFichePlageHoraire;
+
+    /** Indicateur de premier passage dans la modification */
+    private boolean indicateurPremierPassage;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plage_horaire);
+
+        modification = getIntent().getBooleanExtra(CODE_MODIFICATION, false);
+        if (modification) {
+            idFichePlageHoraire = getIntent().getStringExtra(CODE_IDENTIFICATION) + "";
+        }
+
+        indicateurPremierPassage = true;
 
         // accès au DAO
         accesHoraires = new HoraireDAO(this);
@@ -107,21 +132,28 @@ public class PlageHoraireActivity extends AppCompatActivity {
         maBarreOutil.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (EnsemblePlageHoraire ensemblePlageHoraire : ensemblesPlagesHoraire) {
-                    if (ensemblePlageHoraire != null) {
-                        accesHoraires.deleteEnsemblePlageHoraire(ensemblePlageHoraire.getId());
+                if (!modification) {
+                    for (EnsemblePlageHoraire ensemblePlageHoraire : ensemblesPlagesHoraire) {
+                        if (ensemblePlageHoraire != null) {
+                            accesHoraires.deleteEnsemblePlageHoraire(ensemblePlageHoraire.getId());
+                        }
                     }
+                    accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
                 }
-                accesHoraires.deleteFichePlageHoraire(fichePlageHoraire.getId());
                 retour();
             }
         });
 
-        fichePlageHoraire = new FichePlageHoraire();
-        accesHoraires.addFichePlageHoraire(fichePlageHoraire);
-        Cursor cursor = accesHoraires.getCursorAllFichePlageHoraire();
-        cursor.moveToLast();
-        fichePlageHoraire.setId(cursor.getString(0));
+        if (!modification) {
+            fichePlageHoraire = new FichePlageHoraire();
+            accesHoraires.addFichePlageHoraire(fichePlageHoraire);
+            Cursor cursor = accesHoraires.getCursorAllFichePlageHoraire();
+            cursor.moveToLast();
+            fichePlageHoraire.setId(cursor.getString(0));
+        } else {
+            System.out.println(idFichePlageHoraire);
+            fichePlageHoraire = accesHoraires.getFichePlageHoraireById(idFichePlageHoraire);
+        }
 
         /* Initialisation du tableau */
         ensemblesPlagesHoraire = new EnsemblePlageHoraire[7];
@@ -135,6 +167,15 @@ public class PlageHoraireActivity extends AppCompatActivity {
         editTextMatin = findViewById(R.id.editText_matin);
         editTextAprem = findViewById(R.id.editText_aprem);
         imageView = findViewById(R.id.imageView);
+
+        // On récupère les button des jours
+        Button btnLundi = findViewById(R.id.btn_lundi);
+        Button btnMardi = findViewById(R.id.btn_mardi);
+        Button btnMercredi = findViewById(R.id.btn_mercredi);
+        Button btnJeudi = findViewById(R.id.btn_jeudi);
+        Button btnVendredi = findViewById(R.id.btn_vendredi);
+        Button btnSamedi = findViewById(R.id.btn_samedi);
+        Button btnDimanche = findViewById(R.id.btn_dimanche);
 
         SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
         adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -171,6 +212,57 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 }
             }
         );
+
+        if (modification) {
+            fab.setImageResource(R.drawable.ic_baseline_save_alt_24);
+            editTextNom.setText(fichePlageHoraire.getNom());
+            editTextInformation.setText(fichePlageHoraire.getInformation());
+            if (fichePlageHoraire.getCheminPhoto() != null) {
+                imagePath = fichePlageHoraire.getCheminPhoto();
+                imageView.setImageURI(Uri.parse(imagePath));
+            }
+            System.out.println(fichePlageHoraire.getIdCategorie());
+            Categorie categorie = accesHoraires.getCategorieById(fichePlageHoraire.getIdCategorie());
+            spinnerLocalisation.setSelection(accesHoraires.getPositionByIdLocalisation(categorie.getIdLocalisation()));
+
+            ArrayList<EnsemblePlageHoraire> ensembles = accesHoraires.getEnsembleHoraireByFiche(idFichePlageHoraire);
+            for (EnsemblePlageHoraire ensemble : ensembles) {
+                if (ensemble != null) {
+                    switch (Integer.parseInt(ensemble.getIdJour())) {
+                        case 1:
+                            ensemblesPlagesHoraire[0] = ensemble;
+                            toogleStyleBoutonSemaine(btnLundi, true);
+                            break;
+                        case 2:
+                            ensemblesPlagesHoraire[1] = ensemble;
+                            toogleStyleBoutonSemaine(btnMardi, true);
+                            break;
+                        case 3:
+                            ensemblesPlagesHoraire[2] = ensemble;
+                            toogleStyleBoutonSemaine(btnMercredi, true);
+                            break;
+                        case 4:
+                            ensemblesPlagesHoraire[3] = ensemble;
+                            toogleStyleBoutonSemaine(btnJeudi, true);
+                            break;
+                        case 5:
+                            ensemblesPlagesHoraire[4] = ensemble;
+                            toogleStyleBoutonSemaine(btnVendredi, true);
+                            break;
+                        case 6:
+                            ensemblesPlagesHoraire[5] = ensemble;
+                            toogleStyleBoutonSemaine(btnSamedi, true);
+                            break;
+                        case 7:
+                            ensemblesPlagesHoraire[6] = ensemble;
+                            toogleStyleBoutonSemaine(btnDimanche, true);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -321,7 +413,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
     }
 
     /**
-     * ajoute la plage horaire a la base de donner et retourne a l'activité principale
+     * Ajoute la plage horaire a la base de donner et retourne a l'activité principale
      */
     public void ajouterFichePlageHoraire() {
         String identifiant = fichePlageHoraire.getId();

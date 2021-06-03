@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.FileProvider;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -60,6 +61,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    /** Code identifiant modification */
+    private static final String CODE_IDENTIFICATION = "IDENTIFIANT_MODIFICATION";
+
     /** Identifiant de l'intention pour la gestion des catégories */
     private final int CODE_GESTION_CATEGORIE = 10;
 
@@ -69,11 +73,14 @@ public class MainActivity extends AppCompatActivity {
     /** Identifiant de l'intention pour l'ajout de la plage horaire */
     private final int CODE_PLAGE_HORAIRE = 30;
 
-    /** Identifiant de l'intention pour l'ajout de la plage horaire */
-    private final int CODE_FICHE_HORAIRE = 40;
+    /** Identifiant de l'intention pour l'ajout d'une fiche horaire ponctuel '*/
+    private final int CODE_FICHE_HORAIRE_PONCTUEL = 40;
 
     /** Clé pour le message transmis par l'activité secondaire */
     public final static String CLE_H_PONCTUEL = "com.example.gestionhoraires.PONCTUEL";
+
+    /** Identifiant de modification */
+    private final static String CODE_MODIFICATION = "MODIFIER";
 
     /** barre d'outils de l'applications */
     private Toolbar maBarreOutil;
@@ -133,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         accesHoraires.open();
 
         curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
-//        curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
+        curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
 
         // Liste de l'onglet 1 : Plages Horaires
         setPlageHoraireAdapter();
@@ -212,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-// TODO Menu Contextuel des listes
+
         /*
          *  on accéde à des informations supplémentaires sur l'élémemt cliqué dans la liste
          */
@@ -222,19 +229,39 @@ public class MainActivity extends AppCompatActivity {
         // selon l'option sélectionnée dans le menu, on réalise le traitement adéquat
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
-                accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                if (lesOnglets.getCurrentTab() == TAB_H_PONCTUEL) {
+                    System.out.println("suppression ponctuel : " + curseurHorairesPonctuelles.getString(HoraireDAO.HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
+                    accesHoraires.deleteHorairePonctuel(curseurHorairesPonctuelles.getString(HoraireDAO.HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
+                } else {
+                    accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                }
                 break;
             case R.id.export_option:
-                Cursor curseur = (Cursor) plageHoraireAdaptateur.getItem(information.position);
-                exportationSMS(curseur.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                if (lesOnglets.getCurrentTab() == TAB_PLAGE_HORAIRE) {
+                    Cursor curseur = (Cursor) plageHoraireAdaptateur.getItem(information.position);
+                    exportationSMS(curseur.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                }
                 break;
             case R.id.modifier :
-                //modifierElement(information.id); // TODO action modifier
+                if (lesOnglets.getCurrentTab() == TAB_PLAGE_HORAIRE) {
+                    Intent plageHoraire = new Intent(MainActivity.this,
+                            PlageHoraireActivity.class);
+                    plageHoraire.putExtra(CODE_MODIFICATION, true);
+                    plageHoraire.putExtra(CODE_IDENTIFICATION, curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                    System.out.println(curseurPlageHoraire.getString(0));
+                    startActivityForResult(plageHoraire, CODE_PLAGE_HORAIRE);
+                } else {
+                    // TODO horaire ponctuelle
+                }
+
                 break;
             case R.id.annuler :		 // retour à la liste principale
                 break;
 
         }
+        curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
+        horairesPonctuellesAdapteur.swapCursor(curseurHorairesPonctuelles);
+        onContentChanged();
         curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
         plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
         onContentChanged();
@@ -348,7 +375,6 @@ public class MainActivity extends AppCompatActivity {
                                         onContentChanged();
                                         break;
                                     case R.id.option_import_json:
-                                        // TODO import JSON
                                        FileDialog fileDialog = new FileDialog(context);
                                         // Add a listener for capture user action
                                         fileDialog.setListener(new FileDialog.ActionListener(){
@@ -527,7 +553,7 @@ public class MainActivity extends AppCompatActivity {
                 R.layout.ligne_liste_horaire_ponctuel,
                 curseurHorairesPonctuelles,
                 new String[] {HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM,
-                        "jour_semaine"}, // TODO mettre la bonne colonne
+                        HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_INFORMATION},
                 new int[] {R.id.name,
                         R.id.categorie}, 0);
         listViewHPonctuelles.setAdapter(horairesPonctuellesAdapteur);
@@ -641,7 +667,7 @@ public class MainActivity extends AppCompatActivity {
     private void ajouterHorairePonctuel() {
         Intent plageHoraire = new Intent(MainActivity.this,
                 HorairePonctuelActivity.class);
-        startActivityForResult(plageHoraire, CODE_FICHE_HORAIRE);
+        startActivityForResult(plageHoraire, CODE_FICHE_HORAIRE_PONCTUEL);
     }
 
     /**
@@ -930,7 +956,10 @@ public class MainActivity extends AppCompatActivity {
                 plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
                 onContentChanged();
                 break;
-            case CODE_FICHE_HORAIRE :
+            case CODE_FICHE_HORAIRE_PONCTUEL :
+                curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
+                horairesPonctuellesAdapteur.swapCursor(curseurHorairesPonctuelles);
+                onContentChanged();
                 break;
             default:
                 break;
@@ -1191,7 +1220,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                curseurPlageHoraire = accesHoraires.getCursorAllLocalisation();
+                curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
                 plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
                 onContentChanged();
                 Toast.makeText(this, "Importation terminer", Toast.LENGTH_LONG).show();

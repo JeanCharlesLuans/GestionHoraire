@@ -95,6 +95,27 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
+            <TableRow
+                android:layout_marginTop="@dimen/marge_normale">
+
+                <TextView
+                    android:layout_marginTop="0dp"
+                    style="@style/element_left"
+                    android:id="@+id/label_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/colonne_information"/>
+
+                <EditText
+                    android:id="@+id/editText_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/edt_info_heigth"
+                    android:hint="@string/colonne_information"
+                    android:maxLines="3"
+                    android:inputType="text"
+                    style="@style/element_right"/>
+
+            </TableRow>
         </TableLayout>
 
         <Button
