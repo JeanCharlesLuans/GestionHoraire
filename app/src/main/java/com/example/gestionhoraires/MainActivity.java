@@ -1157,7 +1157,9 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject ficheJSON = ensembleJSON.getJSONObject(HelperBDHoraire.NOM_TABLE_FICHE_PLAGE_HORAIRE);
                 ficheTmp.setNom(ficheJSON.getString(HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM));
                 ficheTmp.setInformation(ficheJSON.getString(HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION));
+                ficheTmp.setIdCategorie("1");
 
+                // Récupération de l'ID de la fiche
                 accesHoraires.addFichePlageHoraire(ficheTmp);
                 curseur = accesHoraires.getCursorAllFichePlageHoraire();
                 curseur.moveToLast();
