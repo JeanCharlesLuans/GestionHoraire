@@ -151,7 +151,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
             cursor.moveToLast();
             fichePlageHoraire.setId(cursor.getString(0));
         } else {
-            System.out.println(idFichePlageHoraire);
             fichePlageHoraire = accesHoraires.getFichePlageHoraireById(idFichePlageHoraire);
         }
 

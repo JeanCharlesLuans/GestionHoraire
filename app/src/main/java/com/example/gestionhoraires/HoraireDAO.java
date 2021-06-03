@@ -566,6 +566,7 @@ public class HoraireDAO {
         ajoutFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM, ficheHorairePonctuelle.getNom());
         ajoutFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_INFORMATION, ficheHorairePonctuelle.getInformation());
         ajoutFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_IMAGE, ficheHorairePonctuelle.getCheminPhoto());
+        ajoutFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE_CATEGORIE, ficheHorairePonctuelle.getIdCategorie());
         baseHoraire.insert(HelperBDHoraire.NOM_TABLE_FICHE_HORAIRE_PONCTUELLE, HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM, ajoutFicheHorairePonctuelle);
     }
 
@@ -754,6 +755,7 @@ public class HoraireDAO {
         nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_NOM, ficheHorairePonctuelle.getNom());
         nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_INFORMATION, ficheHorairePonctuelle.getInformation());
         nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_IMAGE, ficheHorairePonctuelle.getCheminPhoto());
+        nouvelleFicheHorairePonctuelle.put(HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE_CATEGORIE, ficheHorairePonctuelle.getIdCategorie());
         baseHoraire.update(HelperBDHoraire.NOM_TABLE_FICHE_HORAIRE_PONCTUELLE,
                 nouvelleFicheHorairePonctuelle,
                 HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE + " = ?",
@@ -773,6 +775,44 @@ public class HoraireDAO {
         while (cursor.moveToNext()) {
             String tmp = cursor.getString(0);
             if (tmp.equals(idLocalisation)) {
+                return position;
+            }
+            position++;
+        }
+        return -1;
+    }
+
+    /**
+     * Récupère la position de la categorie plage horaire dans la liste
+     * @param idCategoriePlageHoraire l'identifiant de la localistion
+     * @return la position de la categorie plage horaire
+     */
+    public int getPositionByIdCategoriePlageHoraire(String idCategoriePlageHoraire) {
+        int position = 0;
+        Cursor cursor = baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_PLAGE_HORAIRE, null);
+
+        while (cursor.moveToNext()) {
+            String tmp = cursor.getString(0);
+            if (tmp.equals(idCategoriePlageHoraire)) {
+                return position;
+            }
+            position++;
+        }
+        return -1;
+    }
+
+    /**
+     * Récupère la position de la categorie plage horaire dans la liste
+     * @param idCategorieHorairePonctuel l'identifiant de la categorie
+     * @return la position de la categorie plage horaire
+     */
+    public int getPositionByIdCategorieHorairePonctuel(String idCategorieHorairePonctuel) {
+        int position = 0;
+        Cursor cursor = baseHoraire.rawQuery(REQUETE_TOUT_SELECTIONNER_CATEGORIE_LOCALISATION_HORAIRE_PONCTUEL, null);
+
+        while (cursor.moveToNext()) {
+            String tmp = cursor.getString(0);
+            if (tmp.equals(idCategorieHorairePonctuel)) {
                 return position;
             }
             position++;
@@ -819,30 +859,34 @@ public class HoraireDAO {
                         + " = " + idFicheHorraire;
 
         Cursor cursor = baseHoraire.rawQuery(requete, null);
-        cursor.moveToFirst();
 
-        EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire();
+        if (cursor.getCount() != 0) {
+            cursor.moveToFirst();
 
-        ensemblePlageHoraire.setId(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
-        ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_MATIN));
-        ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_SOIR));
-        ensemblePlageHoraire.setIdJour(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_JOUR));
-        ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_FICHE_PLAGE_HORAIRE));
+            EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire();
 
-        listeEnsemble.add(ensemblePlageHoraire);
-
-        while (cursor.moveToNext()) {
-
-            ensemblePlageHoraire = new EnsemblePlageHoraire();
-
-            ensemblePlageHoraire.setId(cursor.getString(0));
-            ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(1));
-            ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(2));
-            ensemblePlageHoraire.setIdJour(cursor.getString(3));
-            ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(4));
+            ensemblePlageHoraire.setId(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+            ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_MATIN));
+            ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_SOIR));
+            ensemblePlageHoraire.setIdJour(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_JOUR));
+            ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_FICHE_PLAGE_HORAIRE));
 
             listeEnsemble.add(ensemblePlageHoraire);
+
+            while (cursor.moveToNext()) {
+
+                ensemblePlageHoraire = new EnsemblePlageHoraire();
+
+                ensemblePlageHoraire.setId(cursor.getString(0));
+                ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(1));
+                ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(2));
+                ensemblePlageHoraire.setIdJour(cursor.getString(3));
+                ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(4));
+
+                listeEnsemble.add(ensemblePlageHoraire);
+            }
         }
+
 
         return listeEnsemble;
     }

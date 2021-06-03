@@ -34,6 +34,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.core.os.ParcelableCompatCreatorCallbacks;
 
+import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 import com.example.gestionhoraires.beans.HorairePonctuelle;
@@ -98,11 +99,28 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         accesHoraires = new HoraireDAO(this);
         accesHoraires.open();
 
-        ficheHorairePonctuelle = new FicheHorairePonctuelle();
-        accesHoraires.addFicheHorairePonctuelle(ficheHorairePonctuelle);
-        Cursor cursor = accesHoraires.getCursorAllFicheHorairePonctuelle();
-        cursor.moveToLast();
-        ficheHorairePonctuelle.setId(cursor.getString(0));
+        // on récupere les widgets
+        editTextNom = findViewById(R.id.editText_nom);
+        editTextInformation = findViewById(R.id.editText_info);
+        spinnerLocalisation = findViewById(R.id.spinner_localisation);
+        spinnerCategorie = findViewById(R.id.spinner_categorie);
+
+        modification = getIntent().getBooleanExtra(CODE_MODIFICATION_PONCTUEL, false);
+        if (modification) {
+            idFicheHorairePonctuel = getIntent().getStringExtra(CODE_IDENTIFICATION) + "";
+            ficheHorairePonctuelle = accesHoraires.getFicheHorairePonctuelleById(idFicheHorairePonctuel);
+            curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(idFicheHorairePonctuel);
+            editTextNom.setText(ficheHorairePonctuelle.getNom());
+            editTextInformation.setText(ficheHorairePonctuelle.getInformation());
+        } else {
+            ficheHorairePonctuelle = new FicheHorairePonctuelle();
+            accesHoraires.addFicheHorairePonctuelle(ficheHorairePonctuelle);
+            Cursor cursor = accesHoraires.getCursorAllFicheHorairePonctuelle();
+            cursor.moveToLast();
+            ficheHorairePonctuelle.setId(cursor.getString(0));
+            curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(ficheHorairePonctuelle.getId());
+        }
+
 
         maBarreOutil = findViewById(R.id.fiche_ponctuel_tool_bar);
         setSupportActionBar(maBarreOutil);
@@ -110,12 +128,14 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         maBarreOutil.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                accesHoraires.deleteFicheHorairePonctuelle(ficheHorairePonctuelle.getId());
+                if (!modification) {
+                    accesHoraires.deleteFicheHorairePonctuelle(ficheHorairePonctuelle.getId());
+                }
                 retour();
             }
         });
 
-        curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(ficheHorairePonctuelle.getId());
+
 
         // on remplie la liste
         listViewHPonctuel = findViewById(R.id.liste_horaires_ponctuel);
@@ -141,6 +161,11 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
         adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLocalisation.setAdapter(adapterLocalisation);
+
+        if (modification) {
+            Categorie categorie = accesHoraires.getCategorieById(ficheHorairePonctuelle.getIdCategorie());
+            spinnerLocalisation.setSelection(accesHoraires.getPositionByIdLocalisation(categorie.getIdLocalisation()));
+        }
 
         spinnerLocalisation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -183,11 +208,11 @@ public class HorairePonctuelActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editTextNom.getText().toString().equals("")) {
                     if (spinnerCategorie.getSelectedItem() != null) {
-                        System.out.println("Je dois m'arreter");
-                        ficheHorairePonctuelle.setIdCategorie(spinnerCategorie.getSelectedItemId() + "");
+                        ficheHorairePonctuelle.setNom(editTextNom.getText().toString());
                         ficheHorairePonctuelle.setInformation(editTextInformation.getText().toString());
                         ficheHorairePonctuelle.setIdCategorie(spinnerCategorie.getSelectedItemId() + "");
-                        accesHoraires.addFicheHorairePonctuelle(ficheHorairePonctuelle);
+                        System.out.println("categorie : " + spinnerCategorie.getSelectedItemId());
+                        accesHoraires.updateFicheHorairePonctuelle(ficheHorairePonctuelle, ficheHorairePonctuelle.getId());
                         retour();
                     } else {
                         Toast.makeText(getApplicationContext(), R.string.toast_pas_de_categorie, Toast.LENGTH_LONG).show();

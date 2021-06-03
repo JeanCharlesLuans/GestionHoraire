@@ -285,7 +285,8 @@ public class HelperBDHoraire extends SQLiteOpenHelper {
             + "SELECT " + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_CLE + ", "
             + NOM_TABLE_JOUR + "." + JOUR_LIBELLE + " AS libelle, "
             + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_CLE_FICHE + " AS idFiche, "
-            + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_OUVERTURE + " AS horaireOuverture"
+            + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_OUVERTURE + " AS horaireOuverture, "
+            + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_FERMETURE + " AS horaireFermeture"
             + " FROM " + NOM_TABLE_HORAIRE_PONCTUELLE + " INNER JOIN " + NOM_TABLE_JOUR + " ON "
             + NOM_TABLE_HORAIRE_PONCTUELLE + "." + HORAIRE_PONCTUELLE_CLE_JOUR + " = "
             + NOM_TABLE_JOUR + "." + JOUR_CLE + ";";

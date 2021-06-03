@@ -37,6 +37,7 @@ import com.example.gestionhoraires.beans.Categorie;
 import com.example.gestionhoraires.beans.EnsemblePlageHoraire;
 import com.example.gestionhoraires.beans.FichePlageHoraire;
 
+import com.example.gestionhoraires.beans.HorairePonctuelle;
 import com.example.gestionhoraires.beans.Jour;
 import com.example.gestionhoraires.beans.Localisation;
 import com.example.gestionhoraires.beans.PlageHoraire;
@@ -79,8 +80,11 @@ public class MainActivity extends AppCompatActivity {
     /** Clé pour le message transmis par l'activité secondaire */
     public final static String CLE_H_PONCTUEL = "com.example.gestionhoraires.PONCTUEL";
 
-    /** Identifiant de modification */
+    /** Identifiant de modification de fiche plage horaire */
     private final static String CODE_MODIFICATION = "MODIFIER";
+
+    /** Identifiant de mofication de fiche horaire ponctuel */
+    private final static String CODE_MODIFICATION_PONCTUEL = "MODIFIER_PONCTUEL";
 
     /** barre d'outils de l'applications */
     private Toolbar maBarreOutil;
@@ -230,8 +234,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.supprimer :   // supprimer un élément
                 if (lesOnglets.getCurrentTab() == TAB_H_PONCTUEL) {
-                    System.out.println("suppression ponctuel : " + curseurHorairesPonctuelles.getString(HoraireDAO.HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
-                    accesHoraires.deleteHorairePonctuel(curseurHorairesPonctuelles.getString(HoraireDAO.HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
+                    accesHoraires.deleteFicheHorairePonctuelle(curseurHorairesPonctuelles.getString(HoraireDAO.HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
                 } else {
                     accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
                 }
@@ -247,11 +250,16 @@ public class MainActivity extends AppCompatActivity {
                     Intent plageHoraire = new Intent(MainActivity.this,
                             PlageHoraireActivity.class);
                     plageHoraire.putExtra(CODE_MODIFICATION, true);
-                    plageHoraire.putExtra(CODE_IDENTIFICATION, curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
-                    System.out.println(curseurPlageHoraire.getString(0));
+                    plageHoraire.putExtra(CODE_IDENTIFICATION,
+                            curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
                     startActivityForResult(plageHoraire, CODE_PLAGE_HORAIRE);
                 } else {
-                    // TODO horaire ponctuelle
+                    Intent ficheHorairePonctuel = new Intent(MainActivity.this,
+                            HorairePonctuelActivity.class);
+                    ficheHorairePonctuel.putExtra(CODE_MODIFICATION_PONCTUEL, true);
+                    ficheHorairePonctuel.putExtra(CODE_IDENTIFICATION,
+                            curseurHorairesPonctuelles.getString(HoraireDAO.FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
+                    startActivityForResult(ficheHorairePonctuel, CODE_FICHE_HORAIRE_PONCTUEL);
                 }
 
                 break;
@@ -261,7 +269,6 @@ public class MainActivity extends AppCompatActivity {
         }
         curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
         horairesPonctuellesAdapteur.swapCursor(curseurHorairesPonctuelles);
-        onContentChanged();
         curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
         plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
         onContentChanged();
@@ -948,15 +955,17 @@ public class MainActivity extends AppCompatActivity {
                     Cursor cursor = accesHoraires.getCursorAllFichePlageHoraire();
                     cursor.moveToLast();
                     accesHoraires.deleteFichePlageHoraire(cursor.getString(0));
-                    curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
-                    plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
-                    onContentChanged();
                 }
                 curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
                 plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
                 onContentChanged();
                 break;
             case CODE_FICHE_HORAIRE_PONCTUEL :
+                if (resultCode != RESULT_OK) {
+                    Cursor cursor = accesHoraires.getCursorAllFicheHorairePonctuelle();
+                    cursor.moveToLast();
+                    accesHoraires.deleteFicheHorairePonctuelle(cursor.getString(0));
+                }
                 curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
                 horairesPonctuellesAdapteur.swapCursor(curseurHorairesPonctuelles);
                 onContentChanged();
