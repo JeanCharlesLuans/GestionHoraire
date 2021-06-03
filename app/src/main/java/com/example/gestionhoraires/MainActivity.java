@@ -376,25 +376,10 @@ public class MainActivity extends AppCompatActivity {
                                 switch (boutonMode.getCheckedRadioButtonId()) {
                                     case R.id.option_import_csv:
                                         // TODO import CSV
-                                        // initData();
-                                        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
-                                        plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
-                                        onContentChanged();
+                                        importationCSV();
                                         break;
                                     case R.id.option_import_json:
-                                       FileDialog fileDialog = new FileDialog(context);
-                                        // Add a listener for capture user action
-                                        fileDialog.setListener(new FileDialog.ActionListener(){
-                                            public void userAction(int action, String filePath)
-                                            {
-                                                // Test if user select a file
-                                                if (action == FileDialog.ACTION_SELECTED_FILE) {
-                                                    Log.e("IMPORTATION", filePath);
-                                                    importationJSON(filePath);
-                                                }
-                                            }});
-// Show the dialog box
-                                        fileDialog.selectFile();
+                                        importationJSON();
                                         break;
                                 }
                             }
@@ -987,7 +972,7 @@ public class MainActivity extends AppCompatActivity {
         JSONArray liste = new JSONArray();
 
         File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        File fichierJSON = new File(root, "FichierJSON");
+        File fichierJSON = new File(root, "FichesHoraireJson");
         try {
 
             for (int i = 0; i < listeFichePlageHoraires.length; i++) {
@@ -1133,7 +1118,11 @@ public class MainActivity extends AppCompatActivity {
      * Deserialiser un fichier JSON, puis l'importe dans la BD
      * @param filePath chemin du fichier
      */
-    private void importationJSON(String filePath) {
+    private void importationJSON() {
+
+        // Fichier a JSON
+        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        File fichier = new File(root, "FichesHoraireJson");
 
         BufferedReader reader;
         String ligne;
@@ -1146,7 +1135,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // Ouverture du fichier
-            reader = new BufferedReader(new FileReader(new File(filePath)));
+            reader = new BufferedReader(new FileReader(fichier));
             ligne = reader.readLine();
 
             fichierJSON = new JSONArray(ligne);
@@ -1230,16 +1219,41 @@ public class MainActivity extends AppCompatActivity {
                     accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
 
                 }
-
-                curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
-                plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
-                onContentChanged();
-                Toast.makeText(this, "Importation terminer", Toast.LENGTH_LONG).show();
             }
 
-        } catch (IOException | JSONException e) {
+        } catch (IOException err) {
             Toast.makeText(this, getString(R.string.erreur_ouverture), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
+            Log.e("erreur", err.getMessage());
+        } catch (JSONException err) {
+            Log.e("erreur", err.getMessage());
+        }
+        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+        plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+        onContentChanged();
+        Toast.makeText(this, "Importation terminer", Toast.LENGTH_LONG).show();
+
+    }
+
+    private void importationCSV() {
+
+        Log.e("Importation CSV", "Click");
+
+        // Fichier a JSON
+        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        File fichier = new File(root, "FichesHoraireCsv");
+
+        BufferedReader reader;
+        String ligne;
+
+        try {
+            // Ouverture du fichier
+            reader = new BufferedReader(new FileReader(fichier));
+            while((ligne = reader.readLine()) != null) {
+                Log.e("Importation CSV", ligne);
+            }
+
+        }catch (IOException err) {
+            Log.e("CSV", err.toString());
         }
     }
 }
