@@ -166,7 +166,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/imageButton2" />
 
-    </LinearLayout>
                 <ImageView
                     android:id="@+id/imageView"
                     android:layout_width="102dp"
@@ -196,13 +195,13 @@
         </LinearLayout>
     </ScrollView>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_ajout_fiche"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:contentDescription="@string/fab_ajout_fiche_description"
-        android:text="@string/fab_ajout_fiche"
-        android:textColor="@color/white" />
+        android:src="@drawable/ic_baseline_add_24"
+        app:tint="@color/white"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

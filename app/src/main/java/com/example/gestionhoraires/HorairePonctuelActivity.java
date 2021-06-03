@@ -48,6 +48,12 @@ import java.util.Date;
 
 public class HorairePonctuelActivity extends AppCompatActivity {
 
+    /** Code identifiant modification */
+    private static final String CODE_IDENTIFICATION = "IDENTIFIANT_MODIFICATION";
+
+    /** Identifiant de mofication de fiche horaire ponctuel */
+    private final static String CODE_MODIFICATION_PONCTUEL = "MODIFIER_PONCTUEL";
+
     /** Identifiant de l'intention pour l'acces a la camera */
     private static final int TAKE_PICTURE = 1;
 
@@ -90,6 +96,13 @@ public class HorairePonctuelActivity extends AppCompatActivity {
     /** Path de l'image */
     private String imagePath;
 
+    /** Indicateur de moficiation */
+    private boolean modification;
+
+    /** Identifiant de l'horaire ponctuel à modifier */
+    private String idFicheHorairePonctuel;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +117,7 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         editTextInformation = findViewById(R.id.editText_info);
         spinnerLocalisation = findViewById(R.id.spinner_localisation);
         spinnerCategorie = findViewById(R.id.spinner_categorie);
+        imageView = findViewById(R.id.imageView);
 
         modification = getIntent().getBooleanExtra(CODE_MODIFICATION_PONCTUEL, false);
         if (modification) {
@@ -112,6 +126,9 @@ public class HorairePonctuelActivity extends AppCompatActivity {
             curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(idFicheHorairePonctuel);
             editTextNom.setText(ficheHorairePonctuelle.getNom());
             editTextInformation.setText(ficheHorairePonctuelle.getInformation());
+            imageView.setImageURI(Uri.parse(ficheHorairePonctuelle.getCheminPhoto()));
+            imagePath = ficheHorairePonctuelle.getCheminPhoto();
+
         } else {
             ficheHorairePonctuelle = new FicheHorairePonctuelle();
             accesHoraires.addFicheHorairePonctuelle(ficheHorairePonctuelle);
@@ -151,12 +168,6 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         listViewHPonctuel.setAdapter(horairesPonctuelAdapteur);
         registerForContextMenu(listViewHPonctuel);
 
-        // on récupere les widgets
-        editTextNom = findViewById(R.id.editText_nom);
-        editTextInformation = findViewById(R.id.editText_info);
-        spinnerLocalisation = findViewById(R.id.spinner_localisation);
-        spinnerCategorie = findViewById(R.id.spinner_categorie);
-        imageView = findViewById(R.id.imageView);
 
         SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
         adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -202,7 +213,10 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         });
 
         // On ajoute un bouton flotant
-        ExtendedFloatingActionButton fab = findViewById(R.id.fab_ajout_fiche);
+        FloatingActionButton fab = findViewById(R.id.fab_ajout_fiche);
+        if (modification) {
+            fab.setImageResource(R.drawable.ic_baseline_save_alt_24);
+        }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,7 +225,7 @@ public class HorairePonctuelActivity extends AppCompatActivity {
                         ficheHorairePonctuelle.setNom(editTextNom.getText().toString());
                         ficheHorairePonctuelle.setInformation(editTextInformation.getText().toString());
                         ficheHorairePonctuelle.setIdCategorie(spinnerCategorie.getSelectedItemId() + "");
-                        System.out.println("categorie : " + spinnerCategorie.getSelectedItemId());
+                        ficheHorairePonctuelle.setCheminPhoto(imagePath);
                         accesHoraires.updateFicheHorairePonctuelle(ficheHorairePonctuelle, ficheHorairePonctuelle.getId());
                         retour();
                     } else {
