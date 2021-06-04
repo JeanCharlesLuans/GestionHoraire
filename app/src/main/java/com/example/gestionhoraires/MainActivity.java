@@ -134,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
     /** Indicateur ouvert des filtres */
     private boolean ouvert;
 
+    /** Indicateur de modification */
+    private boolean modification;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,6 +241,11 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     accesHoraires.deleteFichePlageHoraire(curseurPlageHoraire.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
                 }
+                curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
+                horairesPonctuellesAdapteur.swapCursor(curseurHorairesPonctuelles);
+                curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+                plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+                onContentChanged();
                 break;
             case R.id.export_option:
                 if (lesOnglets.getCurrentTab() == TAB_PLAGE_HORAIRE) {
@@ -246,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.modifier :
+                modification = true;
                 if (lesOnglets.getCurrentTab() == TAB_PLAGE_HORAIRE) {
                     Intent plageHoraire = new Intent(MainActivity.this,
                             PlageHoraireActivity.class);
@@ -267,11 +276,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
         }
-        curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
-        horairesPonctuellesAdapteur.swapCursor(curseurHorairesPonctuelles);
-        curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
-        plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
-        onContentChanged();
         return (super.onContextItemSelected(item));
     }
 
@@ -298,7 +302,9 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //TODO recherche = query
+                curseurPlageHoraire = accesHoraires.getCursorFichePlageHoraireByNom(query);
+                plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+                onContentChanged();
                 return true;
             }
             /**
@@ -308,6 +314,9 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public boolean onQueryTextChange(String s) {
+                curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+                plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+                onContentChanged();
                 return true;
             }
         });
@@ -781,10 +790,10 @@ public class MainActivity extends AppCompatActivity {
                         String strCategorie = "";
                         String strLocalisation = "";
                         boolean estOuvert = true;   // stub, ne fonctionne pas
-                        // TODO Do something
-                        if (check_categorie.isChecked() && spin_categorie.isSelected()) {
+                        if (check_categorie.isChecked() && spin_categorie.getSelectedItem() != null) {
                             Categorie categorie = accesHoraires.getCategorieById(spin_categorie.getSelectedItemId() + "");
                             strCategorie += categorie.getNom();
+
                         }
                         if (check_localisation.isChecked()) {
                             Localisation localisation = accesHoraires.getLocalisationById(spin_localisation.getSelectedItemId() + "");
@@ -928,7 +937,6 @@ public class MainActivity extends AppCompatActivity {
      * @param returnedIntent
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
-        // TODO les différent cas de retour
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch(requestCode) {
             case CODE_GESTION_CATEGORIE:
@@ -937,9 +945,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case CODE_PLAGE_HORAIRE:
                 if (resultCode != RESULT_OK) {
-                    Cursor cursor = accesHoraires.getCursorAllFichePlageHoraire();
-                    cursor.moveToLast();
-                    accesHoraires.deleteFichePlageHoraire(cursor.getString(0));
+                    if (!modification) {
+                        Cursor cursor = accesHoraires.getCursorAllFichePlageHoraire();
+                        cursor.moveToLast();
+                        accesHoraires.deleteFichePlageHoraire(cursor.getString(0));
+                    }
+
                 }
                 curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
                 plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
@@ -947,9 +958,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case CODE_FICHE_HORAIRE_PONCTUEL :
                 if (resultCode != RESULT_OK) {
-                    Cursor cursor = accesHoraires.getCursorAllFicheHorairePonctuelle();
-                    cursor.moveToLast();
-                    accesHoraires.deleteFicheHorairePonctuelle(cursor.getString(0));
+                    if (!modification) {
+                        Cursor cursor = accesHoraires.getCursorAllFicheHorairePonctuelle();
+                        cursor.moveToLast();
+                        accesHoraires.deleteFicheHorairePonctuelle(cursor.getString(0));
+                    }
                 }
                 curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
                 horairesPonctuellesAdapteur.swapCursor(curseurHorairesPonctuelles);
@@ -958,6 +971,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
+        modification = false;
     }
 
 

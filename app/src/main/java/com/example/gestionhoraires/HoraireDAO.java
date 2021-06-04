@@ -976,6 +976,18 @@ public class HoraireDAO {
     }
 
     /**
+     * Retourne un curseur sur la liste des fiches plages horaires avec le nom recherché
+     * @param nom le nom recherché
+     * @return le curseur
+     */
+    public Cursor getCursorFichePlageHoraireByNom(String nom) {
+        String requete =
+                " SELECT * FROM " + HelperBDHoraire.NOM_TABLE_FICHE_PLAGE_HORAIRE
+                + " WHERE " + HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM + " like '%" + nom + "%'";
+        return baseHoraire.rawQuery(requete, null);
+    }
+
+    /**
      * Récupère la catégorie par défaut
      * @return la catégorie
      */
@@ -1040,10 +1052,21 @@ public class HoraireDAO {
      */
     public Cursor getCursorFichePlageHoraireByLocalisationAndCategorie(String localisation, String categorie, boolean ouvert) {
         String requete = "SELECT * FROM " + HelperBDHoraire.VUE_FICHE_PLAGE_HORAIRE
-                + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0 "
-                + " AND categorie like '%" + categorie + "%' "
+                + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0"
+                + " AND categorie like '%" + categorie + "%'"
                 + " AND localisation like '%" + localisation + "%';";
         return baseHoraire.rawQuery(requete, null);
+    }
+
+    /**
+     * Retourne une liste de tous les id des fiches plage horaire des établissements ouverts
+     * @return la liste des id
+     */
+    public ArrayList<Integer> getFichePlageHoraireOuverte() {
+        ArrayList<Integer> idFichesPlageHoraire = new ArrayList<>();
+
+
+        return idFichesPlageHoraire;
     }
 
     /**

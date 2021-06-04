@@ -126,8 +126,11 @@ public class HorairePonctuelActivity extends AppCompatActivity {
             curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(idFicheHorairePonctuel);
             editTextNom.setText(ficheHorairePonctuelle.getNom());
             editTextInformation.setText(ficheHorairePonctuelle.getInformation());
-            imageView.setImageURI(Uri.parse(ficheHorairePonctuelle.getCheminPhoto()));
-            imagePath = ficheHorairePonctuelle.getCheminPhoto();
+            if (ficheHorairePonctuelle.getCheminPhoto() != null) {
+                imageView.setImageURI(Uri.parse(ficheHorairePonctuelle.getCheminPhoto()));
+                imagePath = ficheHorairePonctuelle.getCheminPhoto();
+            }
+
 
         } else {
             ficheHorairePonctuelle = new FicheHorairePonctuelle();
@@ -595,6 +598,7 @@ public class HorairePonctuelActivity extends AppCompatActivity {
      * Efface la photo selectionner par l'utilisateur
      */
     public void onClickEffacerP(View view) {
+        imagePath = "";
         imageView.setImageURI(Uri.parse(""));
     }
 

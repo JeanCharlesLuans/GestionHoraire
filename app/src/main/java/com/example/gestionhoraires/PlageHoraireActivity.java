@@ -47,7 +47,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.xml.transform.Result;
 
@@ -281,6 +283,33 @@ public class PlageHoraireActivity extends AppCompatActivity {
                     }
                 }
             }
+
+            /*GregorianCalendar gCalendar = new GregorianCalendar();
+            int today = gCalendar.get(gCalendar.DAY_OF_WEEK);
+
+            if (ensemblesPlagesHoraire[today-1] != null) {
+                PlageHoraire matin = accesHoraires.getPlageHoraireById(ensemblesPlagesHoraire[today-1].getIdPlageHoraireMatin());
+                PlageHoraire soir = accesHoraires.getPlageHoraireById(ensemblesPlagesHoraire[today-1].getIdPlageHoraireSoir());
+                if (matin.getHoraireOuverture() != null) {
+                    String message;
+                    if (matin.getEstFerme() == 0) {
+                        message = "Ouvert de ";
+                    } else {
+                        message = "Fermé de ";
+                    }
+                    editTextMatin.setText(message + matin.getHoraireOuverture() + " à " + matin.getHoraireFermeture());
+                }
+
+                if (soir.getHoraireOuverture() != null) {
+                    String message;
+                    if (soir.getEstFerme() == 0) {
+                        message = "Ouvert de ";
+                    } else {
+                        message = "Fermé de ";
+                    }
+                    editTextAprem.setText(message + soir.getEtatOuverture() + " à " + soir.getHoraireFermeture());
+                }
+            }*/
         }
     }
 
@@ -358,6 +387,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
      * Efface la photo selectionner par l'utilisateur
      */
     public void onClickEffacer(View view) {
+        imagePath = "";
         imageView.setImageURI(Uri.parse(""));
     }
 
