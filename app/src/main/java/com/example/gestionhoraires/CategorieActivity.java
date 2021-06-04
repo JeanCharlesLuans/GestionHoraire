@@ -26,6 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.gestionhoraires.beans.Categorie;
+import com.example.gestionhoraires.beans.FicheHorairePonctuelle;
+import com.example.gestionhoraires.beans.FichePlageHoraire;
 import com.example.gestionhoraires.beans.Localisation;
 
 import java.util.ArrayList;
@@ -197,27 +199,92 @@ public class CategorieActivity extends AppCompatActivity {
      * permet la suppression d'une catégorie
      */
     private void supprimerCategorie() {
-        String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
+        String identifiant = curseurSurBase.getString(accesHoraire.CATEGORIE_NUM_COLONNE_CLE);
         if (!curseurSurBase.getString(3).equals("0")) {
             Toast.makeText(this, R.string.toast_categorie_defaut_supprimer, Toast.LENGTH_LONG).show();
         } else {
             // on affiche une boite de confirmation
             new AlertDialog.Builder(this)
-                    .setTitle(getResources().getString(R.string.alerte_suppression))
+                    .setTitle(getResources().getString(R.string.alerte_suppression_categorie))
                     .setNegativeButton(getResources().getString(R.string.bouton_non), null)
                     .setPositiveButton(getResources().getString(R.string.bouton_oui),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    accesHoraire.deleteCategorie(identifiant);
-                                    curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
-                                    adaptateur.swapCursor(curseurSurBase);
-                                    onContentChanged();
+                                    boolean isConflict = accesHoraire.conflictWithFichePlageHoraire(identifiant);
+                                    gestionConflit(isConflict, identifiant);
                                 }
                             })
                     .show();
         }
 
+        curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
+        adaptateur.swapCursor(curseurSurBase);
+        onContentChanged();
+    }
+
+    /**
+     *
+     * @param isConflict
+     * @param identifiant
+     */
+    private void gestionConflit(boolean isConflict, String identifiant) {
+
+        if (isConflict) {
+            // Si il y a un conflit, on laisse le choix a l'utilisateur de l'actiona effectuer
+            AlertDialog dialogConflit = new AlertDialog.Builder(this)
+                    .setTitle(getResources().getString(R.string.titre_alerte_conflit))
+                    .setMessage(getResources().getString(R.string.alerte_conflit))
+                    .setNeutralButton(getResources().getString(R.string.bouton_negatif), null)
+                    .setNegativeButton(getResources().getString(R.string.delete_all), null)
+                    .setPositiveButton(getResources().getString(R.string.move_all_fiche), null)
+                    .create();
+
+            dialogConflit.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Button btnDeleteAll = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                    Button btnMove = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                    btnMove.setVisibility(View.INVISIBLE);
+                    btnDeleteAll.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isPonctuel) {
+                                ArrayList<FicheHorairePonctuelle> fichesHorairePonctuelle = accesHoraire.getAllFicheHorairePonctuelByIdCategorie(identifiant);
+                                for (FicheHorairePonctuelle ficheHorairePonctuelle : fichesHorairePonctuelle) {
+                                    accesHoraire.deleteFicheHorairePonctuelle(ficheHorairePonctuelle.getId());
+                                }
+                            } else {
+                                ArrayList<FichePlageHoraire> fichesPlageHoraire = accesHoraire.getAllFichePlageHoraireByIdCategorie(identifiant);
+                                for (FichePlageHoraire fichePlageHoraire : fichesPlageHoraire) {
+                                    accesHoraire.deleteFichePlageHoraire(fichePlageHoraire.getId());
+                                }
+                            }
+                            accesHoraire.deleteCategorie(identifiant);
+                            // when everything is ok
+                            dialogConflit.dismiss();
+                            curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
+                            adaptateur.swapCursor(curseurSurBase);
+                            onContentChanged();
+                        }
+                    });
+                }
+            });
+            dialogConflit.show();
+        } else {
+            if (isPonctuel) {
+                ArrayList<FicheHorairePonctuelle> fichesHorairePonctuelle = accesHoraire.getAllFicheHorairePonctuelByIdCategorie(identifiant);
+                for (FicheHorairePonctuelle ficheHorairePonctuelle : fichesHorairePonctuelle) {
+                    accesHoraire.deleteFicheHorairePonctuelle(ficheHorairePonctuelle.getId());
+                }
+            } else {
+                ArrayList<FichePlageHoraire> fichesPlageHoraire = accesHoraire.getAllFichePlageHoraireByIdCategorie(identifiant);
+                for (FichePlageHoraire fichePlageHoraire : fichesPlageHoraire) {
+                    accesHoraire.deleteFichePlageHoraire(fichePlageHoraire.getId());
+                }
+            }
+            accesHoraire.deleteCategorie(identifiant);
+        }
         curseurSurBase = isPonctuel ? accesHoraire.getCursorAllCategorieLocalisationHorairePonctuel() : accesHoraire.getCursorAllCategorieLocalisationPlageHoraire();
         adaptateur.swapCursor(curseurSurBase);
         onContentChanged();

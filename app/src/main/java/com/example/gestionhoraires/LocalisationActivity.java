@@ -172,7 +172,6 @@ public class LocalisationActivity extends AppCompatActivity {
      */
     private void supprimerLocalisation() {
         String identifiant = curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_CLE);
-        Log.i("Loc", identifiant);
         /* Si la localisation n'est pas celle par défaut */
         if (!curseurSurBase.getString(accesHoraire.LOCALISATION_NUM_COLONNE_DEFAUT).equals("0")) {
             Toast.makeText(this, R.string.toast_localisation_defaut, Toast.LENGTH_LONG).show();

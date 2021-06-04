@@ -61,10 +61,12 @@
     <string name="alerte_titre">Saisie invalide</string>
     <string name="alerte_nom">Vous devez renseigner le nom.</string>
     <string name="alerte_suppression">Voulez-vous vraiment supprimer cette localisation ?</string>
+    <string name="alerte_suppression_categorie">Voulez-vous vraiment supprimer cette catégorie ?</string>
     <string name="titre_alerte_conflit">Conflit ! que voulez vous faire ?</string>
     <string name="alerte_conflit">Il semble il y avoir un conflit, que voulez-vous faire ?</string>
     <string name="delete_all">Tout Supprimer</string>
     <string name="move_all">Déplacer dans une autre liste</string>
+    <string name="move_all_fiche">Déplacer dans une autre catégorie</string>
     <string name="title_move_localisation">Déplacer dans une autre liste</string>
     <string name="title_parametre_categorie_ponctuel">Gestion catégorie horaire ponctuel</string>
 

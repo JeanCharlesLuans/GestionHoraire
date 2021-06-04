@@ -951,6 +951,12 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch(requestCode) {
             case CODE_GESTION_CATEGORIE:
+                curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+                plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+                onContentChanged();
+                curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
+                horairesPonctuellesAdapteur.swapCursor(curseurHorairesPonctuelles);
+                onContentChanged();
                 break;
             case CODE_GESTION_LOCALISATION:
                 break;
@@ -1074,69 +1080,6 @@ public class MainActivity extends AppCompatActivity {
 
         composeSmsMessage(message);
         Log.e("SMS", message);
-    }
-
-    /**
-     * STUB initialise des datas dans la BD
-     */
-    private void initData() {
-
-        PlageHoraire[] listePlage =
-                {
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-                        new PlageHoraire("14:00", 1, "18:00", 1, 0),
-
-                        new PlageHoraire("08:00", 1, "14:00", 1, 0),
-                        new PlageHoraire("16:00", 1, "20:00", 1, 0),
-
-                        new PlageHoraire("08:00", 1, "", 0, 0),
-                        new PlageHoraire("", 0, "20:00", 1, 0),
-
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-                        new PlageHoraire("10:00", 1, "12:00", 1, 0),
-                };
-
-        EnsemblePlageHoraire[] listeEnsemble =
-                {
-                        new EnsemblePlageHoraire("1","2","1", "1"),
-                        new EnsemblePlageHoraire("3","4","2", "1"),
-                        new EnsemblePlageHoraire("5","6","3", "1"),
-                        new EnsemblePlageHoraire("7","8","4", "1"),
-                        new EnsemblePlageHoraire("9","10","5", "1"),
-                        new EnsemblePlageHoraire("11","12","6", "1"),
-                        new EnsemblePlageHoraire("13","14","7", "1")
-                };
-
-        FichePlageHoraire[] listeFichePlageHorraire =
-                {
-                        new FichePlageHoraire("Nom 0", "1", "Information 0", "c:/photo0"),
-                        new FichePlageHoraire("Nom 1", "1", "Information 1", "c:/photo1"),
-                        new FichePlageHoraire("Nom 2", "1", "Information 2", "c:/photo2"),
-                        new FichePlageHoraire("Nom 3", "1", "Information 3", "c:/photo3"),
-                };
-
-        for (int i = 0; i < listePlage.length; i++) {
-            accesHoraires.addPlageHoraire(listePlage[i]);
-        }
-
-        for (int i = 0; i < listeFichePlageHorraire.length; i++) {
-            accesHoraires.addFichePlageHoraire(listeFichePlageHorraire[i]);
-        }
-
-        for (int i = 0; i < listeEnsemble.length; i++) {
-            accesHoraires.addEnsemblePlageHoraire(listeEnsemble[i]);
-        }
-
-        Log.i("IMPORTATION", "Fin");
     }
 
     /**

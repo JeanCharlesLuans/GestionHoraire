@@ -102,6 +102,9 @@ public class HorairePonctuelActivity extends AppCompatActivity {
     /** Identifiant de l'horaire ponctuel à modifier */
     private String idFicheHorairePonctuel;
 
+    /** Indicateur de premier passage */
+    private boolean indicateurPremierPassage;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,6 +114,8 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         // accès au DAO
         accesHoraires = new HoraireDAO(this);
         accesHoraires.open();
+
+        indicateurPremierPassage = true;
 
         // on récupere les widgets
         editTextNom = findViewById(R.id.editText_nom);
@@ -155,8 +160,6 @@ public class HorairePonctuelActivity extends AppCompatActivity {
             }
         });
 
-
-
         // on remplie la liste
         listViewHPonctuel = findViewById(R.id.liste_horaires_ponctuel);
         horairesPonctuelAdapteur = new SimpleCursorAdapter(this,
@@ -171,15 +174,9 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         listViewHPonctuel.setAdapter(horairesPonctuelAdapteur);
         registerForContextMenu(listViewHPonctuel);
 
-
         SimpleCursorAdapter adapterLocalisation = getAdapterLocalisation();
         adapterLocalisation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLocalisation.setAdapter(adapterLocalisation);
-
-        if (modification) {
-            Categorie categorie = accesHoraires.getCategorieById(ficheHorairePonctuelle.getIdCategorie());
-            spinnerLocalisation.setSelection(accesHoraires.getPositionByIdLocalisation(categorie.getIdLocalisation()));
-        }
 
         spinnerLocalisation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -187,6 +184,12 @@ public class HorairePonctuelActivity extends AppCompatActivity {
                 SimpleCursorAdapter adapterCategorie = getAdapterCategoriePonctuelsByLocalisation(spinnerLocalisation.getSelectedItemId() + "");
                 adapterCategorie.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerCategorie.setAdapter(adapterCategorie);
+                if (modification && indicateurPremierPassage) {
+                    indicateurPremierPassage = false;
+                    System.out.println(accesHoraires.getPositionByIdCategorieHorairePonctuel(ficheHorairePonctuelle.getIdCategorie()));
+                    //spinnerCategorie.setSelection(accesHoraires.getPositionByIdCategorieHorairePonctuel(ficheHorairePonctuelle.getIdCategorie()));
+                    //spinnerCategorie.setSelection(1);
+                }
             }
 
             @Override
@@ -219,7 +222,10 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab_ajout_fiche);
         if (modification) {
             fab.setImageResource(R.drawable.ic_baseline_save_alt_24);
+            Categorie categorie = accesHoraires.getCategorieById(ficheHorairePonctuelle.getIdCategorie());
+            spinnerLocalisation.setSelection(accesHoraires.getPositionByIdLocalisation(categorie.getIdLocalisation()));
         }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

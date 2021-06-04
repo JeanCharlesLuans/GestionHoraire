@@ -1038,8 +1038,82 @@ public class HoraireDAO {
      * @return vrai si il existe des catégories pour cette localisation, false sinon
      */
     public boolean conflictWithCategorie(String idLocalisation) {
-        ArrayList<Categorie> categories = getCategoriesByLocalisation(idLocalisation);
         return getCategoriesByLocalisation(idLocalisation).size() != 0;
+    }
+
+    /**
+     * Détermine si des fiches existent avec des fiches
+     * @param idCategorie l'identifiant de la catégorie
+     * @return true si il y a un conflit, false sinon
+     */
+    public boolean conflictWithFichePlageHoraire(String idCategorie) {
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_FICHE_PLAGE_HORAIRE
+                + " WHERE " + HelperBDHoraire.FICHE_PLAGE_HORAIRE_CLE_CATEGORIE + " = " + idCategorie;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        if (cursor.getCount() != 0) {
+            return true;
+        }
+        requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_FICHE_HORAIRE_PONCTUELLE
+                + " WHERE " + HelperBDHoraire.FICHE_HORAIRE_PONCTUELLE_CLE_CATEGORIE + " = " + idCategorie;
+        cursor = baseHoraire.rawQuery(requete, null);
+        if (cursor.getCount() != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Récupère une liste de fiche plage horaire en fonction d'un identifiant de catégorie
+     * @param idCategorie l'identifiant de la catégorie
+     * @return la liste
+     */
+    public ArrayList<FichePlageHoraire> getAllFichePlageHoraireByIdCategorie(String idCategorie) {
+        ArrayList<FichePlageHoraire> fichesPlageHoraires = new ArrayList<>();
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_FICHE_PLAGE_HORAIRE
+                + " WHERE " + HelperBDHoraire.FICHE_PLAGE_HORAIRE_CLE_CATEGORIE + " = " + idCategorie;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                FichePlageHoraire fichePlageHoraire = new FichePlageHoraire();
+                fichePlageHoraire.setIdCategorie(idCategorie);
+                fichePlageHoraire.setCheminPhoto(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CHEMIN_IMAGE));
+                fichePlageHoraire.setId(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                fichePlageHoraire.setNom(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_NOM));
+                fichePlageHoraire.setInformation(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_INFORMATION));
+                fichesPlageHoraires.add(fichePlageHoraire);
+            }
+        }
+        return fichesPlageHoraires;
+    }
+
+    /**
+     * Récupère une liste de fiche horaire ponctuel en fonction d'un identifiant de catégorie
+     * @param idCategorie l'identifiant de la catégorie
+     * @return la liste
+     */
+    public ArrayList<FicheHorairePonctuelle> getAllFicheHorairePonctuelByIdCategorie(String idCategorie) {
+        ArrayList<FicheHorairePonctuelle> fichesHorairePonctuel = new ArrayList<>();
+        String requete =
+                "SELECT * FROM " + HelperBDHoraire.NOM_TABLE_FICHE_PLAGE_HORAIRE
+                        + " WHERE " + HelperBDHoraire.FICHE_PLAGE_HORAIRE_CLE_CATEGORIE + " = " + idCategorie;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                FicheHorairePonctuelle ficheHorairePonctuelle = new FicheHorairePonctuelle();
+                ficheHorairePonctuelle.setId(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CLE));
+                ficheHorairePonctuelle.setNom(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_NOM));
+                ficheHorairePonctuelle.setInformation(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_INFORMATION));
+                ficheHorairePonctuelle.setCheminPhoto(cursor.getString(FICHE_HORAIRE_PONCTUELLE_NUM_COLONNE_CHEMIN_IMAGE));
+                ficheHorairePonctuelle.setIdCategorie(idCategorie);
+                fichesHorairePonctuel.add(ficheHorairePonctuelle);
+            }
+        }
+        return fichesHorairePonctuel;
     }
 
     /**

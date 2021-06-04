@@ -168,6 +168,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
         editTextMatin = findViewById(R.id.editText_matin);
         editTextAprem = findViewById(R.id.editText_aprem);
         imageView = findViewById(R.id.imageView);
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,6 +209,10 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 SimpleCursorAdapter adapterCategorie = getAdapterCategorieByLocalisation(spinnerLocalisation.getSelectedItemId() + "");
                 adapterCategorie.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerCategorie.setAdapter(adapterCategorie);
+                if (modification && indicateurPremierPassage) {
+                    indicateurPremierPassage = false;
+                    spinnerCategorie.setSelection(accesHoraires.getPositionByIdCategoriePlageHoraire(fichePlageHoraire.getIdCategorie()));
+                }
             }
 
             @Override
@@ -242,7 +247,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 imagePath = fichePlageHoraire.getCheminPhoto();
                 imageView.setImageURI(Uri.parse(imagePath));
             }
-            System.out.println(fichePlageHoraire.getIdCategorie());
             Categorie categorie = accesHoraires.getCategorieById(fichePlageHoraire.getIdCategorie());
             spinnerLocalisation.setSelection(accesHoraires.getPositionByIdLocalisation(categorie.getIdLocalisation()));
 
