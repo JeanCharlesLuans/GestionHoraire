@@ -5,12 +5,16 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -61,6 +65,13 @@ import java.io.Writer;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     /** Code identifiant modification */
     private static final String CODE_IDENTIFICATION = "IDENTIFIANT_MODIFICATION";
@@ -385,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
                                 switch (boutonMode.getCheckedRadioButtonId()) {
                                     case R.id.option_import_csv:
                                         // TODO import CSV
-                                        importationCSV();
+                                        importationCSV(context);
                                         break;
                                     case R.id.option_import_json:
                                         importationJSON();
@@ -985,10 +996,9 @@ public class MainActivity extends AppCompatActivity {
 
         JSONArray liste = new JSONArray();
 
-        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        File fichierJSON = new File(root, "FichesHoraireJson");
+        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File fichierJSON = new File(root, "FichesHoraire.json");
         try {
-
             for (int i = 0; i < listeFichePlageHoraires.length; i++) {
                 liste.put(listeFichePlageHoraires[i].getJson(accesHoraires));
             }
@@ -999,6 +1009,7 @@ public class MainActivity extends AppCompatActivity {
             Writer w = new BufferedWriter(new OutputStreamWriter(fos));
             w.write(liste.toString());
             w.flush();
+
 
         } catch (JSONException err) {
             Log.e("JSON", err.getMessage());
@@ -1130,13 +1141,12 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Deserialiser un fichier JSON, puis l'importe dans la BD
-     * @param filePath chemin du fichier
      */
     private void importationJSON() {
 
         // Fichier a JSON
-        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        File fichier = new File(root, "FichesHoraireJson");
+        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File fichier = new File(root, "FichesHoraire.json");
 
         BufferedReader reader;
         String ligne;
@@ -1178,7 +1188,6 @@ public class MainActivity extends AppCompatActivity {
                 ficheTmp.setId(curseur.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
 
                 // Création des ensemble
-                ArrayList<EnsemblePlageHoraire> ensembleHoraireTMP = new ArrayList<>();
                 JSONArray ensembleHoraireJSON = ensembleJSON.getJSONArray(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE);
                 for(int j = 0; j < ensembleHoraireJSON.length(); j ++) {
 
@@ -1248,26 +1257,132 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void importationCSV() {
+    /**
+     * Désérialise un fichier CSV pour l'ajouter a la BD applicative
+     */
+    private void importationCSV(Context context) {
 
-        Log.e("Importation CSV", "Click");
+        final int LOCALISATION = 0;
+        final int CATEGORIE = 1;
+        final int NOM = 2;
+        final int INFORMATION = 3;
+        final int LUNDI = 4;
+        final int MARDI = 8;
+        final int MERCREDI = 12;
+        final int JEUDI = 16;
+        final int VENDREDI = 20;
+        final int SAMEDI = 24;
+        final int DIMANCHE = 28;
 
-        // Fichier a JSON
-        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        File fichier = new File(root, "FichesHoraireCsv");
+        Cursor cursor;
+
+        Localisation localisation;
+        Categorie categorie;
+        FichePlageHoraire fichePlageHoraire;
 
         BufferedReader reader;
         String ligne;
+        String[] contenu;
+
+        verifyStoragePermissions(this);
+
+        File fichier = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "FichesHoraire.csv");
 
         try {
             // Ouverture du fichier
             reader = new BufferedReader(new FileReader(fichier));
+
+            //Parcours des fiche horaire
             while((ligne = reader.readLine()) != null) {
-                Log.e("Importation CSV", ligne);
+
+                contenu = ligne.split(";", -2);
+
+                Log.e("Taille tableau", "" + contenu.length);
+
+                //Si le tableau est rempli, et si ce n'est pas l'entete
+                if (contenu.length != 0 && !contenu[LOCALISATION].equals("Ville")) {
+
+                    localisation = accesHoraires.getLocalisationByName(contenu[LOCALISATION]);
+
+                    // Création de la localisation si elle n'exite pas
+                    if (localisation.getId() == null) {
+                        localisation.setNom(contenu[LOCALISATION]);
+                        accesHoraires.addLocalisation(localisation);
+                        Log.e("BD", "Ajout de localisation dans la BD");
+
+                        cursor = accesHoraires.getCursorAllLocalisation();
+                        cursor.moveToLast();
+                        localisation.setId(cursor.getColumnName(HoraireDAO.LOCALISATION_NUM_COLONNE_CLE));
+
+                    }
+
+                    categorie = accesHoraires.getCategorieByNameByLocalisation(contenu[CATEGORIE], localisation.getId());
+
+                    // Création de la catégorie si elle n'existe pas
+                    if (categorie.getId() == null) {
+                        categorie.setNom(contenu[CATEGORIE]);
+                        categorie.setIsDefault(0);
+                        categorie.setIsHorairePonctuelle(0);
+                        categorie.setIdLocalisation(localisation.getId());
+                        accesHoraires.addCategorie(categorie);
+                        Log.e("BD", "Ajout de catégorie dans la BD");
+
+                        cursor = accesHoraires.getCursorAllCategoriePlageHoraire();
+                        cursor.moveToLast();
+                        categorie.setId(cursor.getColumnName(HoraireDAO.CATEGORIE_NUM_COLONNE_CLE));
+                    }
+
+                    // Création des fiches plages horraires
+                    fichePlageHoraire = new FichePlageHoraire(contenu[NOM],
+                                                              categorie.getId(),
+                                                              contenu[INFORMATION],
+                                                 "");
+
+                    accesHoraires.addFichePlageHoraire(fichePlageHoraire);
+
+                    cursor = accesHoraires.getCursorAllFichePlageHoraire();
+                    cursor.moveToLast();
+                    fichePlageHoraire.setId(cursor.getColumnName(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+
+                }
             }
 
         }catch (IOException err) {
             Log.e("CSV", err.toString());
+        }
+    }
+
+    /**
+     * Ajoute a la BD les plage horraire et l'ensemble
+     * @param tableau tableau a ajouter
+     * @param indexStart index du tableau ou commance l'ensemble horraire (même si null)
+     * @return l'id de l'ensemble
+     */
+    private int ajoutEnsemblePlageHorraire(String[] tableau, int indexStartJour) {
+
+        // Toute la journée ?
+        if (tableau[indexStartJour+2] == null && tableau[indexStartJour+3] == null) {
+            PlageHoraire plageHoraire = new PlageHoraire(tableau[indexStartJour], tableau[indexStartJour + 1], 0);
+            accesHoraires.addPlageHoraire(plageHoraire);
+        } else {
+            // TODO gerer le cas ou il y a a deux plage horraire a créer
+        }
+    }
+
+    public void verifyStoragePermissions(Activity activity) {
+        // Check si permission de lecture
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        //Demande si ce n'est pas le cas
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        } else {
+            Log.e("Permission", "Permission ok");
         }
     }
 }

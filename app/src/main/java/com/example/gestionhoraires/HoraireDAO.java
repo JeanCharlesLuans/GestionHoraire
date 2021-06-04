@@ -1124,4 +1124,48 @@ public class HoraireDAO {
                 + " ORDER BY " + HelperBDHoraire.HORAIRE_PONCTUELLE_CLE;
         return baseHoraire.rawQuery(requete, null);
     }
+
+    /**
+     * Retourne la localisation qui a le nom passer en paramettre
+     * @param name le nom de la localisation
+     * @return la localisation
+     */
+    public Localisation getLocalisationByName(String name) {
+        Localisation localisation = new Localisation();
+        String requete =
+                " SELECT * FROM " + HelperBDHoraire.NOM_TABLE_LOCALISATION
+                        + " WHERE " + HelperBDHoraire.LOCALISATION_NOM+ " = '" + name + "'";
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        cursor.moveToFirst();
+
+        if (cursor.getCount() != 0) {
+            localisation.setId(cursor.getString(LOCALISATION_NUM_COLONNE_CLE));
+            localisation.setNom(cursor.getString(LOCALISATION_NUM_COLONNE_NOM));
+        }
+        return localisation;
+    }
+
+    /**
+     * Retourne la localisation qui a le nom passer en paramettre
+     * @param name le nom de la localisation
+     * @return la localisation
+     */
+    public Categorie getCategorieByNameByLocalisation(String name, String idLocalisation) {
+        Categorie categorie = new Categorie();
+        String requete =
+                " SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
+                        + " WHERE " + HelperBDHoraire.LOCALISATION_NOM + " = '" + name + "'"
+                        + "AND " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation;
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+        cursor.moveToFirst();
+
+        if (cursor.getCount() != 0) {
+            categorie.setId(cursor.getString(CATEGORIE_NUM_COLONNE_CLE));
+            categorie.setNom(cursor.getString(CATEGORIE_NUM_COLONNE_NOM));
+            categorie.setIdLocalisation(cursor.getString(CATEGORIE_NUM_COLONNE_CLE_LOCALISATION));
+            categorie.setIsDefault(cursor.getInt(CATEGORIE_NUM_COLONNE_DEFAUT));
+            categorie.setIsHorairePonctuelle(cursor.getInt(CATEGORIE_NUM_COLONNE_HORAIRE_PONCTUELLE));
+        }
+        return categorie;
+    }
 }
