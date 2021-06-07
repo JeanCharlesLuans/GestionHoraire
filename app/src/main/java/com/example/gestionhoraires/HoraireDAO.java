@@ -849,14 +849,14 @@ public class HoraireDAO {
     /**
      * @return tout les ensemble horraire d'une fiche horraire
      */
-    public ArrayList<EnsemblePlageHoraire> getEnsembleHoraireByFiche(String idFicheHorraire) {
+    public ArrayList<EnsemblePlageHoraire> getEnsembleHoraireByFiche(String idFicheHoraire) {
         ArrayList<EnsemblePlageHoraire> listeEnsemble = new ArrayList<>();
 
         String requete =
                 "SELECT * FROM "
                         + HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE
                         + " WHERE " + HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_FICHE
-                        + " = " + idFicheHorraire;
+                        + " = " + idFicheHoraire;
 
         Cursor cursor = baseHoraire.rawQuery(requete, null);
 

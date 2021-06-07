@@ -252,6 +252,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
 
             ArrayList<EnsemblePlageHoraire> ensembles = accesHoraires.getEnsembleHoraireByFiche(idFichePlageHoraire);
             for (EnsemblePlageHoraire ensemble : ensembles) {
+                System.out.print("Ensemble : " + ensemble);
                 if (ensemble != null) {
                     switch (Integer.parseInt(ensemble.getIdJour())) {
                         case 1:
@@ -288,12 +289,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 }
             }
 
-            /*GregorianCalendar gCalendar = new GregorianCalendar();
+            GregorianCalendar gCalendar = new GregorianCalendar();
             int today = gCalendar.get(gCalendar.DAY_OF_WEEK);
 
-            if (ensemblesPlagesHoraire[today-1] != null) {
-                PlageHoraire matin = accesHoraires.getPlageHoraireById(ensemblesPlagesHoraire[today-1].getIdPlageHoraireMatin());
-                PlageHoraire soir = accesHoraires.getPlageHoraireById(ensemblesPlagesHoraire[today-1].getIdPlageHoraireSoir());
+            if (ensemblesPlagesHoraire[today-2] != null) {
+                PlageHoraire matin = accesHoraires.getPlageHoraireById(ensemblesPlagesHoraire[today-2].getIdPlageHoraireMatin());
+                PlageHoraire soir = accesHoraires.getPlageHoraireById(ensemblesPlagesHoraire[today-2].getIdPlageHoraireSoir());
                 if (matin.getHoraireOuverture() != null) {
                     String message;
                     if (matin.getEstFerme() == 0) {
@@ -302,6 +303,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
                         message = "Fermé de ";
                     }
                     editTextMatin.setText(message + matin.getHoraireOuverture() + " à " + matin.getHoraireFermeture());
+                    editTextMatin.setVisibility(View.VISIBLE);
                 }
 
                 if (soir.getHoraireOuverture() != null) {
@@ -312,8 +314,9 @@ public class PlageHoraireActivity extends AppCompatActivity {
                         message = "Fermé de ";
                     }
                     editTextAprem.setText(message + soir.getEtatOuverture() + " à " + soir.getHoraireFermeture());
+                    editTextAprem.setVisibility(View.VISIBLE);
                 }
-            }*/
+            }
         }
     }
 
@@ -527,8 +530,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
                         jour.getId()) : null;
 
                 if (dejaEnregistre) {
-
-
 
                     EnsemblePlageHoraire ensemblePlageHoraire = ensemblesPlagesHoraire[position];
 

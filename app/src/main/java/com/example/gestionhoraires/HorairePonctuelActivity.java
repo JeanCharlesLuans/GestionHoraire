@@ -430,11 +430,30 @@ public class HorairePonctuelActivity extends AppCompatActivity {
                                     || editTextHeureFin.getText().toString().equals("")) {
                                 Toast.makeText(getApplicationContext(), R.string.toast_champs_vides, Toast.LENGTH_LONG).show();
                             } else {
-                                horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
-                                        editTextHeureFin.getText().toString(),
-                                        spinnerJour.getSelectedItemId() + "",
-                                        ficheHorairePonctuelle.getId());
-                                accesHoraires.addHorairePonctuelle(horairePonctuelle);
+                                int heureDebut = Integer.parseInt(editTextHeure.getText().toString().split(":")[0]);
+                                int minuteDebut = Integer.parseInt(editTextHeure.getText().toString().split(":")[1]);
+                                int heureFin = Integer.parseInt(editTextHeureFin.getText().toString().split(":")[0]);
+                                int minuteFin = Integer.parseInt(editTextHeureFin.getText().toString().split(":")[1]);
+
+                                if (heureDebut > heureFin) {
+                                    Toast.makeText(getApplicationContext(), R.string.erreur_heure, Toast.LENGTH_LONG).show();
+                                } else if (heureDebut == heureFin) {
+                                    if (minuteDebut < minuteFin) {
+                                        horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
+                                                editTextHeureFin.getText().toString(),
+                                                spinnerJour.getSelectedItemId() + "",
+                                                ficheHorairePonctuelle.getId());
+                                        accesHoraires.addHorairePonctuelle(horairePonctuelle);
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), R.string.erreur_heure, Toast.LENGTH_LONG).show();
+                                    }
+                                } else {
+                                    horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
+                                            editTextHeureFin.getText().toString(),
+                                            spinnerJour.getSelectedItemId() + "",
+                                            ficheHorairePonctuelle.getId());
+                                    accesHoraires.addHorairePonctuelle(horairePonctuelle);
+                                }
                             }
                         }
 
@@ -545,14 +564,34 @@ public class HorairePonctuelActivity extends AppCompatActivity {
                             horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
                                     spinnerJour.getSelectedItemId() + "",
                                     ficheHorairePonctuelle.getId());
+                            accesHoraires.updateHorairePonctuelle(horairePonctuelle, idHorairePonctuel);
+
                         } else {
-                            horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
-                                    editTextHeureFin.getText().toString(),
-                                    spinnerJour.getSelectedItemId() + "",
-                                    ficheHorairePonctuelle.getId());
+                            int heureDebut = Integer.parseInt(editTextHeure.getText().toString().split(":")[0]);
+                            int minuteDebut = Integer.parseInt(editTextHeure.getText().toString().split(":")[1]);
+                            int heureFin = Integer.parseInt(editTextHeureFin.getText().toString().split(":")[0]);
+                            int minuteFin = Integer.parseInt(editTextHeureFin.getText().toString().split(":")[1]);
+
+                            if (heureDebut > heureFin) {
+                                Toast.makeText(getApplicationContext(), R.string.erreur_heure, Toast.LENGTH_LONG).show();
+                            } else if (heureDebut == heureFin) {
+                                if (minuteDebut < minuteFin) {
+                                    horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
+                                            editTextHeureFin.getText().toString(),
+                                            spinnerJour.getSelectedItemId() + "",
+                                            ficheHorairePonctuelle.getId());
+                                    accesHoraires.updateHorairePonctuelle(horairePonctuelle, idHorairePonctuel);
+                                } else {
+                                    Toast.makeText(getApplicationContext(), R.string.erreur_heure, Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                horairePonctuelle = new HorairePonctuelle(editTextHeure.getText().toString(),
+                                        editTextHeureFin.getText().toString(),
+                                        spinnerJour.getSelectedItemId() + "",
+                                        ficheHorairePonctuelle.getId());
+                                accesHoraires.updateHorairePonctuelle(horairePonctuelle, idHorairePonctuel);
+                            }
                         }
-                        System.out.println(editTextHeureFin.getText().toString());
-                        accesHoraires.updateHorairePonctuelle(horairePonctuelle, idHorairePonctuel);
                         curseurSurBase = accesHoraires.getCursorAllHorairePonctuelleByIdFiche(ficheHorairePonctuelle.getId());
                         horairesPonctuelAdapteur.swapCursor(curseurSurBase);
                         onContentChanged();
