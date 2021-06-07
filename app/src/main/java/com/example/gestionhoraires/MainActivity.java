@@ -1303,7 +1303,7 @@ public class MainActivity extends AppCompatActivity {
                     ajoutEnsemblePlageHorraire(contenu, JEUDI, fichePlageHoraire.getId());
                     ajoutEnsemblePlageHorraire(contenu, VENDREDI, fichePlageHoraire.getId());
                     ajoutEnsemblePlageHorraire(contenu, SAMEDI, fichePlageHoraire.getId());
-                    //ajoutEnsemblePlageHorraireDimanche(contenu, DIMANCHE, fichePlageHoraire.getId());
+                    ajoutEnsemblePlageHorraire(contenu, DIMANCHE, fichePlageHoraire.getId());
 
                 }
             }
