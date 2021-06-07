@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private TabHost lesOnglets;
 
+    /** vrai si l'onglet actif et l'onglet horaire ponctuel, faux sinon */
+    boolean isHorairePonctuel;
+
     /** numéro de l'onglet des plages horaires */
     private final int TAB_PLAGE_HORAIRE = 0;
 
@@ -193,15 +196,16 @@ public class MainActivity extends AppCompatActivity {
                         changeStyleOnglet();
 
 
-                        /* on enleve la possibiliter de filtrer la liste quand
-                         * l'utilisateur est sur le deuxieme onglet
+                        /*
+                         * on enleve la visibiliter de plusieur options du menu
                          */
-                        boolean visibility = !tabId.equals("onglet_horaires_ponctuelles");
-                        setToolBarVisibility(visibility);
+                        isHorairePonctuel = tabId.equals("onglet_horaires_ponctuelles");
+                        setToolBarVisibility(!isHorairePonctuel);
                     }
                 }
         );
         lesOnglets.setCurrentTab(TAB_PLAGE_HORAIRE);
+        isHorairePonctuel = false;
 
         // On ajoute un bouton flotant
         floatingActionButtonAJout = findViewById(R.id.fab_ajout);
@@ -227,8 +231,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
-// TODO Menu Contextuel des listes
         new MenuInflater(this).inflate(R.menu.menu_contextuel_settings, menu);
+        if (isHorairePonctuel) {
+            MenuItem export = menu.findItem(R.id.export_option);
+            export.setVisible(false);
+        }
     }
 
     /**
