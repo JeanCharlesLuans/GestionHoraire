@@ -137,6 +137,8 @@ public class LocalisationActivity extends AppCompatActivity {
          *  on désérialise le fichier XML décriant le menu à l'argument menu
          */
         new MenuInflater(this).inflate(R.menu.menu_contextuel_settings, menu);
+        MenuItem export = menu.findItem(R.id.export_option);
+        export.setVisible(false);
     }
 
     /**
