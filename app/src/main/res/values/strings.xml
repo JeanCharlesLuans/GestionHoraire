@@ -117,6 +117,7 @@
     <string name="toast_pas_de_categorie">Cette localisation ne possède pas de catégorie.</string>
     <string name="erreur_ouverture">Impossible de lire le fichier</string>
     <string name="erreur_heure">L\'heure de début doit être inférieure à l\'heure de fin.</string>
+    <string name="import_terminee">Importation terminée.</string>
 
     <!-- Horaires Ponctuel -->
     <string name="titre_detail_plage_horaire">Ajout d\'une fiche d\'horaires ponctuels</string>

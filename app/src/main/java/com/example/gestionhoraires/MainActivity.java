@@ -163,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
         curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
         curseurHorairesPonctuelles = accesHoraires.getCursorAllFicheHorairePonctuelle();
 
+        verifyStoragePermissions(this);
+
         // Liste de l'onglet 1 : Plages Horaires
         setPlageHoraireAdapter();
 
@@ -1203,7 +1205,7 @@ public class MainActivity extends AppCompatActivity {
         curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
         plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
         onContentChanged();
-        Toast.makeText(this, "Importation terminer", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.import_terminee, Toast.LENGTH_LONG).show();
 
     }
 
@@ -1307,6 +1309,9 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
+            curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
+            plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
+            onContentChanged();
 
         }catch (IOException err) {
             Log.e("CSV", err.toString());
@@ -1330,7 +1335,7 @@ public class MainActivity extends AppCompatActivity {
             if (tableau[indexJour + 2].equals("") && tableau[indexJour + 3].equals("")) {
                 /* TOUTE LA JOURNEE */
                 PlageHoraire plageHoraire;
-                if (!tableau[indexJour].equals("fermé")) {
+                if (!tableau[indexJour].equals("ferme")) {
                     // OUVERT
                     plageHoraire = new PlageHoraire(tableau[indexJour], tableau[indexJour + 1], 0);
                     accesHoraires.addPlageHoraire(plageHoraire);
@@ -1355,7 +1360,7 @@ public class MainActivity extends AppCompatActivity {
                 /* MATIN + APREM */
                 PlageHoraire plageHoraireMatin;
 
-                if (!tableau[indexJour].equals("fermé")) {
+                if (!tableau[indexJour].equals("ferme")) {
                     plageHoraireMatin = new PlageHoraire(tableau[indexJour], 1, tableau[indexJour + 1], 1, 0);
                 } else {
                     plageHoraireMatin = new PlageHoraire("00:00", "00:00", 1);
@@ -1368,7 +1373,7 @@ public class MainActivity extends AppCompatActivity {
 
                 PlageHoraire plageHoraireSoir;
 
-                if (!tableau[indexJour + 2].equals("fermé")) {
+                if (!tableau[indexJour + 2].equals("ferme")) {
                     plageHoraireSoir = new PlageHoraire(tableau[indexJour + 2], 1, tableau[indexJour + 3], 1, 0);
                 } else {
                     plageHoraireSoir = new PlageHoraire("00:00", "00:00", 1);
@@ -1402,7 +1407,7 @@ public class MainActivity extends AppCompatActivity {
             if (tableau.length == 30) {
                 /* TOUTE LA JOURNEE */
                 PlageHoraire plageHoraire;
-                if (!tableau[indexJour].equals("fermé")) {
+                if (!tableau[indexJour].equals("ferme")) {
                     // OUVERT
                     plageHoraire = new PlageHoraire(tableau[indexJour], tableau[indexJour + 1], 0);
                     accesHoraires.addPlageHoraire(plageHoraire);
@@ -1427,7 +1432,7 @@ public class MainActivity extends AppCompatActivity {
                 /* MATIN + APREM */
                 PlageHoraire plageHoraireMatin;
 
-                if (!tableau[indexJour].equals("fermé")) {
+                if (!tableau[indexJour].equals("ferme")) {
                     plageHoraireMatin = new PlageHoraire(tableau[indexJour], 1, tableau[indexJour + 1], 1, 0);
                 } else {
                     plageHoraireMatin = new PlageHoraire("00:00", "00:00", 1);
@@ -1440,7 +1445,7 @@ public class MainActivity extends AppCompatActivity {
 
                 PlageHoraire plageHoraireSoir;
 
-                if (!tableau[indexJour + 2].equals("fermé")) {
+                if (!tableau[indexJour + 2].equals("ferme")) {
                     plageHoraireSoir = new PlageHoraire(tableau[indexJour + 2], 1, tableau[indexJour + 3], 1, 0);
                 } else {
                     plageHoraireSoir = new PlageHoraire("00:00", "00:00", 1);
