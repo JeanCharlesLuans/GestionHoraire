@@ -517,13 +517,25 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 int position = Integer.parseInt(jour.getId()) - 1;
 
                 boolean dejaEnregistre = ensemblesPlagesHoraire[position] == null ? false : true;
-                ensemblesPlagesHoraire[position] = dejaEnregistre ? accesHoraires.getEnsemblePlageHoraireByIdFicheAndJour(getIdLastFiche(),
+                String idFiche = modification ? fichePlageHoraire.getId() : getIdLastFiche();
+
+                ensemblesPlagesHoraire[position] = dejaEnregistre ? accesHoraires.getEnsemblePlageHoraireByIdFicheAndJour(idFiche,
                         jour.getId()) : null;
 
                 if (dejaEnregistre) {
+
+
+
                     EnsemblePlageHoraire ensemblePlageHoraire = ensemblesPlagesHoraire[position];
+
+                    Log.e("ID", ensemblePlageHoraire.getIdFichePlageHoraire());
+
                     plageHoraireMatin = accesHoraires.getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireMatin());
                     plageHoraireSoir = accesHoraires.getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireSoir());
+
+                    Log.e("TAG", plageHoraireMatin.getHoraireOuverture() + " - " + plageHoraireMatin.getHoraireFermeture());
+                    Log.e("TAG", plageHoraireSoir.getHoraireOuverture() + " - " + plageHoraireSoir.getHoraireFermeture());
+
                     String[] tabHoraireMatinDebut = plageHoraireMatin.getHoraireOuverture().split(":");
                     String[] tabHoraireMatinFin = plageHoraireMatin.getHoraireFermeture().split(":");
                     int heureHoraireMatinDebut = Integer.parseInt(tabHoraireMatinDebut[0]);
