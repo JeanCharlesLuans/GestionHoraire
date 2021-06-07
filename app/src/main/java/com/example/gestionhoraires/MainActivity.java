@@ -1303,9 +1303,7 @@ public class MainActivity extends AppCompatActivity {
                     ajoutEnsemblePlageHorraire(contenu, JEUDI, fichePlageHoraire.getId());
                     ajoutEnsemblePlageHorraire(contenu, VENDREDI, fichePlageHoraire.getId());
                     ajoutEnsemblePlageHorraire(contenu, SAMEDI, fichePlageHoraire.getId());
-
-                    if (contenu.length != 30)
-                        ajoutEnsemblePlageHorraire(contenu, DIMANCHE, fichePlageHoraire.getId());
+                    //ajoutEnsemblePlageHorraireDimanche(contenu, DIMANCHE, fichePlageHoraire.getId());
 
                 }
             }
@@ -1329,60 +1327,133 @@ public class MainActivity extends AppCompatActivity {
 
         Cursor cursor;
 
-        if (tableau[indexJour+2].equals("") && tableau[indexJour+3].equals("")) {
-            /* TOUTE LA JOURNEE */
-            PlageHoraire plageHoraire;
-            if (!tableau[indexJour].equals("fermé")) {
-                // OUVERT
-                plageHoraire = new PlageHoraire(tableau[indexJour], tableau[indexJour + 1], 0);
-                accesHoraires.addPlageHoraire(plageHoraire);
+            if (tableau[indexJour + 2].equals("") && tableau[indexJour + 3].equals("")) {
+                /* TOUTE LA JOURNEE */
+                PlageHoraire plageHoraire;
+                if (!tableau[indexJour].equals("fermé")) {
+                    // OUVERT
+                    plageHoraire = new PlageHoraire(tableau[indexJour], tableau[indexJour + 1], 0);
+                    accesHoraires.addPlageHoraire(plageHoraire);
 
+                    cursor = accesHoraires.getCursorAllPlageHoraire();
+                    cursor.moveToLast();
+                    plageHoraire.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                } else {
+                    // FERME
+                    plageHoraire = new PlageHoraire("00:00", "00:00", 1);
+                    accesHoraires.addPlageHoraire(plageHoraire);
+
+                    cursor = accesHoraires.getCursorAllPlageHoraire();
+                    cursor.moveToLast();
+                    plageHoraire.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                }
+
+                EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(plageHoraire.getId(), idJour, idFiche);
+                accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
+
+            } else {
+                /* MATIN + APREM */
+                PlageHoraire plageHoraireMatin;
+
+                if (!tableau[indexJour].equals("fermé")) {
+                    plageHoraireMatin = new PlageHoraire(tableau[indexJour], 1, tableau[indexJour + 1], 1, 0);
+                } else {
+                    plageHoraireMatin = new PlageHoraire("00:00", "00:00", 1);
+                }
+
+                accesHoraires.addPlageHoraire(plageHoraireMatin);
                 cursor = accesHoraires.getCursorAllPlageHoraire();
                 cursor.moveToLast();
-                plageHoraire.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
-            } else {
-                // FERME
-                plageHoraire = new PlageHoraire("00:00", "00:00", 1);
-                accesHoraires.addPlageHoraire(plageHoraire);
+                plageHoraireMatin.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
 
+                PlageHoraire plageHoraireSoir;
+
+                if (!tableau[indexJour + 2].equals("fermé")) {
+                    plageHoraireSoir = new PlageHoraire(tableau[indexJour + 2], 1, tableau[indexJour + 3], 1, 0);
+                } else {
+                    plageHoraireSoir = new PlageHoraire("00:00", "00:00", 1);
+                }
+
+                accesHoraires.addPlageHoraire(plageHoraireSoir);
                 cursor = accesHoraires.getCursorAllPlageHoraire();
                 cursor.moveToLast();
-                plageHoraire.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
-            }
+                plageHoraireSoir.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
 
-            EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(plageHoraire.getId(), idJour, idFiche);
-            accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
+                EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(plageHoraireMatin.getId(), plageHoraireSoir.getId(), idJour, idFiche);
+                accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
 
-        } else {
-            /* MATIN + APREM */
-            PlageHoraire plageHoraireMatin;
+        }
+    }
 
-            if (!tableau[indexJour].equals("fermé")) {
-                plageHoraireMatin = new PlageHoraire(tableau[indexJour], 1, tableau[indexJour + 1], 1, 0);
+    /**
+     * Ajoute a la BD les plage horraire et l'ensemble a une fiche horraire
+     * @param tableau tableau du contenu a ajouter
+     * @param indexJour index du tableau ou commance l'ensemble horraire (même si null)
+     */
+    private void ajoutEnsemblePlageHorraireDimanche(String[] tableau, int indexJour, String idFiche) {
+
+        String idJour = Integer.toString(indexJour / 4);
+
+        Log.e("TAG", "ID fiche : " + idFiche);
+        Log.e("TAG", "ID jour : " + idJour);
+
+        Cursor cursor;
+
+            if (tableau.length == 30) {
+                /* TOUTE LA JOURNEE */
+                PlageHoraire plageHoraire;
+                if (!tableau[indexJour].equals("fermé")) {
+                    // OUVERT
+                    plageHoraire = new PlageHoraire(tableau[indexJour], tableau[indexJour + 1], 0);
+                    accesHoraires.addPlageHoraire(plageHoraire);
+
+                    cursor = accesHoraires.getCursorAllPlageHoraire();
+                    cursor.moveToLast();
+                    plageHoraire.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                } else {
+                    // FERME
+                    plageHoraire = new PlageHoraire("00:00", "00:00", 1);
+                    accesHoraires.addPlageHoraire(plageHoraire);
+
+                    cursor = accesHoraires.getCursorAllPlageHoraire();
+                    cursor.moveToLast();
+                    plageHoraire.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                }
+
+                EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(plageHoraire.getId(), idJour, idFiche);
+                accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
+
             } else {
-                plageHoraireMatin = new PlageHoraire("00:00", "00:00", 1);
-            }
+                /* MATIN + APREM */
+                PlageHoraire plageHoraireMatin;
 
-            accesHoraires.addPlageHoraire(plageHoraireMatin);
-            cursor = accesHoraires.getCursorAllPlageHoraire();
-            cursor.moveToLast();
-            plageHoraireMatin.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                if (!tableau[indexJour].equals("fermé")) {
+                    plageHoraireMatin = new PlageHoraire(tableau[indexJour], 1, tableau[indexJour + 1], 1, 0);
+                } else {
+                    plageHoraireMatin = new PlageHoraire("00:00", "00:00", 1);
+                }
 
-            PlageHoraire plageHoraireSoir;
+                accesHoraires.addPlageHoraire(plageHoraireMatin);
+                cursor = accesHoraires.getCursorAllPlageHoraire();
+                cursor.moveToLast();
+                plageHoraireMatin.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
 
-            if (!tableau[indexJour + 2].equals("fermé")) {
-                plageHoraireSoir = new PlageHoraire(tableau[indexJour + 2], 1, tableau[indexJour + 3], 1, 0);
-            } else {
-                plageHoraireSoir = new PlageHoraire("00:00", "00:00", 1);
-            }
+                PlageHoraire plageHoraireSoir;
 
-            accesHoraires.addPlageHoraire(plageHoraireSoir);
-            cursor = accesHoraires.getCursorAllPlageHoraire();
-            cursor.moveToLast();
-            plageHoraireSoir.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                if (!tableau[indexJour + 2].equals("fermé")) {
+                    plageHoraireSoir = new PlageHoraire(tableau[indexJour + 2], 1, tableau[indexJour + 3], 1, 0);
+                } else {
+                    plageHoraireSoir = new PlageHoraire("00:00", "00:00", 1);
+                }
 
-            EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(plageHoraireMatin.getId(), plageHoraireSoir.getId(), idJour, idFiche);
-            accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
+                accesHoraires.addPlageHoraire(plageHoraireSoir);
+                cursor = accesHoraires.getCursorAllPlageHoraire();
+                cursor.moveToLast();
+                plageHoraireSoir.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+
+                EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(plageHoraireMatin.getId(), plageHoraireSoir.getId(), idJour, idFiche);
+                accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
+
         }
     }
 
