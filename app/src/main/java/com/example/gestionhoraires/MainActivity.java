@@ -767,6 +767,7 @@ public class MainActivity extends AppCompatActivity {
                         // affiche la liste et deplace les élément en dessous si la checkBox est selectionner
                         toggleSpinnerCategorie(constraintLayout,
                                                check_categorie.isChecked(), spin_categorie);
+
                     }
                 });
 
@@ -818,7 +819,11 @@ public class MainActivity extends AppCompatActivity {
                             Localisation localisation = accesHoraires.getLocalisationById(spin_localisation.getSelectedItemId() + "");
                             strLocalisation += localisation.getNom();
                         }
-                        curseurPlageHoraire = accesHoraires.getCursorFichePlageHoraireByLocalisationAndCategorie(strLocalisation, strCategorie, true);
+                        curseurPlageHoraire = accesHoraires.getCursorFichePlageHoraireByLocalisationAndCategorie(strLocalisation, strCategorie, check_ouvert.isChecked());
+                        /*if (check_ouvert.isChecked()) {
+                            Log.i("ouvert", "coucou");
+                            curseurPlageHoraire = accesHoraires.getAllFichePlageHoraireOuverte();
+                        }*/
                         plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
                         onContentChanged();
                         //ferme la dialog quand tout est bon

@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.CursorJoiner;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.sax.EndElementListener;
 import android.support.v4.app.INotificationSideChannel;
@@ -106,14 +108,8 @@ public class HoraireDAO {
     /** Numéro de la colonne de l'horaire de fermeture */
     public static final int PLAGE_HORAIRE_NUM_COLONNE_HORAIRE_FERMETURE = 2;
 
-    /** Numéro de la colonne de l'état de l'ouverture */
-    public static final int PLAGE_HORAIRE_NUM_COLONNE_ETAT_OUVERTURE = 3;
-
-    /** Numéro de la colonne de l'état de la fermeture */
-    public static final int PLAGE_HORAIRE_NUM_COLONNE_ETAT_FERMETURE = 4;
-
     /** Numéro de la colonne de l'indicateur de fermeture */
-    public static final int PLAGE_HORAIRE_NUM_COLONNE_EST_FERME = 5;
+    public static final int PLAGE_HORAIRE_NUM_COLONNE_EST_FERME = 3;
 
     //// Horaire Ponctuelle ////
     /** Numéro de la colonne de la clé */
@@ -1114,14 +1110,39 @@ public class HoraireDAO {
                 + " WHERE " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = 0"
                 + " AND categorie like '%" + categorie + "%'"
                 + " AND localisation like '%" + localisation + "%';";
-        return baseHoraire.rawQuery(requete, null);
+
+        Cursor cursor = baseHoraire.rawQuery(requete, null);
+
+        if (ouvert) {
+            Cursor cursorOuvert = getAllFichePlageHoraireOuverte();
+
+            String[] columnNames = {"_id", "nom", "information", "cheminImage", "idCategorie"};
+            MatrixCursor cursorFinal = new MatrixCursor(columnNames);
+
+            while (cursor.moveToNext()) {
+                while (cursorOuvert.moveToNext()) {
+                    if (cursor.getString(0).equals(cursorOuvert.getString(0))) {
+                        cursorFinal.addRow(new String[]{cursorOuvert.getString(0),
+                                cursorOuvert.getString(1),
+                                cursorOuvert.getString(2),
+                                cursorOuvert.getString(3),
+                                cursorOuvert.getString(4)
+                        });
+                    }
+                }
+            }
+            return cursorFinal;
+        } else {
+            return cursor;
+        }
+
     }
 
     /**
      * Récupère une liste de fiche plage horaire qui sont ouverte
      * @return la liste
      */
-    public ArrayList<FichePlageHoraire> getAllFichePlageHoraireOuverte() {
+    public Cursor getAllFichePlageHoraireOuverte() {
         ArrayList<FichePlageHoraire> fichesPlageHoraireOuverte = new ArrayList<>();
 
         // On récupère le jour courant
@@ -1200,7 +1221,18 @@ public class HoraireDAO {
             }
         }
 
-        return fichesPlageHoraireOuverte;
+        /** Transformation de la liste en curseur */
+        String[] columnNames = {"_id", "nom", "information", "cheminImage", "idCategorie"};
+        MatrixCursor cursor = new MatrixCursor(columnNames);
+        for (FichePlageHoraire fichePlageHoraire : fichesPlageHoraireOuverte) {
+            cursor.addRow(new String[]{fichePlageHoraire.getId(),
+                    fichePlageHoraire.getNom(),
+                    fichePlageHoraire.getInformation(),
+                    fichePlageHoraire.getCheminPhoto(),
+                    fichePlageHoraire.getIdCategorie()
+            });
+        }
+        return cursor;
     }
 
     /**
