@@ -40,48 +40,48 @@
     <string name="titre_aide">Aide au fonctionnement de l\'application</string>
     <string name="message_aide_categorie">"
         Pour revenir en arrière:\n
-        Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "RETOUR". \n
+        Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "RETOUR". \n
         Ajouter une catégorie : \n
-        Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "AJOUTER", Renseigner les info et appuyer sur "OK". \n
+        Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "AJOUTER", Renseigner les info et appuyer sur "OK". \n
         Modifier une catégorie : \n
         Effectuez un appui long sur la catégorie souhaitée, appuyez sur "MODIFIER", modifiez les informations necessaires et appuyer sur "OK". \n
         Supprimer une catégorie: \n
-        Effectuez un appui long sur la catégorie souhaitée, appuyez sur "SUPPRIMER", comfimez la suppression."
+        Effectuez un appui long sur la catégorie souhaitée, appuyez sur "SUPPRIMER", comfirmez la suppression."
     </string>
     <string name="message_aide_localisation">"
         Pour revenir en arrière: \n
-        Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "RETOUR". \n
+        Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "RETOUR". \n
         Ajouter un lieu géographique : \n
-        Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "AJOUTER", Renseigner les info et appuyer sur "OK". \n
+        Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "AJOUTER", Renseigner les info et appuyer sur "OK". \n
         Modifier un lieu géographique : \n
         Effectuez un appui long sur la catégorie souhaitée, appuyez sur "MODIFIER", modifiez les informations necessaires et appuyer sur "OK". \n
         Supprimer un lieu géographique: \n
-        Effectuez un appui long sur la catégorie souhaitée, appuyez sur "SUPPRIMER", comfimez la suppression."
+        Effectuez un appui long sur la catégorie souhaitée, appuyez sur "SUPPRIMER", comfirmez la suppression."
     </string>
     <string name="message_aide_ponctuel">"
         Pour revenir en arrière: \n
-        Méthode 1 : Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "RETOUR". \n
-        Méthode 2 : Appuyez sur la flèche pointant vers la gauche, en haut a gauche de l'écran. \n
-        Renseigné les information nécessaire à l'ajout d'une fiche. Pour omfirmer l'ajout de la fiche appuyez sur le boutons d'ajout en bas a droite de l'écran \n
-        Vous pouvez a tout moment ajouter une horaire en appuyant sur le boutons AJOUT HORAIRE, vous pourrez alors renseigné le jour et l'heure."
+        Méthode 1 : Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "RETOUR". \n
+        Méthode 2 : Appuyez sur la flèche pointant vers la gauche, en haut à gauche de l'écran. \n
+        Renseigner les informations nécessaires à l'ajout d'une fiche. Pour confirmer l'ajout de la fiche appuyez sur le bouton d'ajout en bas à droite de l'écran \n
+        Vous pouvez à tout moment ajouter une horaire en appuyant sur le bouton AJOUT HORAIRE, vous pourrez alors renseigner le jour et l'heure."
     </string>
     <string name="message_aide_plage_horaire">"
         Pour revenir en arrière: \n
-        Méthode 1 : Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "RETOUR". \n
+        Méthode 1 : Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran, Choisir l'option "RETOUR". \n
         Méthode 2 : Appuyez sur la flèche pointant vers la gauche, en haut a gauche de l'écran. \n
-        Renseigné les information nécessaire à l'ajout d'une fiche. Pour omfirmer l'ajout de la fiche appuyez sur le boutons d'ajout en bas a droite de l'écran \n
-        Vous pouvez a tout moment ajouter une horaire en appuyant sur le boutons du jour correspondent a l'horaire voulu, vous pourrez alors renseigné la plage horaire.\n
-        Pour effacer une plage horaire appuyer sur le jour correspondent au plage horaire, puis sur le bouton EFFACER, le boutons du jour redeviendra blanc et l'horaire sera effacer."
+        Renseigné les information nécessaire à l'ajout d'une fiche. Pour omfirmer l'ajout de la fiche appuyez sur le bouton d'ajout en bas a droite de l'écran \n
+        Vous pouvez a tout moment ajouter une horaire en appuyant sur le boutons du jour correspondent à l'horaire voulu, vous pourrez alors renseigné la plage horaire.\n
+        Pour effacer une plage horaire appuyez sur le jour correspondent au plage horaire, puis sur le bouton EFFACER, le bouton du jour redeviendra blanc et l'horaire sera effacé."
     </string>
     <string name="message_aide_main">"
         Pour Consulter la liste des plages horaires ou la liste des horaires ponctuels, appuyez sur l'onglet correspondent \n
-        Pour ajouter une fiche horaire, appuyer sur le boutons d'ajout situé en bas a droite de l'écran. le type de fiche a ajouter sera déterminer par l'onglet actif. \n
-        Pour accéder a la gestion des catégorie, Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran et selectionnez GESTION CATEGORIE. \n
-        Pour accéder a la gestion des lieus géographiques, Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran et selectionnez GESTION LOCALISATION. \n
-        Pour importer un fichier, Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran et selectionnez l'option IMPORTER. \n
-        Pour exporter un fichier JSON, Rendez dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran et selectionnez l'option EXPORTER EN JSON. \n
-        Pour effectuez une recherche, appuyer sur la loupe et saisissez le mot a recherché. \n
-        Pour appliquez des filtres, appuyer sur l'entonnoir a coté de la loupe et appliquez les différents filtres souhaitées. \n"
+        Pour ajouter une fiche horaire, appuyer sur le boutons d'ajout situé en bas à droite de l'écran. le type de fiche à ajouter sera déterminé par l'onglet actif. \n
+        Pour accéder à la gestion des catégorie, Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran et selectionnez GESTION CATEGORIE. \n
+        Pour accéder à la gestion des lieux géographiques, Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran et selectionnez GESTION LOCALISATION. \n
+        Pour importer un fichier, Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran et selectionnez l'option IMPORTER. \n
+        Pour exporter un fichier JSON, Rendez-vous dans le menu contextuel en appuyant sur les trois points en haut à droite de l’écran et selectionnez l'option EXPORTER EN JSON. \n
+        Pour effectuer une recherche, appuyer sur la loupe et saisissez le mot à rechercher. \n
+        Pour appliquer des filtres, appuyer sur l'entonnoir a coté de la loupe et appliquez les différents filtres souhaités. \n"
     </string>
 
     <!-- Onglets -->

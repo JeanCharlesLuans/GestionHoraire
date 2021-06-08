@@ -334,7 +334,7 @@ public class LocalisationActivity extends AppCompatActivity {
                         EditText edt_nom = dialog.findViewById(R.id.edt_nom);
                         String name = edt_nom.getText().toString();
                         if (!name.equals("")) {
-                            if (accesHoraire.getLocalisationByName(edt_nom.getText().toString()) != null) {
+                            if (accesHoraire.getLocalisationByName(edt_nom.getText().toString()).getNom() != null) {
                                 alerteNom.show();
                             } else {
                                 Localisation localisation = new Localisation(name);
