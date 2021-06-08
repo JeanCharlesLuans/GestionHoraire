@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -84,6 +85,9 @@ public class HorairePonctuelActivity extends AppCompatActivity {
     /** Spinner contenant les Catégories */
     private Spinner spinnerCategorie;
 
+    /** Text view de la catégorie */
+    private TextView tvCategorie;
+
     /** Curseur contenant les horaires ponctuels de la fiche */
     private Cursor curseurSurBase;
 
@@ -123,6 +127,7 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         spinnerLocalisation = findViewById(R.id.spinner_localisation);
         spinnerCategorie = findViewById(R.id.spinner_categorie);
         imageView = findViewById(R.id.imageView);
+        tvCategorie = findViewById(R.id.label_categorie);
 
         modification = getIntent().getBooleanExtra(CODE_MODIFICATION_PONCTUEL, false);
         if (modification) {
@@ -184,12 +189,6 @@ public class HorairePonctuelActivity extends AppCompatActivity {
                 SimpleCursorAdapter adapterCategorie = getAdapterCategoriePonctuelsByLocalisation(spinnerLocalisation.getSelectedItemId() + "");
                 adapterCategorie.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerCategorie.setAdapter(adapterCategorie);
-                if (modification && indicateurPremierPassage) {
-                    indicateurPremierPassage = false;
-                    System.out.println(accesHoraires.getPositionByIdCategorieHorairePonctuel(ficheHorairePonctuelle.getIdCategorie()));
-                    //spinnerCategorie.setSelection(accesHoraires.getPositionByIdCategorieHorairePonctuel(ficheHorairePonctuelle.getIdCategorie()));
-                    //spinnerCategorie.setSelection(1);
-                }
             }
 
             @Override
@@ -223,6 +222,7 @@ public class HorairePonctuelActivity extends AppCompatActivity {
         if (modification) {
             fab.setImageResource(R.drawable.ic_baseline_save_alt_24);
             Categorie categorie = accesHoraires.getCategorieById(ficheHorairePonctuelle.getIdCategorie());
+            tvCategorie.setText(tvCategorie.getText().toString() + " : " + categorie.getNom());
             spinnerLocalisation.setSelection(accesHoraires.getPositionByIdLocalisation(categorie.getIdLocalisation()));
         }
 
