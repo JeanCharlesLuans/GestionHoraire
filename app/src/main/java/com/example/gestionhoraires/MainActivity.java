@@ -1130,12 +1130,45 @@ public class MainActivity extends AppCompatActivity {
                 // la localisation et la fiche horraire
                 JSONObject ensembleJSON = fichierJSON.getJSONObject(i);
 
+                // Création de la localisation, si elle n'existe pas déja
+                JSONObject localisationJSON = ensembleJSON.getJSONObject(HelperBDHoraire.NOM_TABLE_LOCALISATION);
+                Localisation localisation = accesHoraires.getLocalisationByName(localisationJSON.getString(HelperBDHoraire.LOCALISATION_NOM));
+                if (localisation.getId() == null && localisationJSON.getInt(HelperBDHoraire.LOCALISATION_IS_DEFAULT) == 0) {
+                    localisation.setNom(localisationJSON.getString(HelperBDHoraire.LOCALISATION_NOM));
+                    localisation.setIsDefault(0);
+
+                    accesHoraires.addLocalisation(localisation);
+                    curseur = accesHoraires.getCursorAllLocalisation();
+                    curseur.moveToLast();
+                    localisation.setId(curseur.getString(HoraireDAO.LOCALISATION_NUM_COLONNE_CLE));
+                }
+
+                // Création de la catégorie, si elle n'existe pas déja
+                JSONObject categorieJSON = ensembleJSON.getJSONObject(HelperBDHoraire.NOM_TABLE_CATEGORIE);
+                Categorie categorie = accesHoraires.getCategorieByNameByLocalisation(categorieJSON.getString(HelperBDHoraire.CATEGORIE_NOM), localisation.getId(), 0);
+                Log.e("DEBUG", categorie.toString());
+                if (categorie.getId() == null) {
+
+                    categorie.setNom(categorieJSON.getString(HelperBDHoraire.CATEGORIE_NOM));
+                    categorie.setIsDefault(0);
+                    categorie.setIsHorairePonctuelle(0);
+                    categorie.setIdLocalisation(localisation.getId());
+
+                    accesHoraires.addCategorie(categorie);
+                    curseur = accesHoraires.getCursorAllCategorie();
+                    curseur.moveToLast();
+                    categorie.setId(curseur.getString(HoraireDAO.CATEGORIE_NUM_COLONNE_CLE));
+
+                    Log.e("DEBUG", "Création catégorie");
+                    Log.e("DEBUG", categorie.getNom());
+                }
+
                 // Création de la fiche a partir du JSON : récupération du nom et des informations
                 FichePlageHoraire ficheTmp = new FichePlageHoraire();
                 JSONObject ficheJSON = ensembleJSON.getJSONObject(HelperBDHoraire.NOM_TABLE_FICHE_PLAGE_HORAIRE);
                 ficheTmp.setNom(ficheJSON.getString(HelperBDHoraire.FICHE_PLAGE_HORAIRE_NOM));
                 ficheTmp.setInformation(ficheJSON.getString(HelperBDHoraire.FICHE_PLAGE_HORAIRE_INFORMATION));
-                ficheTmp.setIdCategorie("1");
+                ficheTmp.setIdCategorie(categorie.getId());
 
                 // Récupération de l'ID de la fiche
                 accesHoraires.addFichePlageHoraire(ficheTmp);
@@ -1285,7 +1318,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
-                    categorie = accesHoraires.getCategorieByNameByLocalisation(contenu[CATEGORIE], localisation.getId());
+                    categorie = accesHoraires.getCategorieByNameByLocalisation(contenu[CATEGORIE], localisation.getId(), 0);
 
                     // Création de la catégorie si elle n'existe pas
                     if (categorie.getId() == null) {

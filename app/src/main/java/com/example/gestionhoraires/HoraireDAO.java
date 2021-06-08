@@ -1337,16 +1337,20 @@ public class HoraireDAO {
     }
 
     /**
-     * Retourne la localisation qui a le nom passer en paramettre
-     * @param name le nom de la localisation
+     * Retourne la catégorie de Plage Horaire dont le nom et l'id de la localisation sont passer en
+     * paramettre
+     * @param name le nom de la catégorie
+     * @param idLocalisation l'id de la localisation
+     * @param isPonctuelle 0 => Non / 1 => Oui
      * @return la localisation
      */
-    public Categorie getCategorieByNameByLocalisation(String name, String idLocalisation) {
+    public Categorie getCategorieByNameByLocalisation(String name, String idLocalisation, int isPonctuelle) {
         Categorie categorie = new Categorie();
         String requete =
                 " SELECT * FROM " + HelperBDHoraire.NOM_TABLE_CATEGORIE
                         + " WHERE " + HelperBDHoraire.LOCALISATION_NOM + " = '" + name + "'"
-                        + "AND " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation;
+                        + " AND " + HelperBDHoraire.CATEGORIE_CLE_LOCALISATION + " = " + idLocalisation
+                        + " AND " + HelperBDHoraire.CATEGORIE_HORAIRE_PONCTUELLE + " = " + isPonctuelle;
         Cursor cursor = baseHoraire.rawQuery(requete, null);
         cursor.moveToFirst();
 
