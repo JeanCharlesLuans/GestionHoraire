@@ -426,7 +426,7 @@ public class LocalisationActivity extends AppCompatActivity {
     private void afficheAide() {
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.titre_aide))
-                .setMessage(getResources().getString(R.string.message_aide))
+                .setMessage(getResources().getString(R.string.message_aide_localisation))
                 .setPositiveButton(R.string.bouton_positif, null)
                 .show();
     }
