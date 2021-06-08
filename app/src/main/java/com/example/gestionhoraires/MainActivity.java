@@ -1162,9 +1162,7 @@ public class MainActivity extends AppCompatActivity {
                     // Création de la plage horraire matin
                     PlageHoraire plageHoraireMatin = new PlageHoraire(
                             matinJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
-                            matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE),
                             matinJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE),
-                            matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE),
                             matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME)
                     );
 
