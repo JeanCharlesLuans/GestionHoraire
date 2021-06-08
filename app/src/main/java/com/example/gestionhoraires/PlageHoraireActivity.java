@@ -519,6 +519,12 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 tpApremDebut.setIs24HourView(true);
                 tpApremFin.setIs24HourView(true);
 
+                // initalisation des plage horaire par défaut, 9h - 17h
+                tpMatinDebut.setHour(9);
+                tpMatinDebut.setMinute(0);
+                tpMatinFin.setHour(17);
+                tpMatinFin.setMinute(0);
+
                 PlageHoraire plageHoraireMatin;
                 PlageHoraire plageHoraireSoir;
                 Jour jour = accesHoraires.getJourByNom(btn.getText().toString());
@@ -595,6 +601,10 @@ public class PlageHoraireActivity extends AppCompatActivity {
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
                         switch (radioGroup.getCheckedRadioButtonId()) {
                             case R.id.option_jour_entier:
+                                tpMatinDebut.setHour(9);
+                                tpMatinDebut.setMinute(0);
+                                tpMatinFin.setHour(17);
+                                tpMatinFin.setMinute(0);
                                 textViewMatin.setText(getString(R.string.colonne_horaire));
                                 textViewAprem.setVisibility(View.INVISIBLE);
                                 tpApremDebut.setVisibility(View.INVISIBLE);
@@ -609,6 +619,14 @@ public class PlageHoraireActivity extends AppCompatActivity {
                                 }
                                 break;
                             case R.id.option_2_plage_h:
+                                tpMatinDebut.setHour(9);
+                                tpMatinDebut.setMinute(0);
+                                tpMatinFin.setHour(12);
+                                tpMatinFin.setMinute(0);
+                                tpApremDebut.setHour(14);
+                                tpApremDebut.setMinute(0);
+                                tpApremFin.setHour(17);
+                                tpApremFin.setMinute(0);
                                 textViewMatin.setText(getString(R.string.horaire_matin));
                                 textViewAprem.setVisibility(View.VISIBLE);
                                 tpApremDebut.setVisibility(View.VISIBLE);
