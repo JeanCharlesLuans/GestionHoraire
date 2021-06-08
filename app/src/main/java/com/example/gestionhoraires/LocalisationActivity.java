@@ -312,6 +312,12 @@ public class LocalisationActivity extends AppCompatActivity {
                 .setMessage(getResources().getString(R.string.alerte_nom))
                 .setPositiveButton(getResources().getString(R.string.bouton_positif), null);
 
+        /** Création de l'alerte si les données sont invalides */
+        AlertDialog.Builder alerteNom = new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.alerte_titre))
+                .setMessage(getResources().getString(R.string.alerte_nom_erreur))
+                .setPositiveButton(getResources().getString(R.string.bouton_positif), null);
+
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.ajout_localisation))
                 .setView(boiteSaisie)
@@ -328,8 +334,12 @@ public class LocalisationActivity extends AppCompatActivity {
                         EditText edt_nom = dialog.findViewById(R.id.edt_nom);
                         String name = edt_nom.getText().toString();
                         if (!name.equals("")) {
-                            Localisation localisation = new Localisation(name);
-                            accesHoraire.addLocalisation(localisation);
+                            if (accesHoraire.getLocalisationByName(edt_nom.getText().toString()) != null) {
+                                alerteNom.show();
+                            } else {
+                                Localisation localisation = new Localisation(name);
+                                accesHoraire.addLocalisation(localisation);
+                            }
                         } else {
                             alerte.show();
                         }

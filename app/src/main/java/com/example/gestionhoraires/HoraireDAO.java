@@ -21,7 +21,11 @@ import com.example.gestionhoraires.beans.PlageHoraire;
 import com.google.android.material.animation.ChildrenAlphaProperty;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Classe permettant de gérer tous les accès à la base de données
@@ -470,8 +474,6 @@ public class HoraireDAO {
             plageHoraire.setId(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_CLE));
             plageHoraire.setHoraireOuverture(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_HORAIRE_OUVERTURE));
             plageHoraire.setHoraireFermeture(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_HORAIRE_FERMETURE));
-            plageHoraire.setEtatOuverture(Integer.parseInt(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_ETAT_OUVERTURE)));
-            plageHoraire.setEtatFermeture(Integer.parseInt(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_ETAT_FERMETURE)));
             plageHoraire.setEstFerme(Integer.parseInt(cursor.getString(PLAGE_HORAIRE_NUM_COLONNE_EST_FERME)));
         }
 
@@ -538,8 +540,6 @@ public class HoraireDAO {
         ContentValues ajoutPlageHoraire = new ContentValues();
         ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE, plageHoraire.getHoraireOuverture());
         ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE, plageHoraire.getHoraireFermeture());
-        ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE, plageHoraire.getEtatOuverture());
-        ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE, plageHoraire.getEtatFermeture());
         ajoutPlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME, plageHoraire.getEstFerme());
         baseHoraire.insert(HelperBDHoraire.NOM_TABLE_PLAGE_HORAIRE, HelperBDHoraire.PLAGE_HORAIRE_CLE, ajoutPlageHoraire);
     }
@@ -719,8 +719,6 @@ public class HoraireDAO {
         ContentValues nouvellePlageHoraire = new ContentValues();
         nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE, plageHoraire.getHoraireOuverture());
         nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE, plageHoraire.getHoraireFermeture());
-        nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE, plageHoraire.getEtatOuverture());
-        nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE, plageHoraire.getEtatFermeture());
         nouvellePlageHoraire.put(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME, plageHoraire.getEstFerme());
         baseHoraire.update(HelperBDHoraire.NOM_TABLE_PLAGE_HORAIRE,
                 nouvellePlageHoraire,
@@ -861,21 +859,9 @@ public class HoraireDAO {
         Cursor cursor = baseHoraire.rawQuery(requete, null);
 
         if (cursor.getCount() != 0) {
-            cursor.moveToFirst();
-
-            EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire();
-
-            ensemblePlageHoraire.setId(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
-            ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_MATIN));
-            ensemblePlageHoraire.setIdPlageHoraireSoir(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_PLAGE_HORAIRE_SOIR));
-            ensemblePlageHoraire.setIdJour(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_JOUR));
-            ensemblePlageHoraire.setIdFichePlageHoraire(cursor.getString(ENSEMBLE_PLAGE_HORAIRE_NUM_COLONNE_CLE_FICHE_PLAGE_HORAIRE));
-
-            listeEnsemble.add(ensemblePlageHoraire);
-
             while (cursor.moveToNext()) {
 
-                ensemblePlageHoraire = new EnsemblePlageHoraire();
+                EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire();
 
                 ensemblePlageHoraire.setId(cursor.getString(0));
                 ensemblePlageHoraire.setIdPlageHoraireMatin(cursor.getString(1));
@@ -890,7 +876,6 @@ public class HoraireDAO {
 
         return listeEnsemble;
     }
-
 
     /**
      * Retourne une liste de catégories en fonction d'une localisation
@@ -1133,15 +1118,115 @@ public class HoraireDAO {
     }
 
     /**
-     * Retourne une liste de tous les id des fiches plage horaire des établissements ouverts
-     * @return la liste des id
+     * Récupère une liste de fiche plage horaire qui sont ouverte
+     * @return la liste
      */
-    public ArrayList<Integer> getFichePlageHoraireOuverte() {
-        ArrayList<Integer> idFichesPlageHoraire = new ArrayList<>();
+    public ArrayList<FichePlageHoraire> getAllFichePlageHoraireOuverte() {
+        ArrayList<FichePlageHoraire> fichesPlageHoraireOuverte = new ArrayList<>();
 
+        // On récupère le jour courant
+        GregorianCalendar gCalendar = new GregorianCalendar();
+        int today = gCalendar.get(gCalendar.DAY_OF_WEEK) - 1;
 
-        return idFichesPlageHoraire;
+        String dateCourante = new SimpleDateFormat("HH:mm").format(new Date());
+        int heureCourante = Integer.parseInt(dateCourante.split(":")[0]);
+        int minuteCourante = Integer.parseInt(dateCourante.split(":")[1]);
+
+        // On récupère toutes les fiches plages horaires
+        ArrayList<FichePlageHoraire> fichesPlageHoraire = getAllFichePlageHoraire();
+        for (FichePlageHoraire fichePlageHoraire : fichesPlageHoraire) {
+            ArrayList<EnsemblePlageHoraire> ensemblesPlageHoraire = getEnsembleHoraireByFiche(fichePlageHoraire.getId());
+            for (EnsemblePlageHoraire ensemblePlageHoraire : ensemblesPlageHoraire) {
+                if (ensemblePlageHoraire.getIdJour().equals(today + "")) {
+                    PlageHoraire plageMatin = getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireMatin());
+                    if (plageMatin.getEstFerme() == 0) {
+                        String[] horaireMatinOuverture = plageMatin.getHoraireOuverture().split(":");
+                        String[] horaireMatinFermeture = plageMatin.getHoraireFermeture().split(":");
+                        int heureMatinOuverture = Integer.parseInt(horaireMatinOuverture[0]);
+                        int minuteMatinOuverture = Integer.parseInt(horaireMatinOuverture[1]);
+                        int heureMatinFermeture = Integer.parseInt(horaireMatinFermeture[0]);
+                        int minuteMatinFermeture = Integer.parseInt(horaireMatinFermeture[1]);
+
+                        if (heureMatinOuverture < heureCourante && heureCourante < heureMatinFermeture) {
+                            fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                        } else if (heureMatinOuverture == heureCourante && heureCourante < heureMatinFermeture) {
+                            fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                        } else if (heureMatinOuverture < heureCourante && heureCourante == heureMatinFermeture) {
+                            fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                        } else if (heureMatinOuverture == heureCourante && heureMatinFermeture == heureCourante) {
+                            if (minuteMatinOuverture < minuteCourante && minuteCourante < minuteMatinFermeture) {
+                                fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                            } else if (minuteMatinOuverture == minuteCourante && minuteCourante < minuteMatinFermeture) {
+                                fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                            } else if (minuteMatinOuverture < minuteCourante && minuteCourante == minuteMatinFermeture) {
+                                fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                            } else if (minuteMatinOuverture == minuteCourante && minuteCourante == minuteMatinFermeture) {
+                                fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                            }
+                        }
+                    }
+
+                    if (ensemblePlageHoraire.getIdPlageHoraireSoir() != null) {
+                        PlageHoraire plageSoir = getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireSoir());
+                        if (plageSoir.getEstFerme() == 0) {
+
+                            String[] horaireSoirOuverture = plageSoir.getHoraireOuverture().split(":");
+                            String[] horaireSoirFermeture = plageSoir.getHoraireFermeture().split(":");
+                            int heureSoirOuverture = Integer.parseInt(horaireSoirOuverture[0]);
+                            int minuteSoirOuverture = Integer.parseInt(horaireSoirOuverture[1]);
+                            int heureSoirFermeture = Integer.parseInt(horaireSoirFermeture[0]);
+                            int minuteSoirFermeture = Integer.parseInt(horaireSoirFermeture[1]);
+
+                            if (heureSoirOuverture < heureCourante && heureCourante < heureSoirFermeture) {
+                                fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                            } else if (heureSoirOuverture == heureCourante && heureCourante < heureSoirFermeture) {
+                                fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                            } else if (heureSoirOuverture < heureCourante && heureCourante == heureSoirFermeture) {
+                                fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                            } else if (heureSoirOuverture == heureCourante && heureSoirFermeture == heureCourante) {
+                                if (minuteSoirOuverture < minuteCourante && minuteCourante < minuteSoirFermeture) {
+                                    fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                                } else if (minuteSoirOuverture == minuteCourante && minuteCourante < minuteSoirFermeture) {
+                                    fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                                } else if (minuteSoirOuverture < minuteCourante && minuteCourante == minuteSoirFermeture) {
+                                    fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                                } else if (minuteSoirOuverture == minuteCourante && minuteCourante == minuteSoirFermeture) {
+                                    fichesPlageHoraireOuverte.add(getFichePlageHoraireById(fichePlageHoraire.getId()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return fichesPlageHoraireOuverte;
     }
+
+    /**
+     * Récupère toutes les fiches plages horaires présentes dans la base de données
+     * @return la liste
+     */
+    public ArrayList<FichePlageHoraire> getAllFichePlageHoraire() {
+        ArrayList<FichePlageHoraire> fichesPlageHoraire = new ArrayList<>();
+
+        Cursor cursor = getCursorAllFichePlageHoraire();
+
+        if (cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                FichePlageHoraire fichePlageHoraire = new FichePlageHoraire();
+                fichePlageHoraire.setId(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                fichePlageHoraire.setNom(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_NOM));
+                fichePlageHoraire.setInformation(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_INFORMATION));
+                fichePlageHoraire.setIdCategorie(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE_CATEGORIE));
+                fichePlageHoraire.setCheminPhoto(cursor.getString(FICHE_PLAGE_HORAIRE_NUM_COLONNE_CHEMIN_IMAGE));
+                fichesPlageHoraire.add(fichePlageHoraire);
+            }
+        }
+
+        return fichesPlageHoraire;
+    }
+
 
     /**
      * Récupère un ensemble de plage horaire en fonction d'une fiche et d'un jour

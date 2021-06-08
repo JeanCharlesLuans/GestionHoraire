@@ -32,6 +32,7 @@
     <string name="option_supprimer">Supprimer</string>
     <string name="option_modifier">Modifier</string>
     <string name="option_annuler">Annuler</string>
+    <string name="option_details">Détails</string>
 
     <!-- Texte Aide --> <!-- TODO changer le texte d'aide -->
     <string name="aide_recherche">Recherche</string>
@@ -60,6 +61,7 @@
     <string name="modifier_categorie">Modifier la catégorie</string>
     <string name="alerte_titre">Saisie invalide</string>
     <string name="alerte_nom">Vous devez renseigner le nom.</string>
+    <string name="alerte_nom_erreur">Vous ne pouvez pas enregistrer deux localisations avec le même nom.</string>
     <string name="alerte_suppression">Voulez-vous vraiment supprimer cette localisation ?</string>
     <string name="alerte_suppression_categorie">Voulez-vous vraiment supprimer cette catégorie ?</string>
     <string name="titre_alerte_conflit">Conflit ! que voulez vous faire ?</string>
@@ -69,6 +71,7 @@
     <string name="move_all_fiche">Déplacer dans une autre catégorie</string>
     <string name="title_move_localisation">Déplacer dans une autre liste</string>
     <string name="title_parametre_categorie_ponctuel">Gestion catégorie horaire ponctuel</string>
+    <string name="details">Détails</string>
 
     <!-- Filtre -->
     <string name="titre_boite_filtre">Selectionnez les filtres</string>
@@ -78,7 +81,7 @@
 
     <!-- Toast -->
     <string name="toast_localisation_defaut">Vous ne pouvez pas supprimer la localisation par défaut.</string>
-    <string name="toast_categorie_defaut_modifier">Vous ne pouvez pas modifer la catégorie par défaut.</string>
+    <string name="toast_categorie_defaut_modifier">Vous ne pouvez pas modifier la catégorie par défaut.</string>
     <string name="toast_categorie_defaut_supprimer">Vous ne pouvez pas supprimer la catégorie par défaut.</string>
 
     <!-- Exportation et Importation -->

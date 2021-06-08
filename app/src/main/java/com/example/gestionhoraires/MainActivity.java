@@ -1180,9 +1180,7 @@ public class MainActivity extends AppCompatActivity {
 
                         PlageHoraire plageHoraireSoir = new PlageHoraire(
                                 soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
-                                soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE),
                                 soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE),
-                                soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE),
                                 soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME)
                         );
 
