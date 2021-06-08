@@ -97,6 +97,9 @@ public class PlageHoraireActivity extends AppCompatActivity {
     /** La photo de la fiche */
     private ImageView imageView;
 
+    /** Text view de la catégorie */
+    private TextView tvCategorie;
+
     /** La fiche plage horaire */
     private static FichePlageHoraire fichePlageHoraire;
 
@@ -164,6 +167,8 @@ public class PlageHoraireActivity extends AppCompatActivity {
         spinnerLocalisation = findViewById(R.id.spinner_localisation);
         spinnerCategorie = findViewById(R.id.spinner_categorie);
         editTextInformation = findViewById(R.id.editText_info);
+        tvCategorie = findViewById(R.id.label_categorie);
+
         // edit Text pour présenter les horaire du jour courant
         editTextMatin = findViewById(R.id.editText_matin);
         editTextAprem = findViewById(R.id.editText_aprem);
@@ -209,10 +214,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
                 SimpleCursorAdapter adapterCategorie = getAdapterCategorieByLocalisation(spinnerLocalisation.getSelectedItemId() + "");
                 adapterCategorie.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerCategorie.setAdapter(adapterCategorie);
-                if (modification && indicateurPremierPassage) {
-                    indicateurPremierPassage = false;
-                    spinnerCategorie.setSelection(accesHoraires.getPositionByIdCategoriePlageHoraire(fichePlageHoraire.getIdCategorie()));
-                }
             }
 
             @Override
@@ -241,18 +242,18 @@ public class PlageHoraireActivity extends AppCompatActivity {
 
         if (modification) {
             fab.setImageResource(R.drawable.ic_baseline_save_alt_24);
+            Categorie categorie = accesHoraires.getCategorieById(fichePlageHoraire.getIdCategorie());
+            tvCategorie.setText(tvCategorie.getText().toString() + " : " + categorie.getNom());
             editTextNom.setText(fichePlageHoraire.getNom());
             editTextInformation.setText(fichePlageHoraire.getInformation());
             if (fichePlageHoraire.getCheminPhoto() != null) {
                 imagePath = fichePlageHoraire.getCheminPhoto();
                 imageView.setImageURI(Uri.parse(imagePath));
             }
-            Categorie categorie = accesHoraires.getCategorieById(fichePlageHoraire.getIdCategorie());
             spinnerLocalisation.setSelection(accesHoraires.getPositionByIdLocalisation(categorie.getIdLocalisation()));
 
             ArrayList<EnsemblePlageHoraire> ensembles = accesHoraires.getEnsembleHoraireByFiche(idFichePlageHoraire);
             for (EnsemblePlageHoraire ensemble : ensembles) {
-                System.out.print("Ensemble : " + ensemble);
                 if (ensemble != null) {
                     switch (Integer.parseInt(ensemble.getIdJour())) {
                         case 1:
@@ -533,8 +534,6 @@ public class PlageHoraireActivity extends AppCompatActivity {
 
                     EnsemblePlageHoraire ensemblePlageHoraire = ensemblesPlagesHoraire[position];
 
-                    Log.e("ID", ensemblePlageHoraire.getIdFichePlageHoraire());
-
                     plageHoraireMatin = accesHoraires.getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireMatin());
                     plageHoraireSoir = accesHoraires.getPlageHoraireById(ensemblePlageHoraire.getIdPlageHoraireSoir());
 
@@ -649,7 +648,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
                                     plageHoraireMatin = accesHoraires.getPlageHoraireById(cursor.getString(0));
                                     ensemblesPlagesHoraire[position] = new EnsemblePlageHoraire(plageHoraireMatin.getId(),
                                             jour.getId(),
-                                            getIdLastFiche());
+                                            idFiche);
                                     accesHoraires.addEnsemblePlageHoraire(ensemblesPlagesHoraire[position]);
                                 } else {
                                     accesHoraires.updatePlageHoraire(plageHoraireMatin,
@@ -684,7 +683,7 @@ public class PlageHoraireActivity extends AppCompatActivity {
                                     ensemblesPlagesHoraire[position] = new EnsemblePlageHoraire(plageHoraireMatin.getId(),
                                             plageHoraireSoir.getId(),
                                             jour.getId(),
-                                            getIdLastFiche());
+                                            idFiche);
                                     accesHoraires.addEnsemblePlageHoraire(ensemblesPlagesHoraire[position]);
 
                                 } else {

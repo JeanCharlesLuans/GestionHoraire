@@ -118,7 +118,6 @@
     <string name="erreur_ouverture">Impossible de lire le fichier</string>
     <string name="erreur_heure">L\'heure de début doit être inférieure à l\'heure de fin.</string>
     <string name="import_terminee">Importation terminée.</string>
-    <string name="export_terminee">Exportation terminée.</string>
 
     <!-- Horaires Ponctuel -->
     <string name="titre_detail_plage_horaire">Ajout d\'une fiche d\'horaires ponctuels</string>
@@ -127,12 +126,5 @@
     <string name="ajout_horaire_ponctuel">Ajout Horaire</string>
     <string name="update_horaire_ponctuel">Modifier l\'horaire ponctuel</string>
     <string name="toast_champs_vides">Vous devez saisir les horaires.</string>
-
-   <!-- Toast erreur  -->
-    <string name="json_err_ouverture">Une erreur c\'est produite durant l\' ouverture du fichier</string>
-    <string name="json_err_creation">>Une erreur c\'est produite durant la création du JSON></string>
-    <string name="json_err_ecriture">Une erreur c\'est produite durant l\'ecriture du fichier</string>
-
-
 
 </resources>

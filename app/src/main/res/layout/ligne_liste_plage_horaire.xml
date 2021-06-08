@@ -2,20 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:minHeight="50dp">
         <!-- Nom -->
         <TextView
             android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_marginLeft="@dimen/marge_normale"
             android:layout_height="match_parent"
-            android:layout_weight="40" />
+            android:layout_weight="40"
+            android:textSize="25dp"/>
 
         <!-- Information -->
         <TextView
             android:id="@+id/information"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="70" />
+            android:layout_weight="70"
+            android:textSize="25dp"/>
 
 </LinearLayout>
