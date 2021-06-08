@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     // ONGLET 2
 
     /** Curseur sur l'ensemble des horaires ponctuelles de la base */
-    private Cursor curseurHorairesPonctuelles;
+    private Cursor curseurHorairesPonctuelles; // TODO vérifier si on a vraiment besoin de deux curseur.
 
     /** Liste présenter dans le deuxieme onglet de l'application */
     private ListView listViewHPonctuelles;
@@ -177,13 +177,6 @@ public class MainActivity extends AppCompatActivity {
         // On ajoute la ToolBar
         maBarreOutil = findViewById(R.id.main_tool_bar);
         setSupportActionBar(maBarreOutil);
-
-        // Test de la méthode getPlageHoraireOuverte
-        ArrayList<FichePlageHoraire> fichesPlageHoraire = accesHoraires.getAllFichePlageHoraireOuverte();
-
-        for (FichePlageHoraire fichePlageHoraire : fichesPlageHoraire) {
-            Log.i("Nom", fichePlageHoraire.getNom());
-        }
 
         // On ajoute les 2 onglets
         lesOnglets = (TabHost) findViewById(R.id.tableOnglet);
@@ -364,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                 afficherFiltre();
                 break;
             case R.id.import_option :
-                showDialogImport(this);
+                showDialogImport();
                 break;
             case R.id.export_option :
                 selectionnerElement();
@@ -396,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
      * affiche une fenêtre de dialogue a l'utilisateur pourqu'il puisse chosir
      * entre les différent mode d'importation
      */
-    private void showDialogImport(Context context) {
+    private void showDialogImport() {
         final View boiteSaisie = getLayoutInflater().inflate(R.layout.saisie_import, null);
 
         new AlertDialog.Builder(this)
@@ -411,8 +404,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 switch (boutonMode.getCheckedRadioButtonId()) {
                                     case R.id.option_import_csv:
-                                        // TODO import CSV
-                                        importationCSV(context);
+                                        importationCSV();
                                         break;
                                     case R.id.option_import_json:
                                         importationJSON();
@@ -464,7 +456,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void selectionnerElement() {
         setPlageHoraireAdapterForExport();
-        
+
 
         listViewPlageHoraire.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -1025,6 +1017,8 @@ public class MainActivity extends AppCompatActivity {
                 liste.put(listeFichePlageHoraires[i].getJson(accesHoraires));
             }
 
+            Log.i("JSON", liste.toString());
+
             FileOutputStream fos = new FileOutputStream(fichierJSON);
             Writer w = new BufferedWriter(new OutputStreamWriter(fos));
             w.write(liste.toString());
@@ -1033,16 +1027,16 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (JSONException err) {
             Log.e("JSON", err.getMessage());
-            Toast.makeText(this, "Une erreur c'est produite durant la création du JSON", Toast.LENGTH_LONG);
+            Toast.makeText(this, getString(R.string.json_err_creation), Toast.LENGTH_LONG).show();
         } catch (FileNotFoundException err) {
             Log.e("JSON", err.getMessage());
-            Toast.makeText(this, "Une erreur c'est produite durant la création du fichier", Toast.LENGTH_LONG);
+            Toast.makeText(this, getString(R.string.json_err_ouverture), Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             Log.e("JSON", e.getMessage());
-            Toast.makeText(this, "Une erreur c'est produite durant l'ecriture du fichier", Toast.LENGTH_LONG);
+            Toast.makeText(this, getString(R.string.json_err_ecriture), Toast.LENGTH_LONG).show();
         }
 
-        Toast.makeText(this, "Exportation du JSON terminé", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.export_terminee), Toast.LENGTH_LONG).show();
         return fichierJSON;
     }
 
@@ -1087,9 +1081,9 @@ public class MainActivity extends AppCompatActivity {
 
             Jour jour = accesHoraires.getJourById(listeEnsemblePlageHoraire.get(i).getIdJour());
 
-            message += "    Horraires du " + jour.getJour() + " :\n";
+            message += "    Horaires du " + jour.getJour() + " :\n";
             message += "        Matin : " +  matin.getHoraireOuverture() + " - " + matin.getHoraireFermeture() + '\n';
-            message += "        Soir : "  +  soir.getHoraireOuverture() + " - " + soir.getHoraireFermeture() +'\n';
+            message += "        Soir  : "  +  soir.getHoraireOuverture() + " - " + soir.getHoraireFermeture() +'\n';
         }
 
         composeSmsMessage(message);
@@ -1144,69 +1138,84 @@ public class MainActivity extends AppCompatActivity {
                 curseur.moveToLast();
                 ficheTmp.setId(curseur.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
 
-                // Création des ensemble
-                JSONArray ensembleHoraireJSON = ensembleJSON.getJSONArray(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE);
-                for(int j = 0; j < ensembleHoraireJSON.length(); j ++) {
+                // Création de la liste des ensembles
+                JSONArray listeEnsembleHoraireJSON = ensembleJSON.getJSONArray(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE);
+                Log.e("DEBUG import", listeEnsembleHoraireJSON.toString());
 
-                    JSONObject detailEnsembleHoraireJSON = ensembleHoraireJSON.getJSONObject(j);
-                    JSONObject matinJSON = detailEnsembleHoraireJSON.getJSONObject(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN);
+                for(int j = 0; j < listeEnsembleHoraireJSON.length(); j ++) {
 
-                    String idJour = detailEnsembleHoraireJSON.getString(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR);
+                    // recupere un ensemble horaire de la liste pour le traiter
+                    JSONObject ensembleHoraireJSON = listeEnsembleHoraireJSON.getJSONObject(j);
 
-                    PlageHoraire matinTmp = new PlageHoraire(
+                    // Recupere l'ID du jour de l'ensemble
+                    String idJour = ensembleHoraireJSON.getString(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR);
+
+                    // Recupere l'objet JSON de la plage horaire matin
+                    JSONObject matinJSON = ensembleHoraireJSON.getJSONObject(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN);
+
+                    // Recupere l'objet JSON de la plage horaire soir
+                    JSONObject soirJSON = ensembleHoraireJSON.getJSONObject(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN);
+
+                    // Ensemble a ajouter a la BD
+                    EnsemblePlageHoraire ensemblePlageHoraire;
+
+                    // Création de la plage horraire matin
+                    PlageHoraire plageHoraireMatin = new PlageHoraire(
                             matinJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
                             matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE),
-                            matinJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
+                            matinJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE),
                             matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE),
                             matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME)
                     );
 
-                    PlageHoraire soirTmp;
+                    // Ajout de la plage horaire a la BD et récupération de l'ID
+                    accesHoraires.addPlageHoraire(plageHoraireMatin);
+                    curseur = accesHoraires.getCursorAllPlageHoraire();
+                    curseur.moveToLast();
+                    plageHoraireMatin.setId(curseur.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
 
-                    if (detailEnsembleHoraireJSON.getString(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR) != null ) {
+                    // Matin et soir
+                    if (!soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE).equals("")
+                            && soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE).equals("0")) {
 
-                        JSONObject soirJSON = detailEnsembleHoraireJSON.getJSONObject(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR);
-
-                        soirTmp = new PlageHoraire(
+                        PlageHoraire plageHoraireSoir = new PlageHoraire(
                                 soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
                                 soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE),
-                                soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
+                                soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE),
                                 soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE),
                                 soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME)
                         );
 
-                        accesHoraires.addPlageHoraire(soirTmp);
+                        accesHoraires.addPlageHoraire(plageHoraireSoir);
                         curseur = accesHoraires.getCursorAllPlageHoraire();
                         curseur.moveToLast();
-                        soirTmp.setId(curseur.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                        plageHoraireSoir.setId(curseur.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+
+                        ensemblePlageHoraire = new EnsemblePlageHoraire(
+                                plageHoraireMatin.getId(),
+                                plageHoraireSoir.getId(),
+                                idJour,
+                                ficheTmp.getId()
+                        );
                     } else {
-                        soirTmp = new PlageHoraire();
-                        soirTmp.setId(null);
+                        ensemblePlageHoraire = new EnsemblePlageHoraire(
+                                plageHoraireMatin.getId(),
+                                idJour,
+                                ficheTmp.getId()
+                        );
                     }
-
-                    accesHoraires.addPlageHoraire(matinTmp);
-                    curseur = accesHoraires.getCursorAllPlageHoraire();
-                    curseur.moveToLast();
-                    matinTmp.setId(curseur.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
-
-                    EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(
-                            matinTmp.getId(),
-                            soirTmp.getId(),
-                            idJour,
-                            ficheTmp.getId()
-                    );
 
                     accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
 
                 }
             }
 
-        } catch (IOException err) {
+        } catch (IOException | JSONException err) {
             Toast.makeText(this, getString(R.string.erreur_ouverture), Toast.LENGTH_LONG).show();
-            Log.e("erreur", err.getMessage());
-        } catch (JSONException err) {
-            Log.e("erreur", err.getMessage());
+            err.printStackTrace();
         }
+
+        //  Actualisation de la page
         curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
         plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
         onContentChanged();
@@ -1215,9 +1224,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Désérialise un fichier CSV pour l'ajouter a la BD applicative
+     * Désérialise un fichier CSV et ajoute son contenu a la BD applicative
      */
-    private void importationCSV(Context context) {
+    private void importationCSV() {
 
         final int LOCALISATION = 0;
         final int CATEGORIE = 1;
@@ -1317,6 +1326,7 @@ public class MainActivity extends AppCompatActivity {
             curseurPlageHoraire = accesHoraires.getCursorAllFichePlageHoraire();
             plageHoraireAdaptateur.swapCursor(curseurPlageHoraire);
             onContentChanged();
+            Toast.makeText(this, R.string.import_terminee, Toast.LENGTH_LONG).show();
 
         }catch (IOException err) {
             Log.e("CSV", err.toString());
@@ -1396,77 +1406,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Ajoute a la BD les plage horraire et l'ensemble a une fiche horraire
-     * @param tableau tableau du contenu a ajouter
-     * @param indexJour index du tableau ou commance l'ensemble horraire (même si null)
+     * Verifie les permission pour l'ecriture et la lecture de fichier de l'application
+     * Si ce n'est pas le cas, alors une modale s'ouvre pour demander les permission a l'utilisateur
+     * @param activity
      */
-    private void ajoutEnsemblePlageHorraireDimanche(String[] tableau, int indexJour, String idFiche) {
-
-        String idJour = Integer.toString(indexJour / 4);
-
-        Log.e("TAG", "ID fiche : " + idFiche);
-        Log.e("TAG", "ID jour : " + idJour);
-
-        Cursor cursor;
-
-            if (tableau.length == 30) {
-                /* TOUTE LA JOURNEE */
-                PlageHoraire plageHoraire;
-                if (!tableau[indexJour].equals("ferme")) {
-                    // OUVERT
-                    plageHoraire = new PlageHoraire(tableau[indexJour], tableau[indexJour + 1], 0);
-                    accesHoraires.addPlageHoraire(plageHoraire);
-
-                    cursor = accesHoraires.getCursorAllPlageHoraire();
-                    cursor.moveToLast();
-                    plageHoraire.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
-                } else {
-                    // FERME
-                    plageHoraire = new PlageHoraire("00:00", "00:00", 1);
-                    accesHoraires.addPlageHoraire(plageHoraire);
-
-                    cursor = accesHoraires.getCursorAllPlageHoraire();
-                    cursor.moveToLast();
-                    plageHoraire.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
-                }
-
-                EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(plageHoraire.getId(), idJour, idFiche);
-                accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
-
-            } else {
-                /* MATIN + APREM */
-                PlageHoraire plageHoraireMatin;
-
-                if (!tableau[indexJour].equals("ferme")) {
-                    plageHoraireMatin = new PlageHoraire(tableau[indexJour], 1, tableau[indexJour + 1], 1, 0);
-                } else {
-                    plageHoraireMatin = new PlageHoraire("00:00", "00:00", 1);
-                }
-
-                accesHoraires.addPlageHoraire(plageHoraireMatin);
-                cursor = accesHoraires.getCursorAllPlageHoraire();
-                cursor.moveToLast();
-                plageHoraireMatin.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
-
-                PlageHoraire plageHoraireSoir;
-
-                if (!tableau[indexJour + 2].equals("ferme")) {
-                    plageHoraireSoir = new PlageHoraire(tableau[indexJour + 2], 1, tableau[indexJour + 3], 1, 0);
-                } else {
-                    plageHoraireSoir = new PlageHoraire("00:00", "00:00", 1);
-                }
-
-                accesHoraires.addPlageHoraire(plageHoraireSoir);
-                cursor = accesHoraires.getCursorAllPlageHoraire();
-                cursor.moveToLast();
-                plageHoraireSoir.setId(cursor.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
-
-                EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(plageHoraireMatin.getId(), plageHoraireSoir.getId(), idJour, idFiche);
-                accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
-
-        }
-    }
-
     public void verifyStoragePermissions(Activity activity) {
         // Check si permission de lecture
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -1480,6 +1423,7 @@ public class MainActivity extends AppCompatActivity {
                     REQUEST_EXTERNAL_STORAGE
             );
         } else {
+            //DEBUG
             Log.e("Permission", "Permission ok");
         }
     }
