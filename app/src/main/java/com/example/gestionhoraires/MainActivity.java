@@ -1138,57 +1138,72 @@ public class MainActivity extends AppCompatActivity {
                 curseur.moveToLast();
                 ficheTmp.setId(curseur.getString(HoraireDAO.FICHE_PLAGE_HORAIRE_NUM_COLONNE_CLE));
 
-                // Création des ensemble
-                JSONArray ensembleHoraireJSON = ensembleJSON.getJSONArray(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE);
-                for(int j = 0; j < ensembleHoraireJSON.length(); j ++) {
+                // Création de la liste des ensembles
+                JSONArray listeEnsembleHoraireJSON = ensembleJSON.getJSONArray(HelperBDHoraire.NOM_TABLE_ENSEMBLE_PLAGE_HORAIRE);
+                Log.e("DEBUG import", listeEnsembleHoraireJSON.toString());
 
-                    JSONObject detailEnsembleHoraireJSON = ensembleHoraireJSON.getJSONObject(j);
-                    JSONObject matinJSON = detailEnsembleHoraireJSON.getJSONObject(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN);
+                for(int j = 0; j < listeEnsembleHoraireJSON.length(); j ++) {
 
-                    String idJour = detailEnsembleHoraireJSON.getString(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR);
+                    // recupere un ensemble horaire de la liste pour le traiter
+                    JSONObject ensembleHoraireJSON = listeEnsembleHoraireJSON.getJSONObject(j);
 
-                    PlageHoraire matinTmp = new PlageHoraire(
+                    // Recupere l'ID du jour de l'ensemble
+                    String idJour = ensembleHoraireJSON.getString(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_JOUR);
+
+                    // Recupere l'objet JSON de la plage horaire matin
+                    JSONObject matinJSON = ensembleHoraireJSON.getJSONObject(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN);
+
+                    // Recupere l'objet JSON de la plage horaire soir
+                    JSONObject soirJSON = ensembleHoraireJSON.getJSONObject(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_MATIN);
+
+                    // Ensemble a ajouter a la BD
+                    EnsemblePlageHoraire ensemblePlageHoraire;
+
+                    // Création de la plage horraire matin
+                    PlageHoraire plageHoraireMatin = new PlageHoraire(
                             matinJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
                             matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE),
-                            matinJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
+                            matinJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE),
                             matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE),
                             matinJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME)
                     );
 
-                    PlageHoraire soirTmp;
+                    // Ajout de la plage horaire a la BD et récupération de l'ID
+                    accesHoraires.addPlageHoraire(plageHoraireMatin);
+                    curseur = accesHoraires.getCursorAllPlageHoraire();
+                    curseur.moveToLast();
+                    plageHoraireMatin.setId(curseur.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
 
-                    if (detailEnsembleHoraireJSON.getString(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR) != null ) {
+                    // Matin et soir
+                    if (!soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE).equals("")
+                            && soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE).equals("0")) {
 
-                        JSONObject soirJSON = detailEnsembleHoraireJSON.getJSONObject(HelperBDHoraire.ENSEMBLE_PLAGE_HORAIRE_CLE_HORAIRE_SOIR);
-
-                        soirTmp = new PlageHoraire(
+                        PlageHoraire plageHoraireSoir = new PlageHoraire(
                                 soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
                                 soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_OUVERTURE),
-                                soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_OUVERTURE),
+                                soirJSON.getString(HelperBDHoraire.PLAGE_HORAIRE_FERMETURE),
                                 soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_ETAT_FERMETURE),
                                 soirJSON.getInt(HelperBDHoraire.PLAGE_HORAIRE_EST_FERME)
                         );
 
-                        accesHoraires.addPlageHoraire(soirTmp);
+                        accesHoraires.addPlageHoraire(plageHoraireSoir);
                         curseur = accesHoraires.getCursorAllPlageHoraire();
                         curseur.moveToLast();
-                        soirTmp.setId(curseur.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+                        plageHoraireSoir.setId(curseur.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
+
+                        ensemblePlageHoraire = new EnsemblePlageHoraire(
+                                plageHoraireMatin.getId(),
+                                plageHoraireSoir.getId(),
+                                idJour,
+                                ficheTmp.getId()
+                        );
                     } else {
-                        soirTmp = new PlageHoraire();
-                        soirTmp.setId(null);
+                        ensemblePlageHoraire = new EnsemblePlageHoraire(
+                                plageHoraireMatin.getId(),
+                                idJour,
+                                ficheTmp.getId()
+                        );
                     }
-
-                    accesHoraires.addPlageHoraire(matinTmp);
-                    curseur = accesHoraires.getCursorAllPlageHoraire();
-                    curseur.moveToLast();
-                    matinTmp.setId(curseur.getString(HoraireDAO.PLAGE_HORAIRE_NUM_COLONNE_CLE));
-
-                    EnsemblePlageHoraire ensemblePlageHoraire = new EnsemblePlageHoraire(
-                            matinTmp.getId(),
-                            soirTmp.getId(),
-                            idJour,
-                            ficheTmp.getId()
-                    );
 
                     accesHoraires.addEnsemblePlageHoraire(ensemblePlageHoraire);
 
@@ -1197,7 +1212,7 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (IOException | JSONException err) {
             Toast.makeText(this, getString(R.string.erreur_ouverture), Toast.LENGTH_LONG).show();
-            Log.e("erreur", err.getMessage());
+            err.printStackTrace();
         }
 
         //  Actualisation de la page
